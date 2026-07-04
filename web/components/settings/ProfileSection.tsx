@@ -15,6 +15,9 @@ export function ProfileSection() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -30,6 +33,26 @@ export function ProfileSection() {
       });
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleChangePassword() {
+    if (!currentPassword || !newPassword) return;
+    setPasswordError("");
+    setPasswordSuccess("");
+    setChangingPassword(true);
+    try {
+      await api.post("/user/change-password", {
+        current_password: currentPassword,
+        new_password: newPassword,
+      });
+      setPasswordSuccess("Password changed!");
+      setCurrentPassword("");
+      setNewPassword("");
+    } catch (e: any) {
+      setPasswordError(e.message || "Failed to change password");
+    } finally {
+      setChangingPassword(false);
     }
   }
 
@@ -102,6 +125,26 @@ export function ProfileSection() {
               placeholder="Enter new password"
             />
           </div>
+
+          {passwordError && (
+            <p className="text-red-500 text-sm" role="alert">
+              {passwordError}
+            </p>
+          )}
+          {passwordSuccess && (
+            <p className="text-green-600 text-sm" role="alert">
+              {passwordSuccess}
+            </p>
+          )}
+
+          <button
+            type="button"
+            onClick={handleChangePassword}
+            disabled={changingPassword}
+            className="px-4 py-2 bg-neutral-600 text-white rounded-lg hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+          >
+            {changingPassword ? "Changing..." : "Change Password"}
+          </button>
         </div>
       </div>
 

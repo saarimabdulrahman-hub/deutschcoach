@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import type { Plan } from "@/types";
 import { api } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
 
 type BillingCycle = "monthly" | "annual";
 
 interface TierSelectorProps {
   onSelect: (tier: string, billingCycle: BillingCycle) => void;
+  /** If true, the component handles checkout internally (for upgrading from within the app).
+   *  If false/omitted, it delegates to onSelect (for signup flow). */
+  standalone?: boolean;
 }
 
 const TIER_COLORS: Record<string, string> = {
@@ -23,8 +25,7 @@ const TIER_HIGHLIGHT: Record<string, string> = {
   pro: "bg-purple-600/10",
 };
 
-export default function TierSelector({ onSelect }: TierSelectorProps) {
-  const { token } = useAuth();
+export default function TierSelector({ onSelect, standalone = false }: TierSelectorProps) {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
   const [isLoading, setIsLoading] = useState(true);
@@ -68,6 +69,13 @@ export default function TierSelector({ onSelect }: TierSelectorProps) {
   }
 
   async function handleSelect(tier: string) {
+    if (!standalone) {
+      // Delegate to parent (e.g., signup flow which calls signup first, then checkout)
+      onSelect(tier, billingCycle);
+      return;
+    }
+
+    // Standalone mode: handle checkout internally (e.g., upgrading from settings)
     setSubmittingTier(tier);
     try {
       const result = await api.post<{ url: string }>("/payments/checkout", {

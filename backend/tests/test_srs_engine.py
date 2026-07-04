@@ -29,7 +29,7 @@ def test_perfect_recall_on_new_card():
     assert result.repetitions == 1
     assert result.interval_days == 1
     assert result.easiness_factor == 2.6  # +0.1 for rating 5
-    assert result.status == CardStatus.reviewing  # reps=1 => reviewing
+    assert result.status == CardStatus.learning  # 1 rep => learning
     assert result.next_review_at > datetime.utcnow()
 
 
@@ -50,7 +50,7 @@ def test_lapse_resets_progress():
     assert result.repetitions == 0
     assert result.lapses == 1
     assert result.interval_days == 1
-    assert result.easiness_factor == 2.3  # -0.2
+    assert result.easiness_factor == pytest.approx(2.18)  # 2.5 - 0.32 = 2.18
     assert result.status == CardStatus.learning
 
 

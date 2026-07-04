@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/lib/api";
 import SignupForm from "@/components/auth/SignupForm";
 import TierSelector from "@/components/auth/TierSelector";
 
@@ -19,6 +20,7 @@ export default function SignupPage() {
     email: string;
     password: string;
   } | null>(null);
+  const [tierError, setTierError] = useState<string | null>(null);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -27,17 +29,31 @@ export default function SignupPage() {
     }
   }, [user, isLoading, router]);
 
-  async function handleRegister(name: string, email: string, password: string) {
-    await signup(name, email, password);
+  // Step 1: Collect name/email/password ONLY (do not create account yet)
+  function handleRegister(name: string, email: string, password: string) {
     setSignupData({ name, email, password });
     setStep("tiers");
   }
 
-  function handleTierSelect(tier: string, billingCycle: string) {
-    // The TierSelector handles the checkout API call and redirect internally.
-    // This callback exists for any additional side-effects if needed.
-    void tier;
-    void billingCycle;
+  // Step 2: On tier select, create account then redirect to Stripe checkout
+  async function handleTierSelect(tier: string, billingCycle: string) {
+    if (!signupData) return;
+    setTierError(null);
+    try {
+      // Create the account first
+      await signup(signupData.name, signupData.email, signupData.password);
+
+      // Then initiate Stripe checkout
+      const result = await api.post<{ url: string }>("/payments/checkout", {
+        tier,
+        billing_cycle: billingCycle,
+      });
+      window.location.href = result.url;
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to create account. Please try again.";
+      setTierError(message);
+    }
   }
 
   if (isLoading) {
@@ -89,6 +105,11 @@ export default function SignupPage() {
         {/* Tier selection step */}
         {step === "tiers" && (
           <div>
+            {tierError && (
+              <p className="text-red-400 text-sm text-center mb-4" role="alert">
+                {tierError}
+              </p>
+            )}
             <TierSelector onSelect={handleTierSelect} />
           </div>
         )}

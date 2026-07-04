@@ -1,4 +1,9 @@
-from fastapi import APIRouter, Depends
+import os
+
+import bcrypt
+import stripe
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -12,6 +17,11 @@ from app.routers.auth_dependency import require_auth
 from app.schemas.user import UserProfileUpdate, UserOut
 
 router = APIRouter(prefix="/user", tags=["User"])
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
 
 
 def _serialize_user(user: User) -> dict:
@@ -55,12 +65,36 @@ def update_profile(
     return {"message": "Profile updated"}
 
 
+@router.post("/change-password")
+def change_password(
+    body: ChangePasswordRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_auth),
+):
+    """Change the authenticated user's password."""
+    if not bcrypt.checkpw(body.current_password.encode("utf-8"), user.password_hash.encode("utf-8")):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    if len(body.new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    user.password_hash = bcrypt.hashpw(body.new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    db.commit()
+    return {"message": "Password changed"}
+
+
 @router.post("/delete-account")
 def delete_account(
     db: Session = Depends(get_db),
     user: User = Depends(require_auth),
 ):
     """Permanently delete the authenticated user's account and all associated data."""
+    # Cancel Stripe subscription if active
+    if user.stripe_subscription_id:
+        stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+        try:
+            stripe.Subscription.cancel(user.stripe_subscription_id)
+        except stripe.error.StripeError:
+            pass  # Log this, but don't block deletion
+
     db.query(SRSState).filter(SRSState.user_id == user.id).delete()
     db.query(QuizResult).filter(QuizResult.user_id == user.id).delete()
     db.query(LessonProgress).filter(LessonProgress.user_id == user.id).delete()

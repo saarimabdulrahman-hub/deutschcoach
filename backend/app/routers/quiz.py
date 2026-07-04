@@ -8,7 +8,7 @@ from app.models.vocab import VocabEntry
 from app.models.quiz import QuizResult, QuizType
 from app.models.srs import SRSState, CardStatus
 from app.models.lesson_progress import LessonProgress
-from app.routers.auth_dependency import require_auth
+from app.routers.auth_dependency import require_auth, TIER_LIMITS
 from app.quiz.generator import generate_quiz, get_session, delete_session
 from app.schemas.quiz import (
     QuizGenerateRequest,
@@ -84,6 +84,16 @@ def create_quiz(
     user: User = Depends(require_auth),
 ):
     """Generate a new quiz session. Answers are stripped from the response."""
+    # Check tier access if a level is specified
+    if body.level:
+        user_tier = user.subscription_tier.value if hasattr(user.subscription_tier, 'value') else user.subscription_tier
+        allowed_levels = TIER_LIMITS.get(user_tier, ["A1"])
+        if body.level.upper() not in [l.upper() for l in allowed_levels]:
+            raise HTTPException(
+                status_code=403,
+                detail=f"Your {user_tier} plan does not include {body.level} content. Upgrade to access this level.",
+            )
+
     result = generate_quiz(
         db=db,
         user_id=user.id,

@@ -8,7 +8,7 @@ from app.models.lesson import Lesson
 from app.models.vocab import VocabEntry
 from app.models.grammar import GrammarTopic
 from app.models.lesson_progress import LessonProgress
-from app.routers.auth_dependency import require_auth
+from app.routers.auth_dependency import require_auth, TIER_LIMITS
 from app.schemas.curriculum import (
     CurriculumLevel,
     LessonListItem,
@@ -105,6 +105,15 @@ def list_lessons(
             detail=f"Invalid level '{level}'. Valid levels: {', '.join(valid_levels)}",
         )
 
+    # Check tier access
+    user_tier = user.subscription_tier.value if hasattr(user.subscription_tier, 'value') else user.subscription_tier
+    allowed_levels = TIER_LIMITS.get(user_tier, ["A1"])
+    if level.upper() not in [l.upper() for l in allowed_levels]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Your {user_tier} plan does not include {level} content. Upgrade to access this level.",
+        )
+
     lessons = (
         db.query(Lesson)
         .filter(Lesson.level == level.upper())
@@ -151,6 +160,15 @@ def get_lesson_detail(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Invalid level '{level}'. Valid levels: {', '.join(valid_levels)}",
+        )
+
+    # Check tier access
+    user_tier = user.subscription_tier.value if hasattr(user.subscription_tier, 'value') else user.subscription_tier
+    allowed_levels = TIER_LIMITS.get(user_tier, ["A1"])
+    if level.upper() not in [l.upper() for l in allowed_levels]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Your {user_tier} plan does not include {level} content. Upgrade to access this level.",
         )
 
     lesson = (

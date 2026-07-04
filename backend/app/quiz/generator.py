@@ -4,10 +4,21 @@ from sqlalchemy.orm import Session
 from app.models.vocab import VocabEntry
 from app.models.srs import SRSState
 
-QUESTION_TYPES = ["translate", "fill-blank", "multiple-choice", "conjugate"]
+QUESTION_TYPES = ["translate", "fill-blank", "multiple-choice"]  # "conjugate" removed — needs proper verb conjugation dictionary
 
 # In-memory session store: {session_id: {questions: [...], user_id: int}}
+# TODO: Replace in-memory store with Redis or DB for multi-worker deployments
+import time
 _session_store: dict = {}
+SESSION_TTL = 3600  # 1 hour
+
+
+def _sweep_expired():
+    """Remove sessions older than SESSION_TTL."""
+    now = time.time()
+    expired = [sid for sid, s in _session_store.items() if now - s.get("_created", 0) > SESSION_TTL]
+    for sid in expired:
+        del _session_store[sid]
 
 
 def _generate_distractors(db: Session, correct_entry: VocabEntry, count: int = 3) -> list[str]:
@@ -119,6 +130,8 @@ def generate_quiz(
     count: int = 20,
 ) -> dict:
     """Generate a quiz session. Returns {session_id, questions}."""
+    _sweep_expired()  # Clean up expired sessions before creating new one
+
     query = db.query(VocabEntry)
 
     if vocab_ids:
@@ -151,7 +164,7 @@ def generate_quiz(
     selected = random.sample(entries, min(count, len(entries)))
     questions = [_make_question(e, db) for e in selected]
     session_id = str(uuid.uuid4())
-    _session_store[session_id] = {"questions": questions, "user_id": user_id}
+    _session_store[session_id] = {"questions": questions, "user_id": user_id, "_created": time.time()}
 
     return {"session_id": session_id, "questions": questions}
 
