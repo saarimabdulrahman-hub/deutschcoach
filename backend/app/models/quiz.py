@@ -18,7 +18,7 @@ class QuizResult(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
-    quiz_type = Column(SQLEnum(QuizType), nullable=False)
+    quiz_type = Column(SQLEnum(QuizType, values_callable=lambda x: [e.value for e in x]), nullable=False)
     score_pct = Column(Float, nullable=False)
     questions_total = Column(Integer, nullable=False)
     questions_correct = Column(Integer, nullable=False)

@@ -13,3 +13,4 @@ class UserVocabNote(Base):
     english = Column(String(255), nullable=False)
     notes = Column(Text, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
