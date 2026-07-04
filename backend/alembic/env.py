@@ -16,6 +16,15 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
+from app.models.user import User
+from app.models.lesson import Lesson
+from app.models.vocab import VocabEntry
+from app.models.grammar import GrammarTopic
+from app.models.srs import SRSState
+from app.models.quiz import QuizResult
+from app.models.lesson_progress import LessonProgress
+from app.models.user_vocab_note import UserVocabNote
+from app.models.reset_token import PasswordResetToken
 from database import Base
 target_metadata = Base.metadata
 
