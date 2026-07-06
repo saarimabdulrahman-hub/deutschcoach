@@ -70,12 +70,21 @@ def debug_signup():
         from database import SessionLocal
         from app.models.user import User, SubscriptionTier
         from datetime import datetime, timedelta, timezone
+        import bcrypt
+
+        # Test bcrypt
+        try:
+            h = bcrypt.hashpw(b"test1234", bcrypt.gensalt())
+            bcrypt_ok = True
+        except Exception as e:
+            bcrypt_ok = False
+            bcrypt_err = str(e)
 
         db = SessionLocal()
         try:
             user = User(
                 name="DebugTest",
-                email="debug_test@example.com",
+                email="debug_test2@example.com",
                 password_hash="test_hash_not_real",
                 subscription_tier=SubscriptionTier.free,
                 trial_ends_at=datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=7),
@@ -85,7 +94,13 @@ def debug_signup():
             db.refresh(user)
             db.delete(user)
             db.commit()
-            return {"status": "ok", "message": "Write succeeded, user cleaned up", "user_id": user.id}
+            return {
+                "status": "ok",
+                "message": "Write succeeded",
+                "user_id": user.id,
+                "bcrypt_ok": bcrypt_ok,
+                "bcrypt_err": bcrypt_err if not bcrypt_ok else None,
+            }
         finally:
             db.close()
     except Exception:
