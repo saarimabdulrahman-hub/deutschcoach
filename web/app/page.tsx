@@ -71,7 +71,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div style={{ fontSize: "clamp(4rem, 12vw, 16rem)", lineHeight: 0.85, letterSpacing: "-0.03em" }}>
+          <div style={{ fontSize: "clamp(6rem, 20vw, 24rem)", lineHeight: 0.82, letterSpacing: "-0.04em" }}>
             <span className="font-extralight" style={{ color: "var(--color-text)" }}>Deutsch</span>
             <br />
             <span
