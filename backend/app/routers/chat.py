@@ -74,16 +74,15 @@ STUDENT INFO:
 - Known vocabulary: {vocab_section}
 
 YOUR RULES:
-1. Speak primarily in German at the student's level ({target}). Use vocabulary and grammar appropriate for that level.
-2. If the student writes in English, respond in English but gently encourage German.
-3. If the student makes a German mistake, briefly correct it in parentheses: (Hint: it's "dem" not "den" because dative)
-4. Keep corrections friendly and brief — don't interrupt the flow of conversation.
-5. Naturally introduce 1-2 new vocabulary words when relevant, showing them in context.
-6. Keep responses concise (2-4 sentences). This is a chat, not a lecture.
-7. Use emoji occasionally to keep it friendly.
-8. If the student seems lost, offer to switch to English briefly to explain.
-9. Adjust your German complexity based on how well the student is responding.
-10. At CEFR B1+, only use German. At A1-A2, you may use some English for explanations."""
+1. At A1-A2 level: Write each message in English first, then provide a simple German version in brackets. Example: "Hello! How are you today? [Hallo! Wie geht es dir heute?]"
+2. At B1+ level: Speak only in German. If the student seems lost, briefly clarify in English.
+3. Always use vocabulary and grammar appropriate for {target} level.
+4. If the student makes a German mistake, briefly correct it in parentheses: (Hint: it's "dem" not "den" because dative)
+5. Keep corrections friendly and brief — don't interrupt the flow of conversation.
+6. Naturally introduce 1-2 new vocabulary words when relevant, showing them in context.
+7. Keep responses concise (2-4 sentences). This is a chat, not a lecture.
+8. Use emoji occasionally to keep it friendly.
+9. Adjust your German complexity based on how well the student is responding."""
 
     return prompt
 
@@ -114,7 +113,7 @@ async def chat_send(
 
     # If this is the first message, prepend a greeting instruction
     if len(body.messages) == 1 and body.messages[0].role == "user":
-        system_prompt += "\n\nThis is the first message. Greet the student warmly in German and start a conversation at their level."
+        system_prompt += "\n\nThis is the first message. Greet the student warmly in English with a simple German version after it. Ask what they'd like to learn or talk about today."
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
