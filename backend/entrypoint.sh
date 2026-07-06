@@ -1,8 +1,9 @@
 #!/bin/sh
 set -e
 
-# Wait for MySQL if DATABASE_URL contains mysql
-if echo "${DATABASE_URL:-sqlite}" | grep -q "mysql"; then
+# Wait for MySQL only in Docker Compose (db host exists on the compose network).
+# In production (Render, etc.) the DATABASE_URL points to a remote DB — skip wait.
+if echo "${DATABASE_URL:-sqlite}" | grep -q "mysql" && getent hosts db >/dev/null 2>&1; then
   echo "Waiting for MySQL at db:3306..."
   while ! python -c "import socket; s=socket.socket(); s.settimeout(2); s.connect(('db', 3306)); s.close()" 2>/dev/null; do
     sleep 2
@@ -14,6 +15,7 @@ fi
 echo "Running Alembic migrations..."
 alembic upgrade head
 
-# Start the application
-echo "Starting DeutschCoach API on port 8001..."
-exec uvicorn main:app --host 0.0.0.0 --port 8001
+# Use PORT env var if set (Render provides it), otherwise default to 8001
+PORT="${PORT:-8001}"
+echo "Starting DeutschCoach API on port $PORT..."
+exec uvicorn main:app --host 0.0.0.0 --port "$PORT"

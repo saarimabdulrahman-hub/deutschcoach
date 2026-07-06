@@ -49,6 +49,14 @@ docker compose down     # stop
 
 Services: MySQL `:3306`, Backend `:8001`, Frontend `:3456`
 
+### Deployment
+
+See `DEPLOY.md` for a step-by-step guide to deploy on:
+- **Vercel** (frontend) — free
+- **Render** (backend) — free
+- **PlanetScale** (database) — free
+- **Resend** (email) — free
+
 ## Architecture
 
 ### Backend (`backend/`)

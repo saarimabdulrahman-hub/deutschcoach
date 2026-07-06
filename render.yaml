@@ -1,0 +1,51 @@
+# Render Blueprint — Infrastructure-as-Code
+# Deploy via: Connect GitHub repo in Render dashboard, or `render blueprint apply`
+
+services:
+  - type: web
+    name: deutschcoach-api
+    runtime: docker
+    repo: https://github.com/YOUR_USERNAME/german-tutor-chatbot.git
+    branch: master
+    rootDir: backend
+    dockerfilePath: backend/Dockerfile
+    healthCheckPath: /health
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+        # Paste your PlanetScale connection string here:
+        # mysql+pymysql://user:password@aws.connect.psdb.cloud/deutschcoach?ssl_ca=/etc/ssl/cert.pem
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_EXPIRE_MINUTES
+        value: "1440"
+      - key: CORS_ORIGIN
+        sync: false
+        # Paste your Vercel frontend URL here, e.g.:
+        # https://deutschcoach.vercel.app
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ANTHROPIC_BASE_URL
+        value: https://api.deepseek.com/anthropic
+      - key: ANTHROPIC_MODEL
+        value: deepseek-v4-pro[1m]
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: FROM_EMAIL
+        value: noreply@deutschcoach.app
+      - key: FRONTEND_URL
+        sync: false
+        # Paste your Vercel frontend URL here
