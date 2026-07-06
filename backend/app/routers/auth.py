@@ -110,30 +110,37 @@ def user_to_dict(user: User) -> dict:
 
 @router.post("/signup", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
 def signup(req: SignupRequest, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == req.email).first()
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Email already registered",
+    import traceback as _tb
+    try:
+        existing = db.query(User).filter(User.email == req.email).first()
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Email already registered",
+            )
+
+        password_hash = bcrypt.hashpw(
+            req.password.encode("utf-8"), bcrypt.gensalt()
+        ).decode("utf-8")
+
+        user = User(
+            name=req.name,
+            email=req.email,
+            password_hash=password_hash,
+            subscription_tier=SubscriptionTier.free,
+            trial_ends_at=datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=7),
         )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
-    password_hash = bcrypt.hashpw(
-        req.password.encode("utf-8"), bcrypt.gensalt()
-    ).decode("utf-8")
-
-    user = User(
-        name=req.name,
-        email=req.email,
-        password_hash=password_hash,
-        subscription_tier=SubscriptionTier.free,
-        trial_ends_at=datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=7),
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-
-    token = create_token(user.id)
-    return AuthResponse(user=user_to_dict(user), token=token)
+        token = create_token(user.id)
+        return AuthResponse(user=user_to_dict(user), token=token)
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Signup failed")
+        raise HTTPException(status_code=500, detail=_tb.format_exc())
 
 
 @router.post("/login", response_model=AuthResponse)
