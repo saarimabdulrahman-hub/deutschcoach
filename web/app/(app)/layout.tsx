@@ -5,7 +5,7 @@ import { useTheme, type ThemeName } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { TabBar } from "@/components/ui/TabBar";
-import { CommandBar } from "@deutschcoach/shared/ui/CommandBar";
+import { CommandBar } from "@/components/ui/CommandBar";
 
 const THEME_DOTS: { key: ThemeName; label: string; color: string }[] = [
   { key: "indigo", label: "Indigo", color: "#6366f1" },

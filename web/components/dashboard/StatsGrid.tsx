@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import type { DashboardData } from "@deutschcoach/shared/types";
+import type { DashboardData } from "@/types";
 
 function CountUpValue({ value, suffix = "" }: { value: number | string; suffix?: string }) {
   const [displayValue, setDisplayValue] = useState(0);

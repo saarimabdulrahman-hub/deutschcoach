@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@deutschcoach/shared": "*",
     "@tanstack/react-query": "^5.62.0",
     "next": "^16.0.0",
     "react": "^19.0.0",

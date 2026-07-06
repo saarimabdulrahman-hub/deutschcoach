@@ -22,6 +22,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    # SQLite doesn't support ALTER COLUMN TYPE and doesn't enforce
+    # column length limits anyway — skip for SQLite.
+    if op.get_context().dialect.name == "sqlite":
+        return
     op.alter_column(
         "vocab_entries",
         "gender",
@@ -32,6 +36,8 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    if op.get_context().dialect.name == "sqlite":
+        return
     op.alter_column(
         "vocab_entries",
         "gender",
