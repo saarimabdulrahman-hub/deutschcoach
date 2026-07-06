@@ -126,7 +126,7 @@ def signup(req: SignupRequest, db: Session = Depends(get_db)):
         email=req.email,
         password_hash=password_hash,
         subscription_tier=SubscriptionTier.free,
-        trial_ends_at=datetime.now(timezone.utc) + timedelta(days=7),
+        trial_ends_at=datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=7),
     )
     db.add(user)
     db.commit()
@@ -166,7 +166,7 @@ def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
     reset_token = PasswordResetToken(
         user_id=user.id,
         token=token_str,
-        expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+        expires_at=datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(hours=1),
         used=False,
     )
     db.add(reset_token)
@@ -197,7 +197,7 @@ def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
             detail="Reset token has already been used",
         )
 
-    if reset_token.expires_at.replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
+    if reset_token.expires_at < datetime.now(timezone.utc).replace(tzinfo=None):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Reset token has expired",
