@@ -26,19 +26,6 @@ SCENARIOS = {
 
 TIER_LEVEL_MAX = {"free": "A1", "starter": "A2", "plus": "B1", "pro": "C1"}
 
-# Common German words for quick language detection
-_GERMAN_WORDS = {"und", "die", "der", "das", "ist", "nicht", "ein", "eine", "einen",
-    "ich", "du", "wir", "sie", "er", "es", "mit", "auf", "für", "auch", "sich",
-    "aber", "oder", "wie", "wenn", "dass", "kann", "haben", "werden", "sein",
-    "bei", "von", "zum", "zur", "dem", "den", "des", "einem", "einer", "kein",
-    "schon", "noch", "doch", "mal", "immer", "sehr", "viel", "mehr", "gut"}
-
-def _is_german(text: str) -> bool:
-    """Quick check: is the text primarily German?"""
-    words = set(text.lower().split())
-    common = words & _GERMAN_WORDS
-    return len(common) >= 3
-
 
 def build_system_prompt(db: Session, user) -> str:
     """Build a system prompt that includes the user's level, known vocab, and grammar topics."""
@@ -79,11 +66,23 @@ def build_system_prompt(db: Session, user) -> str:
 
     vocab_section = ", ".join(known_vocab[:15]) if known_vocab else "beginner - use very simple German"
 
-    prompt = f"""You are an English-speaking German language tutor. Your student is at CEFR level {target}.
+    prompt = f"""You are a friendly, patient German language tutor. You are having a natural conversation with a student learning German.
 
-YOUR ONLY JOB: Reply in ENGLISH. Explain German words and grammar in English. Use individual German words as examples within your English sentences. Never output full German sentences.
+STUDENT INFO:
+- CEFR Level: {target} (max available: {max_level})
+- Lessons completed: {completed}
+- Known vocabulary: {vocab_section}
 
-Student info: {target} level, {completed} lessons completed."""
+YOUR RULES:
+1. MATCH THE STUDENT'S LANGUAGE: If the student writes in English → respond in English. If the student writes in German → respond in German. This is your most important rule — always mirror the language the student uses.
+2. Speak at the student's level ({target}). Use vocabulary and grammar appropriate for that level.
+3. If the student makes a German mistake, briefly correct it in parentheses: (Hint: it's "dem" not "den" because dative)
+4. Keep corrections friendly and brief — don't interrupt the flow of conversation.
+5. Naturally introduce 1-2 new vocabulary words when relevant, showing them in context.
+6. Keep responses concise (2-4 sentences). This is a chat, not a lecture.
+7. Use emoji occasionally to keep it friendly.
+8. If the student seems lost, offer to switch to English briefly to explain.
+9. Adjust your German complexity based on how well the student is responding."""
 
     return prompt
 
@@ -110,15 +109,11 @@ async def chat_send(
     # Build messages for Anthropic API (last 20 for context window)
     anthropic_messages = []
     for msg in body.messages[-20:]:
-        content = msg.content
-        # Force English by prepending instruction to every user message
-        if msg.role == "user":
-            content = f"[IMPORTANT: Reply in English, not German.] {content}"
-        anthropic_messages.append({"role": msg.role, "content": content})
+        anthropic_messages.append({"role": msg.role, "content": msg.content})
 
     # If this is the first message, prepend a greeting instruction
     if len(body.messages) == 1 and body.messages[0].role == "user":
-        system_prompt += "\n\nGreet the student in English. Ask what they want to learn."
+        system_prompt += "\n\nThis is the first message. Greet the student warmly. Match their language — if they wrote in English, respond in English. If they wrote in German, respond in German."
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -144,7 +139,6 @@ async def chat_send(
             )
 
         data = resp.json()
-        # Handle different response formats
         reply = None
 
         # Anthropic format: content[0].text
@@ -153,7 +147,6 @@ async def chat_send(
                 if block.get("type") == "text" and block.get("text"):
                     reply = block["text"]
                     break
-            # Fallback: first block's text even if type is different
             if not reply and len(data["content"]) > 0:
                 first = data["content"][0]
                 reply = first.get("text") or first.get("thinking") or ""
@@ -165,34 +158,7 @@ async def chat_send(
         if not reply:
             raise HTTPException(status_code=502, detail=f"Unexpected API response format: {json.dumps(data)[:300]}")
 
-        # Post-process: if response is mostly German, translate it to English
-        if _is_german(reply):
-            try:
-                translate_resp = await client.post(
-                    ANTHROPIC_API_URL,
-                    headers={
-                        "x-api-key": ANTHROPIC_API_KEY,
-                        "anthropic-version": "2023-06-01",
-                        "content-type": "application/json",
-                    },
-                    json={
-                        "model": ANTHROPIC_MODEL,
-                        "max_tokens": 500,
-                        "system": "Translate the following German text to English. Keep any German example words or phrases in their original form but explain them in English. Output ONLY the translation, no extra text.",
-                        "messages": [{"role": "user", "content": reply}],
-                    },
-                )
-                if translate_resp.status_code == 200:
-                    trans_data = translate_resp.json()
-                    if isinstance(trans_data.get("content"), list):
-                        for block in trans_data["content"]:
-                            if block.get("type") == "text" and block.get("text"):
-                                reply = block["text"]
-                                break
-            except Exception:
-                pass  # If translation fails, use original response
-
-        # Parse corrections from the response (look for parenthetical hints)
+        # Parse corrections from the response
         corrections: list[dict] = []
         hints = re.findall(r"\(Hint:\s*(.+?)\)", reply)
         for hint in hints:
