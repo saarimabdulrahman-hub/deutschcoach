@@ -7,6 +7,15 @@ from main import app
 client = TestClient(app)
 
 
+def _first_a1_lesson_id(auth_headers: dict) -> int:
+    """Return the database ID of the first A1 lesson (works regardless of AUTO_INCREMENT)."""
+    resp = client.get("/curriculum/A1", headers=auth_headers)
+    assert resp.status_code == 200
+    lessons = resp.json()
+    assert len(lessons) >= 1
+    return lessons[0]["id"]
+
+
 @pytest.fixture
 def auth():
     """Create a unique test user and return auth headers."""
@@ -34,7 +43,8 @@ def test_curriculum_a1(auth):
 
 
 def test_lesson_detail(auth):
-    resp = client.get("/curriculum/A1/1", headers=auth)
+    lesson_id = _first_a1_lesson_id(auth)
+    resp = client.get(f"/curriculum/A1/{lesson_id}", headers=auth)
     assert resp.status_code == 200
     data = resp.json()
     assert data["lesson"]["title"] == "Erste Begegnungen"
@@ -55,7 +65,8 @@ def test_grammar_detail(auth):
 
 
 def test_srs_seed_and_stats(auth):
-    resp = client.post("/srs/seed-lesson", json={"lesson_id": 1}, headers=auth)
+    lesson_id = _first_a1_lesson_id(auth)
+    resp = client.post("/srs/seed-lesson", json={"lesson_id": lesson_id}, headers=auth)
     assert resp.status_code == 200
     data = resp.json()
     assert data["newly_seeded"] >= 1
@@ -68,7 +79,8 @@ def test_srs_seed_and_stats(auth):
 
 
 def test_srs_review(auth):
-    client.post("/srs/seed-lesson", json={"lesson_id": 1}, headers=auth)
+    lesson_id = _first_a1_lesson_id(auth)
+    client.post("/srs/seed-lesson", json={"lesson_id": lesson_id}, headers=auth)
     resp = client.get("/srs/due", headers=auth)
     cards = resp.json()
     if cards:

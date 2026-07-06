@@ -10,6 +10,15 @@ import React, {
 import type { User, AuthResponse } from "@/types";
 import { api } from "@/lib/api";
 
+// Cookie helpers — middleware reads auth_token to protect routes server-side
+function setAuthCookie(token: string) {
+  document.cookie = `auth_token=${token}; path=/; max-age=604800; SameSite=Lax`;
+}
+
+function clearAuthCookie() {
+  document.cookie = "auth_token=; path=/; max-age=0; SameSite=Lax";
+}
+
 interface AuthState {
   user: User | null;
   token: string | null;
@@ -41,10 +50,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .get<User>("/user/profile")
       .then((userData) => {
         setUser(userData);
+        setAuthCookie(stored); // sync cookie for middleware
       })
       .catch(() => {
         // Token invalid or expired — clear it
         localStorage.removeItem("token");
+        clearAuthCookie();
         setToken(null);
       })
       .finally(() => {
@@ -58,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
     });
     localStorage.setItem("token", res.token);
+    setAuthCookie(res.token);
     setToken(res.token);
     setUser(res.user);
   }, []);
@@ -70,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         password,
       });
       localStorage.setItem("token", res.token);
+      setAuthCookie(res.token);
       setToken(res.token);
       setUser(res.user);
     },
@@ -78,6 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(() => {
     localStorage.removeItem("token");
+    clearAuthCookie();
     setToken(null);
     setUser(null);
   }, []);

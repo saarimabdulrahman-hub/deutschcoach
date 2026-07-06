@@ -155,7 +155,7 @@ def submit_quiz(
 ):
     """Submit answers for a quiz session. Grades, stores result, seeds SRS for
     missed words, and deletes the session."""
-    session = get_session(session_id)
+    session = get_session(db, session_id)
     if not session:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -236,7 +236,7 @@ def submit_quiz(
     db.commit()
 
     # Delete the session (consumed)
-    delete_session(session_id)
+    delete_session(db, session_id)
 
     return QuizResultOut(
         score_pct=score_pct,

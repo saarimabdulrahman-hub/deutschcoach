@@ -12,7 +12,7 @@ class VocabEntry(Base):
     german = Column(String(255), nullable=False)
     english = Column(String(255), nullable=False)
     part_of_speech = Column(String(50), nullable=True)
-    gender = Column(String(1), nullable=True)  # m, f, or n
+    gender = Column(String(10), nullable=True)  # m, f, n, pl, or empty
     plural_form = Column(String(255), nullable=True)
     example_sentence = Column(Text, nullable=True)
     audio_url = Column(String(500), nullable=True)

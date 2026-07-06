@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+venv
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+*.db
+.env
+.env.local
+.env.*.local
+*.md
+docs
+.superpowers
+preview

@@ -1,24 +1,23 @@
 import random
 import uuid
+from datetime import datetime, timedelta
+
 from sqlalchemy.orm import Session
+
 from app.models.vocab import VocabEntry
 from app.models.srs import SRSState
+from app.models.quiz_session import QuizSession
 
 QUESTION_TYPES = ["translate", "fill-blank", "multiple-choice"]  # "conjugate" removed — needs proper verb conjugation dictionary
 
-# In-memory session store: {session_id: {questions: [...], user_id: int}}
-# TODO: Replace in-memory store with Redis or DB for multi-worker deployments
-import time
-_session_store: dict = {}
-SESSION_TTL = 3600  # 1 hour
+SESSION_TTL_HOURS = 1  # Quiz sessions expire after 1 hour
 
 
-def _sweep_expired():
-    """Remove sessions older than SESSION_TTL."""
-    now = time.time()
-    expired = [sid for sid, s in _session_store.items() if now - s.get("_created", 0) > SESSION_TTL]
-    for sid in expired:
-        del _session_store[sid]
+def _sweep_expired(db: Session):
+    """Delete sessions older than SESSION_TTL_HOURS."""
+    cutoff = datetime.utcnow() - timedelta(hours=SESSION_TTL_HOURS)
+    db.query(QuizSession).filter(QuizSession.created_at < cutoff).delete()
+    db.commit()
 
 
 def _generate_distractors(db: Session, correct_entry: VocabEntry, count: int = 3) -> list[str]:
@@ -130,7 +129,7 @@ def generate_quiz(
     count: int = 20,
 ) -> dict:
     """Generate a quiz session. Returns {session_id, questions}."""
-    _sweep_expired()  # Clean up expired sessions before creating new one
+    _sweep_expired(db)  # Clean up expired sessions before creating new one
 
     query = db.query(VocabEntry)
 
@@ -164,14 +163,38 @@ def generate_quiz(
     selected = random.sample(entries, min(count, len(entries)))
     questions = [_make_question(e, db) for e in selected]
     session_id = str(uuid.uuid4())
-    _session_store[session_id] = {"questions": questions, "user_id": user_id, "_created": time.time()}
+
+    # Store in database (replaces in-memory dict)
+    db.add(
+        QuizSession(
+            session_id=session_id,
+            user_id=user_id,
+            questions=questions,
+        )
+    )
+    db.commit()
 
     return {"session_id": session_id, "questions": questions}
 
 
-def get_session(session_id: str) -> dict | None:
-    return _session_store.get(session_id)
+def get_session(db: Session, session_id: str) -> dict | None:
+    """Retrieve a quiz session from the database. Returns None if not found or expired."""
+    session = db.query(QuizSession).filter(QuizSession.session_id == session_id).first()
+    if not session:
+        return None
+
+    # Check expiry
+    if (datetime.utcnow() - session.created_at) > timedelta(hours=SESSION_TTL_HOURS):
+        db.delete(session)
+        db.commit()
+        return None
+
+    return {"questions": session.questions, "user_id": session.user_id}
 
 
-def delete_session(session_id: str):
-    _session_store.pop(session_id, None)
+def delete_session(db: Session, session_id: str):
+    """Delete a quiz session after it has been submitted."""
+    session = db.query(QuizSession).filter(QuizSession.session_id == session_id).first()
+    if session:
+        db.delete(session)
+        db.commit()

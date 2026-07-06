@@ -5,9 +5,19 @@ from sqlalchemy import pool
 
 from alembic import context
 
+# Load DATABASE_URL from environment
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# Override sqlalchemy.url with the environment variable (if set)
+db_url = os.getenv("DATABASE_URL")
+if db_url:
+    config.set_main_option("sqlalchemy.url", db_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -22,6 +32,7 @@ from app.models.vocab import VocabEntry
 from app.models.grammar import GrammarTopic
 from app.models.srs import SRSState
 from app.models.quiz import QuizResult
+from app.models.quiz_session import QuizSession
 from app.models.lesson_progress import LessonProgress
 from app.models.user_vocab_note import UserVocabNote
 from app.models.reset_token import PasswordResetToken
