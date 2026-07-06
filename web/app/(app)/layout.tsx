@@ -98,13 +98,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       >
         {/* Left: Logo + App name */}
         <div className="flex items-center gap-3 flex-shrink-0">
-          <Logo size={34} />
+          <Logo size={38} />
           <div className="hidden sm:flex items-baseline gap-0.5">
-            <span className="text-xl font-light tracking-[1px]" style={{ color: "var(--color-text)" }}>
+            <span className="text-2xl font-light tracking-[1px]" style={{ color: "var(--color-text)" }}>
               Deutsch
             </span>
             <span
-              className="text-xl font-bold tracking-[1px]"
+              className="text-2xl font-bold tracking-[1px]"
               style={{ background: "linear-gradient(135deg, #7c3aed, #f59e0b)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}
             >
               Flow
