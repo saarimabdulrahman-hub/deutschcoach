@@ -90,7 +90,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-page-bg)" }}>
       {/* Header bar */}
       <header
-        className="sticky top-0 z-30 flex items-center justify-between h-14 px-4 md:px-6"
+        className="sticky top-0 z-30 flex items-center justify-between h-14 px-6"
         style={{
           background: "var(--color-header-bg)",
           borderBottom: "1px solid var(--color-border)",
@@ -99,7 +99,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Left: Logo + App name */}
         <div className="flex items-center gap-3 flex-shrink-0">
           <Logo size={32} />
-          <div className="hidden sm:flex items-baseline gap-0.5">
+          <div className="flex items-baseline gap-0.5">
             <span className="text-xl font-light tracking-[1px]" style={{ color: "var(--color-text)" }}>
               Deutsch
             </span>
@@ -113,7 +113,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Center: TabBar (desktop) */}
-        <div className="hidden md:flex flex-1 justify-center">
+        <div className="flex flex-1 justify-center">
           <TabBar onOpenCommand={() => setCommandOpen(true)} />
         </div>
 
@@ -123,7 +123,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <button
             onClick={() => setCommandOpen(true)}
             title="Search (Ctrl+K)"
-            className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs hover:text-slate-300 hover:bg-white/5 transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs hover:text-slate-300 hover:bg-white/5 transition-colors"
             style={{ color: "var(--color-text-muted)" }}
           >
             <svg
@@ -155,12 +155,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               >
                 {initial}
               </div>
-              <span className="text-sm hidden sm:inline max-w-[100px] truncate" style={{ color: "var(--color-text-secondary)" }}>
+              <span className="text-sm inline max-w-[100px] truncate" style={{ color: "var(--color-text-secondary)" }}>
                 {user.name}
               </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`h-3.5 w-3.5 transition-transform hidden sm:block ${userMenuOpen ? "rotate-180" : ""}`}
+                className={`h-3.5 w-3.5 transition-transform block ${userMenuOpen ? "rotate-180" : ""}`}
                 style={{ color: "var(--color-text-muted)" }}
                 fill="none"
                 viewBox="0 0 24 24"
@@ -234,14 +234,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 max-w-6xl mx-auto w-full p-4 md:p-6 pb-24 md:pb-6">
+      <main className="flex-1 max-w-6xl mx-auto w-full p-6 pb-6">
         {children}
       </main>
-
-      {/* Mobile bottom tab bar */}
-      <div className="md:hidden">
-        <TabBar onOpenCommand={() => setCommandOpen(true)} />
-      </div>
 
       <CommandBar
         open={commandOpen}
