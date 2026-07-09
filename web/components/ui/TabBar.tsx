@@ -87,9 +87,7 @@ export function TabBar({ onOpenCommand }: TabBarProps) {
     TABS.find((t) => pathname.startsWith(t.href))?.key || "dashboard";
 
   return (
-    <>
-      {/* Desktop top bar tabs (rendered inside header, so this is just the tab row) */}
-      <nav className="hidden md:flex items-center gap-0.5 px-1">
+    <nav className="flex items-center gap-0.5 px-1">
         {TABS.map((tab) => (
           <button
             key={tab.key}
@@ -106,35 +104,6 @@ export function TabBar({ onOpenCommand }: TabBarProps) {
             <span className="relative z-10">{tab.label}</span>
           </button>
         ))}
-      </nav>
-
-      {/* Mobile bottom tab bar */}
-      <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 safe-area-bottom"
-        style={{ background: "var(--color-card-bg)", borderTop: "1px solid var(--color-border)" }}
-      >
-        <div className="flex items-center justify-around h-16 px-1">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => router.push(tab.href)}
-              className="flex flex-col items-center justify-center px-1 py-1 min-w-0 gap-0.5 transition-colors relative"
-              style={{ color: active === tab.key ? "var(--color-active-text)" : "var(--color-text-muted)" }}
-            >
-              {active === tab.key && (
-                <span
-                  className="absolute top-0 left-1/4 right-1/4 h-0.5 rounded-b-full"
-                  style={{ background: "var(--color-accent)" }}
-                />
-              )}
-              {tab.icon}
-              <span className="text-[10px] leading-tight truncate max-w-[48px]">
-                {tab.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </nav>
-    </>
+    </nav>
   );
 }
