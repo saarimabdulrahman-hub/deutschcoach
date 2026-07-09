@@ -29,7 +29,7 @@ export default function ReviewPage() {
       <h1 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>Review</h1>
 
       {isLoading ? (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-5 gap-3">
           {[...Array(5)].map((_, i) => (
             <Skeleton key={i} className="h-20 rounded-xl" />
           ))}
