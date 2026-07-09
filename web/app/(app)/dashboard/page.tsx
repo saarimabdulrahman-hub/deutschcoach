@@ -129,16 +129,16 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats + Level ring */}
-      <div className="grid grid-cols-[1fr_180px] gap-4">
-        <StatsGrid data={data} />
-        <div className="rounded-2xl p-5 flex flex-col items-center justify-center gap-3"
-          style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-          <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
-            Level Progress
-          </p>
-          <LevelProgressRing pct={data.level_progress_pct} />
-          <p className="text-xs text-center" style={{ color: "var(--color-text-muted)" }}>
+      {/* Stats */}
+      <StatsGrid data={data} />
+
+      {/* Level progress */}
+      <div className="rounded-2xl p-5 flex items-center gap-6"
+        style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+        <LevelProgressRing pct={data.level_progress_pct} />
+        <div>
+          <p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>Level Progress</p>
+          <p className="text-xs mt-1" style={{ color: "var(--color-text-muted)" }}>
             {data.level_progress_pct === 0
               ? "Start a lesson to begin!"
               : data.level_progress_pct < 25
