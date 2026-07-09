@@ -70,13 +70,13 @@ function DashboardSkeleton() {
         <div className="h-8 w-56 rounded shimmer" />
         <div className="h-4 w-40 rounded shimmer" />
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
           <div key={i} className="h-28 rounded-2xl shimmer" />
         ))}
       </div>
       <div className="h-40 rounded-2xl shimmer" />
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         <div className="h-56 rounded-2xl shimmer" />
         <div className="h-56 rounded-2xl shimmer" />
       </div>
@@ -110,11 +110,11 @@ export default function DashboardPage() {
   const tip = getTodaysTip();
 
   return (
-    <div className="space-y-6 md:space-y-8">
+    <div className="space-y-8">
       {/* ── Header ─────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-row items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--color-text)" }}>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>
             {getGreeting()}, {firstName} <span className="inline-block">👋</span>
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>{today}</p>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats + Level ring */}
-      <div className="grid lg:grid-cols-[1fr_180px] gap-4">
+      <div className="grid grid-cols-[1fr_180px] gap-4">
         <StatsGrid data={data} />
         <div className="rounded-2xl p-5 flex flex-col items-center justify-center gap-3"
           style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
@@ -153,8 +153,8 @@ export default function DashboardPage() {
       </div>
 
       {/* Main content area */}
-      <div className="grid lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2">
           {data.continue_lesson ? (
             <ContinueLearning lesson={data.continue_lesson} />
           ) : (
@@ -228,7 +228,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Bottom row — Activity + Weakest Words */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         <RecentActivity items={data.recent_activity} />
         <WeakestWords words={data.weakest_words} />
       </div>

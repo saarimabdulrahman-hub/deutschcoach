@@ -25,7 +25,7 @@ export function WeakestWords({ words }: { words: WeakWord[] }) {
               style={{ background: "var(--color-page-bg)" }} onClick={() => router.push("/review")}>
               <div className="flex items-center gap-3 min-w-0">
                 <span className="text-sm font-semibold truncate" style={{ color: "var(--color-text)" }}>{word.german}</span>
-                <span className="text-xs truncate hidden sm:inline" style={{ color: "var(--color-text-muted)" }}>{word.english}</span>
+                <span className="text-xs truncate inline" style={{ color: "var(--color-text-muted)" }}>{word.english}</span>
               </div>
               <span className="text-xs font-bold flex-shrink-0 ml-2 px-2 py-0.5 rounded-full" style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444" }}>
                 {word.lapses}×
