@@ -1,6 +1,6 @@
 # DeutschFlow — Design System & Brand Identity
 
-**Version:** 2.1
+**Version:** 2.2
 **Last Updated:** 2026-07-11
 **Source of Truth:** `web/app/globals.css`, `web/contexts/ThemeContext.tsx`, `web/tailwind.config.ts`
 
@@ -484,6 +484,179 @@ DeutschFlow uses **subtle, functional transitions** with consistent timing:
 All transitions use `ease` or `ease-out` easing. Nothing uses `ease-in` (feels sluggish) or `cubic-bezier` springs (feels gimmicky). The motion should be felt, not analyzed.
 
 **Why consistent timing:** When every transition uses the same 200ms duration, the eye learns to expect it. The interface feels cohesive at a subconscious level.
+
+---
+
+## UX Principles
+
+These principles govern every design decision in DeutschFlow. They are non-negotiable. When a design choice conflicts with a principle, the principle wins. When two principles conflict, the one listed first wins.
+
+### 1. Clarity Over Decoration
+
+Every visual element must earn its place by serving the learning experience. Decorative elements that don't help the learner understand, navigate, or stay motivated should not exist.
+
+**What this means in practice:**
+- A progress ring exists because it communicates completion more intuitively than a percentage number. It earns its place.
+- A decorative divider line between sections earns its place by creating visual separation that helps the eye scan.
+- A background pattern or texture does NOT earn its place — it adds visual noise without aiding comprehension.
+- An animated mascot does NOT earn its place — it distracts from learning content.
+
+**The test:** Remove the element. Does the learning experience get worse? If not, the element was decoration. Remove it permanently.
+
+**Why this matters for DeutschFlow:** Language learning is cognitively demanding. Every pixel of decoration steals attention from German vocabulary, grammar rules, and pronunciation. The interface should be a quiet stage for the content, not a competing performance.
+
+### 2. Learning Before Navigation
+
+The learner opened DeutschFlow to learn German, not to navigate an application. The learning content — the lesson, the vocabulary, the exercise — should always be the most visually prominent element on the page. Navigation, sidebars, headers, and footers exist to serve the learning, not the other way around.
+
+**What this means in practice:**
+- On the lesson page, the lesson content fills the available width. The vocabulary sidebar is narrower and positioned to the right — it supports the content, it doesn't compete with it.
+- On the dashboard, the "Continue Learning" card is the most prominent element. Navigation is in the header and bottom bar — always accessible, never dominant.
+- The grammar reference uses a content-first layout: the article fills the main column, the table of contents is a sidebar.
+
+**The test:** On any page, squint until the content blurs. The largest, most visually weighty element should be the learning content or the primary action — never the navigation, never the sidebar, never the decoration.
+
+**Why this matters for DeutschFlow:** The learner should never think "where is the content?" The content is always right there, front and center, impossible to miss. Navigation is muscle memory — it should work without conscious thought.
+
+### 3. The Next Action Must Be Obvious
+
+On every page, at every moment, the learner should know exactly what to do next. There should never be a moment of "what do I click now?" The primary action is always visually distinct, always one click away, and always the thing the learner most likely wants to do.
+
+**What this means in practice:**
+- Dashboard: The "Resume Lesson" button is the largest, most colorful element. If there's no lesson in progress, "Start Learning" takes its place.
+- Lesson page: "Complete & Add to Flashcards" is the only button with an accent gradient background. It's at the bottom of the content — the natural next step after reading.
+- Review page: The flashcard is the dominant element. Rating buttons appear directly below it. The flow is linear and obvious.
+- Empty states: The CTA button ("Start Lesson," "Browse Lessons") is the most prominent element in the empty state. The learner doesn't have to search for what to do.
+
+**The test:** Show the page to someone who has never seen it before. Don't give instructions. Count the seconds until they click the primary action. If it takes more than 3 seconds, the next action is not obvious enough.
+
+**Why this matters for DeutschFlow:** Decision fatigue is the enemy of learning. Every moment the learner spends deciding what to click is a moment they're not learning German. The interface should make the decision for them.
+
+### 4. Progress Must Feel Rewarding
+
+Progress indicators in DeutschFlow are not just informational — they are motivational. A progress ring filling up, a streak counter incrementing, a "Lesson Complete!" celebration with confetti — these moments should feel genuinely satisfying. The learner should want to complete things because completing things feels good.
+
+**What this means in practice:**
+- The progress ring animates smoothly when it fills — the motion creates a sense of accomplishment.
+- The "Lesson Complete!" state includes a confetti emoji and a congratulatory message — not just a checkmark.
+- The streak counter uses a flame emoji and warm amber color — it feels warm and alive, not like a database field.
+- Empty states say "You're getting started!" and "Your journey begins" — they frame zero as the beginning of something, not the absence of something.
+
+**The anti-pattern:** Progress that feels like a chore. "You've completed 3/16 lessons." This reads like a task list. "73% complete — over halfway there! 🎉" This reads like an achievement. Same data, different framing.
+
+**Why this matters for DeutschFlow:** Motivation is the difference between a learner who opens the app tomorrow and one who doesn't. Progress that feels rewarding creates a positive feedback loop: learn → feel good → want to learn more.
+
+### 5. Every Page Must Reduce Cognitive Load
+
+The learner arrives with limited mental energy. The interface should consume as little of it as possible, leaving the maximum available for learning German. Every design decision should ask: does this make the page easier or harder to process?
+
+**What this means in practice:**
+- Consistent card patterns: The eye learns the card formula once and never has to re-learn it.
+- Predictable navigation: The same 7 tabs in the same order on every page. No hunting.
+- Scannable section headers: Icon + uppercase label = instant recognition without reading.
+- No surprises: No element appears or disappears unexpectedly. No layout jumps. No "clever" interactions that require discovery.
+
+**The test:** Count the distinct visual patterns on a page. Dashboard: card, progress ring, stat, button, badge, timeline item. That's 6 patterns. If a page has 15+ distinct visual patterns, it's too complex.
+
+**Why this matters for DeutschFlow:** A beginner German learner is already processing: new vocabulary, unfamiliar grammar, strange pronunciations, cultural context. The interface should be the easiest thing on the page to understand — practically invisible.
+
+### 6. Navigation Must Never Compete With Learning
+
+Navigation exists to move the learner between learning activities. It should be accessible, predictable, and invisible when not needed. The navigation bar should never be the most visually interesting thing on the page.
+
+**What this means in practice:**
+- Desktop: Navigation is in the header — present, accessible, but not dominant. The active tab has a subtle background change, not a glowing neon indicator.
+- Mobile: Navigation is in a fixed bottom bar — always reachable with a thumb, never in the way of reading.
+- The tab bar uses muted colors for inactive tabs and accent text for the active tab. The contrast is sufficient but not dramatic.
+- No notification badges distract from learning. "12 cards due" is shown on the dashboard, not as a persistent red badge on the Review tab.
+
+**The anti-pattern:** Navigation that screams for attention. Animated tab icons. Pulsing notification dots. Colorful active states that draw the eye away from content. These say "look at me!" when they should say "I'm here if you need me."
+
+**Why this matters for DeutschFlow:** The learner's mental model should be "I'm learning German, and the navigation helps me switch activities." Not "I'm navigating an app, and occasionally there's learning content."
+
+### 7. Learning Content Always Receives Visual Priority
+
+When a page contains both learning content and UI chrome, the learning content must be visually dominant. The hierarchy is: learning content first, supporting information second, navigation third, chrome last.
+
+**What this means in practice:**
+- Lesson page: Content fills 2/3 of the width, vocabulary sidebar takes 1/3. Content is white/near-white text on dark — maximum readability. Sidebar is slightly muted.
+- Grammar page: The article text is `text-secondary` (bright enough to read comfortably). The table of contents sidebar is `text-muted` (visible but subordinate).
+- Dashboard: The progress ring and "Continue Learning" card use accent colors. The activity timeline uses muted text. The eye goes to progress first, activity second.
+
+**The test:** On any page, identify the element with the highest visual weight (largest, brightest, most colorful). It should be learning content or a learning action. If the highest-visual-weight element is navigation, a sidebar, or a decorative element, the hierarchy is wrong.
+
+**Why this matters for DeutschFlow:** Visual hierarchy is not decoration — it's instruction. It tells the learner's eye where to look. If the eye goes to the sidebar before the content, the learner reads supporting information before the main point. The hierarchy must guide the eye to the learning first.
+
+### 8. Empty States Must Motivate, Not Discourage
+
+An empty state is the first impression for a new learner. It must communicate: "You're in the right place. This is going to be great. Here's how to start." It must never communicate: "There's nothing here. You haven't done anything. This is empty."
+
+**What this means in practice:**
+- Every empty state includes an encouraging title, a brief explanation, and a clear CTA.
+- Zero values are reframed positively: "Start your streak today" not "0-day streak." "All caught up!" not "0 cards due."
+- The empty state uses the same card/layout pattern as the populated state. The transition from empty to populated feels like filling in a familiar shape, not like a completely different page appearing.
+
+**The anti-pattern:** "No data available." "0 results." "Nothing to show." Blank boxes. These feel like error states. They make the learner feel like they've done something wrong, or the app is broken, or there's nothing here for them.
+
+**Why this matters for DeutschFlow:** The first session determines whether the learner comes back. A new user sees empty states on dashboard, learn, review, and quiz. If those empty states feel discouraging, the learner churns. If they feel encouraging — "start here, it'll be great" — the learner stays.
+
+### 9. Responsive-First Thinking
+
+Every component is designed for mobile first, then enhanced for larger screens. No component is designed on desktop and then "made to work" on mobile. The mobile experience is not a downgrade — it's the baseline.
+
+**What this means in practice:**
+- Base styles are for 0px+ (mobile). `sm:` adds tablet enhancements (640px+). `lg:` adds desktop enhancements (1024px+).
+- Cards stack vertically on mobile, sit side-by-side on desktop. No card is ever hidden on mobile unless it's genuinely not needed.
+- Touch targets are minimum 44px on mobile — comfortable for fingers. Desktop can use smaller targets since the interaction model is mouse-based.
+- The bottom tab bar is the primary navigation on mobile. The header tab bar is the primary navigation on desktop. Both present the same 7 tabs. The learner doesn't re-learn navigation when switching devices.
+
+**The test:** Design the mobile layout first. When it works perfectly at 375px, add `sm:` and `lg:` enhancements. Never start with the desktop layout and then "figure out mobile."
+
+**Why this matters for DeutschFlow:** Language learning happens on phones. Commuters review flashcards on the train. Travelers practice vocabulary in hotel rooms. Students study during breaks. The mobile experience IS the primary experience for many learners. It must be excellent.
+
+### 10. Accessibility-First Thinking
+
+Accessibility is not a checklist to complete before launch. It's a design constraint as fundamental as "the app should load" and "buttons should be clickable." Every component is born accessible. Accessibility regressions are treated as bugs.
+
+**What this means in practice:**
+- Every interactive element has a visible focus ring. Universal. No exceptions.
+- Every icon-only button has an `aria-label`. Screen readers must know what every button does.
+- Every form input has a `<label>`. Even if it's visually hidden (`sr-only`), it exists in the DOM.
+- Heading hierarchy is logical: h1 → h2 → h3. No skipped levels.
+- `prefers-reduced-motion` is respected. All animations are disabled when the user requests it.
+- Color is never the sole communicator of information. Progress bars also show percentages. Error states also show icons and text. Status badges use text labels alongside colors.
+
+**The test:** Navigate the entire app using only a keyboard. Tab through every interactive element. Verify every focus state is visible. Verify every action is reachable. If anything is unreachable or invisible, it's broken.
+
+**Why this matters for DeutschFlow:** Accessibility is not about compliance — it's about respect. A learner with a screen reader, a motor impairment, or a vestibular disorder deserves the same quality learning experience as anyone else. Building accessibly from the start is easier than retrofitting it later.
+
+### 11. Progressive Disclosure
+
+Don't show everything at once. Each page should reveal information in order of importance, with secondary details available but not forced upon the learner. Complexity should be opt-in, not default.
+
+**What this means in practice:**
+- Dashboard shows: greeting, continue learning, today's plan, progress overview. Activity timeline and vocabulary are further down — visible but not the first thing the learner sees.
+- Learn page shows: level path, current level lessons. The other levels are one click away via the milestone strip.
+- Lesson page shows: objectives, content, exercises. The complete button is at the bottom — the natural conclusion of reading the content.
+- Settings organizes sections by importance: Profile, Subscription, Preferences, Appearance, Danger Zone. The most commonly needed settings are at the top.
+
+**The anti-pattern:** Show everything upfront. A dashboard with 15 stat cards, 8 quick actions, an activity feed, a word cloud, a tip, and a chart — all above the fold. The learner doesn't know where to look. Progressive disclosure says: "Here's what matters most. Everything else is here when you're ready."
+
+**Why this matters for DeutschFlow:** Cognitive load is the enemy. A new learner should see 3-4 things on the dashboard, not 20. As they become familiar with the app, they learn where to find secondary information. The interface reveals itself gradually, matching the learner's growing familiarity.
+
+### 12. Consistency Over Novelty
+
+A consistent, slightly boring interface beats an exciting, inconsistent one every time. The learner should never be surprised by how something works. Every page should feel like it belongs to the same application.
+
+**What this means in practice:**
+- The card pattern is identical on every page. Dashboard cards, lesson cards, grammar cards, settings cards — all use the same `rounded-2xl` + `var(--color-card-bg)` + `1px solid var(--color-border)` + `p-5 sm:p-6`.
+- Buttons use exactly three styles. No page invents a fourth button style because "this page is special."
+- Page headers use the `PageHeader` component. No page writes its own header markup.
+- Colors come from design tokens. No page uses a custom hex color because "this page needs a different shade of purple."
+
+**The test:** Screenshot two different pages and place them side by side. Do they feel like the same application? Can you tell they share a design system? If one page looks like it was designed by a different team, consistency has failed.
+
+**Why this matters for DeutschFlow:** The learner visits 7+ pages in a typical session. If each page has different card styles, different button patterns, and different spacing rules, the learner spends mental energy adjusting to each page. Consistency means the learner learns the interface once and then focuses entirely on learning German.
 
 ---
 
