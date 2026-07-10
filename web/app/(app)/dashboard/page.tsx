@@ -146,7 +146,7 @@ export default function DashboardPage() {
               className="flex items-center gap-3 p-3.5 rounded-xl text-left transition-all hover:-translate-y-0.5"
               style={{
                 background: action.primary ? "var(--color-accent-gradient)" : "var(--color-card-bg)",
-                border: action.primary ? "none" : "1px solid var(--color-border)",
+                border: action.primary ? "1px solid transparent" : "1px solid var(--color-border)",
               }}>
               <span className="w-9 h-9 rounded-lg flex items-center justify-center text-lg flex-shrink-0"
                 style={{ background: action.primary ? "rgba(255,255,255,0.15)" : "var(--color-hover-bg)" }}>
