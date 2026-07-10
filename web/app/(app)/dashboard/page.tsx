@@ -387,8 +387,14 @@ export default function DashboardPage() {
             </p>
           </div>
         </div>
-        <div className="rounded-2xl p-5 flex items-center gap-4"
-          style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+        <div className="rounded-2xl p-5 flex items-center gap-4 surface-primary"
+          style={{
+            border: data.level_progress_pct >= 100
+              ? "1px solid rgba(34,197,94,0.2)"
+              : data.level_progress_pct >= 50
+                ? "1px solid rgba(124,58,237,0.12)"
+                : "1px solid var(--color-border)",
+          }}>
           <span className="text-3xl flex-shrink-0">
             {data.level_progress_pct >= 100 ? "🏆" : data.level_progress_pct >= 50 ? "🎯" : "🌱"}
           </span>
@@ -430,8 +436,8 @@ export default function DashboardPage() {
 
         <div className="rounded-2xl p-4 sm:p-5 flex items-start gap-3"
           style={{
-            background: "linear-gradient(135deg, rgba(124,58,237,0.04) 0%, rgba(30,41,59,0.3) 100%)",
-            border: "1px solid var(--color-border)",
+            background: "radial-gradient(ellipse at 0% 50%, rgba(124,58,237,0.04) 0%, transparent 60%), var(--color-card-bg)",
+            border: "1px solid rgba(124,58,237,0.08)",
           }}>
           <span className="text-xl flex-shrink-0">{tip.emoji}</span>
           <div>

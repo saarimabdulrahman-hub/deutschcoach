@@ -123,8 +123,36 @@
 body {
   font-family: var(--font-sans);
   min-height: 100vh;
-  background: var(--color-page-bg);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(109, 40, 217, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 15%, rgba(139, 92, 246, 0.03) 0%, transparent 40%),
+    var(--color-page-bg);
   color: var(--color-text-secondary);
+}
+
+/* ── Surface Hierarchy ─────────────────────────────────── */
+
+/* Primary surface — subtle top-lighting, used for most cards */
+.surface-primary {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.005) 30%, transparent 60%),
+    var(--color-card-bg);
+}
+
+/* Elevated surface — slightly lighter, used for hero/featured cards */
+.surface-elevated {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(124, 58, 237, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0%, transparent 50%),
+    var(--color-card-bg);
+}
+
+/* Glass surface — translucent violet depth, used for the hero section */
+.surface-glass {
+  background:
+    radial-gradient(ellipse at 40% 0%, rgba(124, 58, 237, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.04) 0%, transparent 45%),
+    linear-gradient(180deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
 }
 
 /* Smooth transitions on all interactive elements */

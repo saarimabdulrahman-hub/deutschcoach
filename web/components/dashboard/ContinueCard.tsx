@@ -16,8 +16,8 @@ function estimatedMinutes(progressPct: number): number {
 // ── State: New Learner ──────────────────────────────────────────────
 function NewLearnerHero({ onStart }: { onStart: () => void }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl p-5 sm:p-8"
-      style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
+    <div className="relative overflow-hidden rounded-2xl p-5 sm:p-8 surface-glass"
+      style={{ border: "1px solid rgba(124, 58, 237, 0.15)", color: "#fff" }}>
       <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
         <div className="flex-1">
           <p className="text-xs font-semibold uppercase tracking-widest opacity-60 mb-2">Welcome to DeutschFlow</p>

@@ -21,7 +21,7 @@ export function Card({ children, className = "", style, variant = "default", hov
 
   return (
     <El
-      className={`${radius} ${hoverClass} ${className}`}
+      className={`${radius} ${hoverClass} surface-primary ${className}`}
       style={{
         background: "var(--color-card-bg)",
         border: "1px solid var(--color-border)",

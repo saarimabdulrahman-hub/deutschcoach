@@ -68,8 +68,8 @@ export function ProgressOverview({ levelPct, streak, cardsDue, quizAvg, weakestC
         Your Progress
       </p>
 
-      <div className="rounded-2xl p-5 sm:p-6"
-        style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+      <div className="rounded-2xl p-5 sm:p-6 surface-elevated"
+        style={{ border: "1px solid var(--color-border)" }}>
 
         {/* Top: Ring + summary */}
         <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8 mb-5 sm:mb-6">
