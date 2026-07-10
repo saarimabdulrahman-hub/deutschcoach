@@ -13,7 +13,7 @@ export function ContinueHero({ lesson, levelPct }: Props) {
   return (
     <div className="relative overflow-hidden rounded-[2rem] min-h-[280px] sm:min-h-[320px] flex flex-col justify-end"
       style={{
-        background: "#0066ff",
+        background: "linear-gradient(160deg, #0f0f23 0%, #1a1040 30%, #1e293b 70%, #0f172a 100%)",
         border: "1px solid rgba(124,58,237,0.15)",
       }}>
       {/* Ambient glow */}

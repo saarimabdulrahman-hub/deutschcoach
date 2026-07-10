@@ -56,7 +56,7 @@ function ActivityTimeline({ items }: { items: { type: string; description: strin
         <p className="text-xs mb-4" style={{ color: "var(--color-text-muted)" }}>Complete your first lesson to see your journey here</p>
         <button onClick={() => router.push("/curriculum")}
           className="px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:-translate-y-0.5"
-          style={{ background: "#ff0000", color: "#fff" }}>
+          style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
           Start Lesson &rarr;
         </button>
       </div>
@@ -187,11 +187,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-4">
-      {/* DEBUG BANNER */}
-      <div style={{ background: "#ffeb3b", color: "#000", padding: "12px 20px", borderRadius: "12px", fontWeight: "bold", fontSize: "16px", textAlign: "center" }}>
-        THIS IS THE NEW DASHBOARD
-      </div>
-
       {/* ── Welcome ──────────────────────────── */}
       <div>
         <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-text-muted)" }}>
@@ -199,7 +194,7 @@ export default function DashboardPage() {
         </p>
         <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: "var(--color-text)" }}>
           <span className="text-lg sm:text-xl mr-2">{greeting.emoji}</span>
-          🚨 CLAUDE TEST - DESKTOP VERSION 🚨
+          {greeting.hi}, {firstName}
         </h1>
         <p className="text-xs sm:text-sm mt-1.5" style={{ color: "var(--color-text-muted)" }}>
           {greeting.en}. Ready to practice?
