@@ -31,7 +31,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex">
       {/* ── Left Panel — Brand ───────────────── */}
       <div
-        className="flex w-[45%] relative overflow-hidden flex-col justify-between py-12 px-12"
+        className="hidden lg:flex w-[45%] relative overflow-hidden flex-col justify-between py-12 px-12"
         style={{
           background:
             "linear-gradient(160deg, #0a0a0a 0%, #171717 30%, #1a1a1a 60%, #0f0f0f 100%)",
@@ -115,6 +115,15 @@ export default function LoginPage() {
         style={{ background: "var(--color-page-bg)" }}
       >
         <div className="w-full max-w-[380px]">
+          {/* Mobile logo */}
+          <div className="lg:hidden flex items-center gap-3 mb-10 justify-center">
+            <Logo size={32} />
+            <h1 className="font-bold text-sm tracking-widest">
+              <span style={{ color: "var(--color-text)" }}>Deutsch</span>
+              <span style={{ background: "linear-gradient(135deg, #7c3aed, #f59e0b)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Flow</span>
+            </h1>
+          </div>
+
           <div className="mb-8">
             <h2 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>Welcome back</h2>
             <p className="text-sm mt-2" style={{ color: "var(--color-text-muted)" }}>Sign in to continue learning</p>

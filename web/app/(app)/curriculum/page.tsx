@@ -247,7 +247,7 @@ export default function CurriculumPage() {
       </div>
 
       {/* Level descriptions */}
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
         {["A1", "A2", "B1", "B2", "C1"].map((lvl) => {
           const info = levelInfo[lvl];
           const isFirst = lvl === "A1";

@@ -113,7 +113,7 @@ export default function LessonPage() {
   return (
     <div className="space-y-6">
       {/* Sticky lesson progress */}
-      <div className="sticky top-14 z-20 -mx-6 px-6 py-2" style={{ background: "var(--color-page-bg)" }}>
+      <div className="sticky top-14 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2" style={{ background: "var(--color-page-bg)" }}>
         <div className="max-w-6xl mx-auto flex items-center gap-3">
           <button
             onClick={() => router.push("/curriculum")}
@@ -168,9 +168,9 @@ export default function LessonPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-6">
         {/* Main content */}
-        <div className="col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           <div
             className="rounded-xl p-6"
             style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}
@@ -237,7 +237,7 @@ export default function LessonPage() {
         </div>
 
         {/* Vocabulary sidebar */}
-        <div className="col-span-1">
+        <div className="lg:col-span-1">
           <div
             className="rounded-xl p-6 sticky top-24"
             style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}

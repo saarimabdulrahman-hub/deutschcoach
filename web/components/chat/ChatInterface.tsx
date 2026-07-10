@@ -101,7 +101,7 @@ export function ChatInterface() {
   return (
     <div className="flex h-[calc(100vh-9rem)] gap-0">
       {/* ── Scenario sidebar ── */}
-      <div className="flex flex-col w-52 flex-shrink-0 border-r mr-4 pr-3 overflow-y-auto" style={{ borderColor: "var(--color-border)" }}>
+      <div className="hidden lg:flex flex-col w-52 flex-shrink-0 border-r mr-4 pr-3 overflow-y-auto" style={{ borderColor: "var(--color-border)" }}>
         <p className="text-xs font-semibold uppercase tracking-wider mb-3 px-1" style={{ color: "var(--color-text-muted)" }}>Scenarios</p>
 
         <button
@@ -142,6 +142,22 @@ export function ChatInterface() {
 
       {/* ── Chat area ── */}
       <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile scenario bar */}
+        <div className="lg:hidden flex gap-2 mb-3 overflow-x-auto pb-1">
+          <button onClick={() => setScenario(null)}
+            className="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0"
+            style={{ background: !scenario ? "var(--color-accent)" : "var(--color-card-bg)", color: !scenario ? "#fff" : "var(--color-text-secondary)", border: "1px solid var(--color-border)" }}>
+            💬 Free
+          </button>
+          {scenarios.map((s) => (
+            <button key={s.key} onClick={() => setScenario(s.key)}
+              className="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0"
+              style={{ background: scenario === s.key ? "var(--color-accent)" : "var(--color-card-bg)", color: scenario === s.key ? "#fff" : "var(--color-text-secondary)", border: "1px solid var(--color-border)" }}>
+              {SCENARIO_ICONS[s.key] || ""} {s.name}
+            </button>
+          ))}
+        </div>
+
         {/* Messages */}
         <div className="flex-1 overflow-y-auto space-y-4 px-1" style={{ scrollBehavior: "smooth" }}>
           {messages.length === 0 && (

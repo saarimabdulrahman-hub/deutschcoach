@@ -18,7 +18,7 @@ interface GrammarTopic {
 
 function SkeletonGrid() {
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
@@ -171,7 +171,7 @@ export default function GrammarPage() {
           }
         />
       ) : (
-        <div className="columns-3 gap-4 space-y-4">
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
           {topics.map((topic) => (
             <div key={topic.id} className="break-inside-avoid">
               <GrammarTopicCard topic={topic} />

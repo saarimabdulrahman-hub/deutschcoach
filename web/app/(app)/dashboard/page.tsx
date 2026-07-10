@@ -43,9 +43,9 @@ function DashboardSkeleton() {
         <div className="h-8 w-56 rounded shimmer" />
         <div className="h-4 w-40 rounded shimmer" />
       </div>
-      <div className="flex gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex gap-3 sm:gap-4">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex-1 h-32 rounded-2xl shimmer" />
+          <div key={i} className="lg:flex-1 h-28 sm:h-32 rounded-2xl shimmer" />
         ))}
       </div>
       <div className="grid grid-cols-2 gap-6">
@@ -82,9 +82,9 @@ export default function DashboardPage() {
   const tip = getTodaysTip();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* ── Header ─────────────────────────────── */}
-      <div className="flex flex-row items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>
             {getGreeting()}, {firstName} <span className="inline-block">👋</span>
@@ -105,8 +105,8 @@ export default function DashboardPage() {
       <StatsGrid data={data} />
 
       {/* Main content area */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2">
+      <div className="grid lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
           {data.continue_lesson ? (
             <ContinueLearning lesson={data.continue_lesson} />
           ) : (
@@ -183,7 +183,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Bottom row — Activity + Weakest Words */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid sm:grid-cols-2 gap-6">
         <RecentActivity items={data.recent_activity} />
         <WeakestWords words={data.weakest_words} />
       </div>

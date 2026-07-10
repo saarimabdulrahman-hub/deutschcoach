@@ -153,7 +153,7 @@ export default function GrammarDetailPage() {
         Back to Grammar
       </Link>
 
-      <div className="grid grid-cols-[1fr_200px] gap-8">
+      <div className="grid lg:grid-cols-[1fr_200px] gap-8">
         {/* Main content area */}
         <div>
           {/* Title and level badge */}
@@ -206,7 +206,7 @@ export default function GrammarDetailPage() {
           {topic.related_lessons && topic.related_lessons.length > 0 && (
             <div>
               <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--color-text)" }}>Related Lessons</h2>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {topic.related_lessons.map((lesson) => (
                   <Link
                     key={lesson.id}
@@ -227,7 +227,7 @@ export default function GrammarDetailPage() {
 
         {/* Table of contents sidebar */}
         {headings.length > 1 && (
-          <aside className="block">
+          <aside className="hidden lg:block">
             <div
               className="sticky top-24 rounded-xl p-4"
               style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}

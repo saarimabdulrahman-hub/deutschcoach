@@ -8,11 +8,6 @@ export const metadata: Metadata = {
     "Master German vocabulary, grammar, and conversation with spaced repetition and interactive quizzes.",
 };
 
-export const viewport = {
-  width: 768,
-  initialScale: 1,
-};
-
 export default function RootLayout({
   children,
 }: {

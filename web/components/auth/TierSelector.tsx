@@ -147,7 +147,7 @@ export default function TierSelector({ onSelect, standalone = false }: TierSelec
       </div>
 
       {/* Tier cards */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {plans.map((plan) => {
           const price = getDisplayPrice(plan);
           const monthlyEq = getMonthlyEquivalent(plan);
