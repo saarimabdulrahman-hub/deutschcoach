@@ -1,5 +1,7 @@
 "use client";
 
+import { Play, Pause, Stop } from "@/components/ui/Icons";
+
 interface ReadAloudBarProps {
   isPlaying: boolean;
   isPaused: boolean;
@@ -31,9 +33,7 @@ export function ReadAloudBar({
           title="Read lesson aloud"
           className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all hover:scale-105 disabled:opacity-40"
           style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-          </svg>
+          <Play className="h-5 w-5" />
         </button>
       ) : isPaused ? (
         <button
@@ -41,9 +41,7 @@ export function ReadAloudBar({
           title="Resume reading"
           className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all hover:scale-105"
           style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-          </svg>
+          <Play className="h-5 w-5" />
         </button>
       ) : (
         <button
@@ -51,9 +49,7 @@ export function ReadAloudBar({
           title="Pause reading"
           className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all hover:scale-105"
           style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10 9v6m4-6v6" />
-          </svg>
+          <Pause className="h-5 w-5" />
         </button>
       )}
 
@@ -64,9 +60,7 @@ export function ReadAloudBar({
           title="Stop reading"
           className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all hover:bg-white/5"
           style={{ color: "var(--color-text-muted)" }}>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <Stop className="h-4 w-4" />
         </button>
       )}
 

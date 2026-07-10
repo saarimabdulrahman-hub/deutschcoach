@@ -8,7 +8,7 @@ import { ThemeProvider } from "./ThemeContext";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30000,
+      staleTime: 60_000, // 1 min — good default for a learning app
       retry: 1,
     },
   },
