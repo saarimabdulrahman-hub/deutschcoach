@@ -6,6 +6,7 @@ import { SRSStats } from "@/components/srs/SRSStats";
 import { FlashcardReviewer } from "@/components/srs/FlashcardReviewer";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 interface SRSStatsData {
   new: number;
@@ -26,7 +27,7 @@ export default function ReviewPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>Review</h1>
+      <PageHeader title="Review" />
 
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">

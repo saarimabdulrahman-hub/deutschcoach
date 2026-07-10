@@ -6,6 +6,7 @@ import { GrammarTopicCard } from "@/components/grammar/GrammarTopicCard";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 const LEVELS = ["All", "A1", "A2", "B1", "B2", "C1"] as const;
 
@@ -85,10 +86,7 @@ export default function GrammarPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: "var(--color-text)" }}>Grammar Reference</h1>
-        <p className="text-sm mt-1.5" style={{ color: "var(--color-text-muted)" }}>Explore German grammar topics by level or search</p>
-      </div>
+      <PageHeader title="Grammar Reference" subtitle="Explore German grammar topics by level or search" />
 
       {/* Search with magnifying glass */}
       <div className="relative mb-5 max-w-md">
