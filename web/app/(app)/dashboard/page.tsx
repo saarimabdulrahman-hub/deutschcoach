@@ -210,7 +210,7 @@ export default function DashboardPage() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background: "rgba(124,58,237,0.1)" }}>🎯</div>
+                  style={{ background: "rgba(34,197,94,0.1)" }}>✅</div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>
                     {data.avg_quiz_score > 0 ? "Knowledge Quiz" : "Discover Your Level"}
@@ -268,25 +268,7 @@ export default function DashboardPage() {
               <button onClick={() => router.push("/curriculum")}
                 className="text-xs font-medium mt-2 hover:underline" style={{ color: "var(--color-accent-light)" }}>Browse lessons &rarr;</button>
             </div>
-            {/* Person reading in bed illustration */}
-            <div className="flex-shrink-0 relative" style={{ width: 56, height: 56 }}>
-              <svg viewBox="0 0 56 56" className="w-full h-full" style={{ opacity: 0.5 }}>
-                {/* Bed */}
-                <rect x="4" y="36" width="48" height="6" rx="3" fill="var(--color-text-muted)" opacity="0.3" />
-                <rect x="6" y="40" width="44" height="4" rx="2" fill="var(--color-text-muted)" opacity="0.2" />
-                {/* Pillow */}
-                <rect x="8" y="30" width="14" height="8" rx="4" fill="var(--color-accent-light)" opacity="0.2" />
-                {/* Blanket */}
-                <rect x="20" y="28" width="30" height="14" rx="6" fill="var(--color-accent)" opacity="0.15" />
-                {/* Person head */}
-                <circle cx="16" cy="20" r="7" fill="var(--color-text-muted)" opacity="0.35" />
-                {/* Book */}
-                <rect x="20" y="22" width="12" height="9" rx="1.5" fill="var(--color-brand-purple)" opacity="0.25" transform="rotate(-5 26 26)" />
-                {/* Book pages */}
-                <line x1="22" y1="24" x2="30" y2="23" stroke="var(--color-text)" opacity="0.15" strokeWidth="0.5" />
-                <line x1="22" y1="26" x2="30" y2="25" stroke="var(--color-text)" opacity="0.15" strokeWidth="0.5" />
-              </svg>
-            </div>
+            <span className="text-3xl flex-shrink-0 opacity-30">{tip.illustration}</span>
           </div>
         </div>
       </div>

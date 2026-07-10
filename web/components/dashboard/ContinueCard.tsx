@@ -29,36 +29,14 @@ function NewLearnerHero({ onStart }: { onStart: () => void }) {
         style={{ bottom: "-20%", left: "5%", width: "40%", height: "60%",
           background: "radial-gradient(ellipse, rgba(245,158,11,0.06) 0%, transparent 60%)" }} />
 
-      {/* Brandenburg Gate illustration — right side, warm dusk tones */}
-      <div className="absolute right-0 top-0 bottom-0 w-[42%] pointer-events-none hidden sm:block"
-        style={{ opacity: 0.85 }}>
-        <svg viewBox="0 0 200 300" className="absolute right-0 top-1/2 -translate-y-1/2 h-[110%]"
-          style={{ filter: "drop-shadow(0 4px 20px rgba(0,0,0,0.3))" }} preserveAspectRatio="xMaxYMid slice">
-          {/* Sky gradient */}
-          <defs>
-            <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
-              <stop offset="40%" stopColor="#8b5cf6" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#4c1d95" stopOpacity="0.1" />
-            </linearGradient>
-          </defs>
-          <rect width="200" height="300" fill="url(#sky)" />
-          {/* Simplified Brandenburg Gate — 6 columns + pediment */}
-          <g transform="translate(25,60)" fill="none" stroke="#fff" strokeWidth="2.5" opacity="0.7">
-            {/* Pediment / top triangle */}
-            <polygon points="0,40 75,0 150,40" fill="rgba(255,255,255,0.06)" />
-            {/* Horizontal beam */}
-            <line x1="0" y1="40" x2="150" y2="40" strokeWidth="3" />
-            {/* Base */}
-            <line x1="0" y1="120" x2="150" y2="120" strokeWidth="3" />
-            {/* 6 Columns */}
-            <line x1="10" y1="40" x2="10" y2="120" /><line x1="36" y1="40" x2="36" y2="120" />
-            <line x1="64" y1="40" x2="64" y2="120" /><line x1="86" y1="40" x2="86" y2="120" />
-            <line x1="114" y1="40" x2="114" y2="120" /><line x1="140" y1="40" x2="140" y2="120" />
-            {/* Center archway (wider gap) */}
-            <rect x="64" y="55" width="22" height="65" fill="rgba(245,158,11,0.15)" stroke="none" />
-          </g>
-        </svg>
+      {/* Brandenburg Gate silhouette — right side */}
+      <div className="absolute right-0 top-0 bottom-0 w-[45%] opacity-10 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at 70% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)",
+        }}>
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 text-right" style={{ fontSize: "120px", lineHeight: "1", opacity: 0.5, filter: "blur(0.5px)" }}>
+          🏛️
+        </div>
       </div>
 
       <div className="relative z-10">
