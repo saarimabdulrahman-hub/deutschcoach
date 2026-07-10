@@ -88,6 +88,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--color-page-bg)" }}>
+      {/* Skip to content — accessibility */}
+      <a href="#main-content" className="skip-to-content">
+        Skip to content
+      </a>
+
       {/* Header bar */}
       <header
         className="sticky top-0 z-30 flex items-center justify-between h-14 px-4 sm:px-6"
@@ -234,7 +239,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 pb-20 sm:pb-6">
+      <main id="main-content" className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 pb-20 sm:pb-6">
         {children}
       </main>
 

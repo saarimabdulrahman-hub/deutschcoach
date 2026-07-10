@@ -84,14 +84,15 @@ export default function GrammarPage() {
   }, [fetchTopics]);
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--color-text)" }}>Grammar Reference</h1>
-        <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>Explore German grammar topics by level or search</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: "var(--color-text)" }}>Grammar Reference</h1>
+        <p className="text-sm mt-1.5" style={{ color: "var(--color-text-muted)" }}>Explore German grammar topics by level or search</p>
       </div>
 
       {/* Search with magnifying glass */}
       <div className="relative mb-5 max-w-md">
+        <label htmlFor="grammar-search" className="sr-only">Search grammar topics</label>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none"
@@ -104,6 +105,7 @@ export default function GrammarPage() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
         </svg>
         <input
+          id="grammar-search"
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

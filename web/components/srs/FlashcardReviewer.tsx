@@ -190,7 +190,7 @@ export function FlashcardReviewer({ onDone }: FlashcardReviewerProps) {
         >
           {/* Front */}
           <div
-            className="rounded-2xl p-8 flex flex-col items-center justify-center text-center backface-hidden"
+            className="rounded-2xl p-5 sm:p-8 flex flex-col items-center justify-center text-center backface-hidden"
             style={{
               background: "var(--color-card-bg)",
               border: "1px solid var(--color-border)",
@@ -214,7 +214,7 @@ export function FlashcardReviewer({ onDone }: FlashcardReviewerProps) {
 
           {/* Back */}
           <div
-            className="absolute inset-0 rounded-2xl p-8 flex flex-col items-center justify-center text-center backface-hidden"
+            className="absolute inset-0 rounded-2xl p-5 sm:p-8 flex flex-col items-center justify-center text-center backface-hidden"
             style={{
               background: "var(--color-hover-bg)",
               border: "1px solid var(--color-badge-bg)",

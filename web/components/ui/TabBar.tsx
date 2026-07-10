@@ -118,6 +118,8 @@ export function TabBar({ onOpenCommand }: TabBarProps) {
             <button
               key={tab.key}
               onClick={() => router.push(tab.href)}
+              aria-label={tab.label}
+              aria-current={active === tab.key ? "page" : undefined}
               className="flex flex-col items-center justify-center px-1 py-1 min-w-0 gap-0.5 transition-colors relative"
               style={{ color: active === tab.key ? "var(--color-active-text)" : "var(--color-text-muted)" }}
             >
