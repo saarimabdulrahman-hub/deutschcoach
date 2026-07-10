@@ -1,6 +1,6 @@
-# DeutschFlow — Design System
+# DeutschFlow — Design System & Brand Identity
 
-**Version:** 1.0
+**Version:** 2.0
 **Last Updated:** 2026-07-11
 **Source of Truth:** `web/app/globals.css`, `web/contexts/ThemeContext.tsx`, `web/tailwind.config.ts`
 
@@ -11,6 +11,187 @@
 DeutschFlow uses a **CSS-custom-property theming system** with 15 color themes. Every component references semantic CSS variables (`--color-text`, `--color-card-bg`, etc.) rather than hardcoded color values. This enables runtime theme switching without recompilation.
 
 The base framework is **Tailwind CSS v4** with the `@import "tailwindcss"` directive (no `@tailwind base/components/utilities`). Custom CSS lives in `web/app/globals.css`.
+
+---
+
+## Brand Identity
+
+### Brand Mission
+
+DeutschFlow exists to make German fluency accessible — not through gamification or gimmicks, but through structured, intelligent, and respectful learning design. We treat language learning as an intellectual pursuit worthy of a premium digital experience.
+
+### Brand Personality
+
+DeutschFlow is the knowledgeable, patient tutor who never makes you feel stupid for asking a basic question. It speaks to you in clear English while gently immersing you in German. It celebrates your wins without infantilizing you. It takes your learning seriously because you take your learning seriously.
+
+### Emotional Goals
+
+When a learner uses DeutschFlow, they should feel:
+
+| Emotion | How We Create It |
+|---------|-----------------|
+| **Capable** | Clear next steps, never lost, progress always visible |
+| **Calm** | Dark theme, generous spacing, no timers, no pressure |
+| **Curious** | "Tip of the Day," grammar explanations, AI tutor invites exploration |
+| **Proud** | Progress rings, streaks, completed lessons — tangible evidence of growth |
+| **Respected** | No cartoon mascots, no infantilizing copy, no gambling mechanics |
+
+### Brand Keywords
+
+Professional · Intelligent · Patient · Premium · Modern · Calm · Encouraging · Structured · Immersive · Respectful
+
+### Anti-Keywords (What We Are NOT)
+
+Gamified · Childish · Cluttered · Corporate · Generic · Stressful · Addictive · Manipulative
+
+### Visual Personality
+
+The DeutschFlow interface feels like a thoughtfully designed study space — dark, focused, with moments of warm color. It uses deep indigo-purple as its signature, generous rounded corners to soften the seriousness, and subtle glows to draw attention without shouting. The system font stack keeps the interface native and performant. Emojis add warmth without becoming the personality.
+
+### Tone of Interface
+
+Every piece of microcopy should sound like a supportive tutor, not a software manual:
+
+- ✅ "All caught up! Come back later for more practice."
+- ❌ "0 cards due."
+
+- ✅ "Your first German lesson awaits."
+- ❌ "No lessons started."
+
+- ✅ "10 minutes every day beats 2 hours once a week."
+- ❌ "Study more to improve your stats."
+
+- ✅ "Guten Morgen, Sarah."
+- ❌ "Welcome back, User."
+
+The interface speaks to the learner in English with German greetings and vocabulary — never the other way around. A beginner should never encounter a German word they haven't been taught.
+
+### Premium Experience Principles
+
+1. **Nothing feels like a template.** Every component, every spacing decision, every color choice is intentional. The interface should never evoke "Bootstrap" or "Tailwind demo."
+2. **Dark mode is the default, not an option.** The app starts in a deep indigo night. The 15 themes are color variations on dark — there is no light mode because learning is a focused, screen-intensive activity.
+3. **Generous but not wasteful.** Spacing is comfortable (24px gap, 20px padding on cards) but no section wastes 100px on decoration. Every pixel serves the learning experience.
+4. **Progress over pressure.** Streaks are positive ("5-day streak!") not threatening ("Don't break your streak!"). There are no countdown timers, no "you're falling behind" notifications.
+5. **AI is a tutor, not a gimmick.** The chat feature is called "Language Coach" not "AI Chat." The persona (Emma) is introduced as a teacher. Suggested prompts guide productive learning conversations.
+
+---
+
+## Brand Signature
+
+This section defines what makes DeutschFlow **instantly recognizable** from a screenshot. These are the non-negotiable visual signatures that differentiate the product from every other dark-theme dashboard.
+
+### The Brand Purple
+
+DeutschFlow's signature color is a **purple-to-amber gradient**: `linear-gradient(135deg, #7c3aed, #f59e0b)`. It appears in:
+
+- The "Flow" part of the DeutschFlow logotype
+- The accent gradient on primary buttons
+- The progress ring on the dashboard
+- The brand divider line on the login page
+
+**Philosophy:** Purple represents intelligence and creativity. Amber represents warmth and achievement. Together they say: "Learning is intellectually serious and personally rewarding."
+
+Never use purple alone as a flat color. DeutschFlow's purple always has depth — a gradient, a glow, or a translucent overlay. Flat purple (`#6366f1`) is reserved for utilitarian UI elements (focus rings, active states).
+
+### Accent Color Hierarchy
+
+| Tier | Color | Usage |
+|------|-------|-------|
+| **Primary** | Purple-amber gradient | Brand moments, primary CTAs, progress |
+| **Secondary** | Indigo (`#6366f1`) | Interactive states, links, badges |
+| **Tertiary** | Slate, emerald, amber | Supporting UI, semantic states |
+
+The accent gradient is never used as a background fill for large areas. It's reserved for: buttons, progress bars, text highlights, and decorative lines. This restraint makes it feel special when it appears.
+
+### The Rounded Corner Philosophy
+
+DeutschFlow uses generous, consistent border-radius: `rounded-2xl` (16px) for cards, `rounded-xl` (12px) for buttons and inputs. Nothing uses sharp corners.
+
+**Philosophy:** Rounded corners soften the dark interface and make it feel approachable rather than severe. The consistency of `rounded-xl`/`rounded-2xl` across every card, button, and input creates a cohesive softness that is distinctly DeutschFlow.
+
+Sharp corners are forbidden. If an element has a border, it has a radius. This is the single most reliable way to spot a DeutschFlow component.
+
+### Card Philosophy
+
+Every card in DeutschFlow follows the same formula:
+
+```
+dark surface + 1px subtle border + generous radius + comfortable padding
+```
+
+Cards are containers for content, not decorative elements. They should feel like they're resting on the page, not floating above it. The border (`1px solid var(--color-border)`) is always present and always the same color — cards don't use shadows to create depth. The page is flat. Cards are distinguished by their border, not by elevation.
+
+This creates a unified surface language: every card is clearly a card, no card pretends to be something else. The learner's eye learns this pattern immediately and can scan the page without cognitive effort.
+
+### Glow Usage
+
+DeutschFlow uses subtle colored glows as a **focus and emphasis mechanism**, not as decoration.
+
+| Context | Glow | Purpose |
+|---------|------|---------|
+| Progress ring | Purple glow on SVG circle | Draws eye to primary progress indicator |
+| Primary button hover | Purple box-shadow | Confirms the CTA is the most important action |
+| Dropdown | Dark shadow | Separates floating UI from page surface |
+| Active card outline | Purple ring (box-shadow outline) | Highlights selected/next item |
+
+**Rule:** Glows are only used on the accent color. Green, amber, or red elements never glow. Only purple glows. This creates a consistent visual language where "glow = important" and "glow = DeutschFlow purple."
+
+### Gradient Usage
+
+Gradients in DeutschFlow serve one purpose: **to mark progress and forward motion.** They appear on:
+
+- Progress bars (left-to-right fill)
+- Progress rings (SVG stroke with gradient)
+- Primary CTA buttons (diagonal gradient)
+- Continue Learning card (gradient background for new users)
+
+Gradients never appear on: static cards, navigation, input fields, badges, or text (except the brand logotype). This restraint makes gradients meaningful — when you see one, something is moving forward.
+
+### Icon Personality
+
+DeutschFlow uses two types of icons:
+
+**SVG Icons** — Clean, 2px stroke weight, outlined style. Used for navigation, actions, and UI controls. Always rendered in the current theme's text color or accent color. Located in `web/components/ui/Icons.tsx`.
+
+**Emoji Icons** — Used as visual accents in cards, recommendations, and empty states. Always wrapped in a fixed-size container (36-40px) with a subtle background tint. Emojis add warmth without becoming the personality — they're seasoning, not the main dish.
+
+The combination of clean SVG UI icons with warm emoji accents creates a distinctive DeutschFlow personality: professional where it needs to be, friendly where it helps.
+
+### Typography Personality
+
+DeutschFlow uses the system font stack — no custom web fonts. This is a deliberate choice:
+
+- **Performance:** Zero font download. Instant render.
+- **Native feel:** The interface feels at home on every device.
+- **Focus:** Typography should be invisible. The learner should think about German vocabulary, not about what font they're looking at.
+
+The type scale is intentionally modest: body text is 14px, captions are 12px, micro-labels are 10px. Nothing is oversized. Headings use `font-bold` with tight tracking. Body text uses default weight with comfortable line-height. This restraint creates a calm reading experience where content, not typography, commands attention.
+
+### Illustration Style
+
+DeutschFlow does not use custom illustrations. Instead, it uses:
+
+- **Emoji** as placeholders and accents (🌱 for beginner, 🎉 for completion)
+- **SVG progress rings** as the primary visual metaphor for learning progress
+- **Color and spacing** to create visual interest without decorative imagery
+
+This is intentional: custom illustrations are expensive to maintain, hard to keep consistent, and quickly feel dated. DeutschFlow's visual richness comes from its color system, its spacing, and its motion — not from drawings.
+
+If DeutschFlow ever adds illustrations, they should be: geometric, minimal, line-based, and purple-toned. No characters. No scenes. Abstract representations of concepts (a growing plant for progress, intersecting circles for community, a winding path for the learning journey).
+
+### Motion Style
+
+DeutschFlow's motion language is subtle and functional:
+
+| Context | Animation | Duration | Easing |
+|---------|-----------|----------|--------|
+| Page enter | Fade up 6px | 250ms | ease-out |
+| Card hover | Lift 2px | 200ms | ease |
+| Progress bar fill | Width expand | 700ms | ease |
+| Theme switch | Instant | 0ms | — |
+| Button press | Scale 0.98 | 150ms | ease-in-out |
+
+**Philosophy:** Motion should be felt, not noticed. No bounces, no springs, no attention-seeking animations. Everything moves exactly as much as it needs to and no more. The `prefers-reduced-motion` query disables all animations — respecting the user's OS-level accessibility preference.
 
 ---
 
