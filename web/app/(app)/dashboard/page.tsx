@@ -215,12 +215,13 @@ export default function DashboardPage() {
       {/* 1. Continue Learning — primary action, most prominent */}
       <ContinueCard lesson={data.continue_lesson} levelPct={data.level_progress_pct} />
 
-      {/* 2. Today's Learning Plan — simplified: only learning, not review */}
+      {/* 2. Today's Learning Plan — intelligent recommendations */}
       <div>
         <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--color-text-muted)" }}>
           Today's Learning Plan
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Lesson card — always shows specific lesson name */}
           <button onClick={() => router.push(data.continue_lesson ? `/curriculum/${data.continue_lesson.level.toLowerCase()}/${data.continue_lesson.id}` : "/curriculum")}
             className="text-left rounded-2xl p-4 transition-all duration-200 hover:-translate-y-0.5 group"
             style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
@@ -229,14 +230,23 @@ export default function DashboardPage() {
                 style={{ background: "rgba(124,58,237,0.08)" }}>📖</div>
               <div className="min-w-0">
                 <p className="text-sm font-semibold leading-tight" style={{ color: "var(--color-text)" }}>
-                  {data.continue_lesson ? "Continue Lesson" : "Start a Lesson"}
+                  {data.continue_lesson ? `Continue: ${data.continue_lesson.title}` : "Your First Lesson"}
                 </p>
               </div>
             </div>
             <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-              {data.continue_lesson ? `${data.continue_lesson.title} — Unit ${data.continue_lesson.unit}` : "Begin with A1 Greetings"}
+              {data.continue_lesson
+                ? `Pick up where you left off in Unit ${data.continue_lesson.unit}`
+                : "Greetings & Introductions — learn to say hello"}
+            </p>
+            <p className="text-[10px] mt-1.5 font-medium" style={{ color: "var(--color-brand-purple)" }}>
+              {data.continue_lesson
+                ? `${data.continue_lesson.progress_pct}% complete — finish today`
+                : "~10 min · Beginner-friendly"}
             </p>
           </button>
+
+          {/* Grammar card — level-specific recommendation */}
           <button onClick={() => router.push("/grammar")}
             className="text-left rounded-2xl p-4 transition-all duration-200 hover:-translate-y-0.5 group"
             style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
@@ -244,13 +254,22 @@ export default function DashboardPage() {
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
                 style={{ background: "rgba(168,85,247,0.08)" }}>📖</div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold leading-tight" style={{ color: "var(--color-text)" }}>Grammar</p>
+                <p className="text-sm font-semibold leading-tight" style={{ color: "var(--color-text)" }}>
+                  {data.continue_lesson ? `${data.continue_lesson.level} Grammar` : "German Grammar"}
+                </p>
               </div>
             </div>
             <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-              Browse the grammar reference
+              {data.continue_lesson
+                ? `Explore topics from your ${data.continue_lesson.level} lessons`
+                : "Understand how German sentences work"}
+            </p>
+            <p className="text-[10px] mt-1.5 font-medium" style={{ color: "var(--color-brand-purple)" }}>
+              {data.continue_lesson ? "Review grammar from your current level" : "Start with articles and pronouns"}
             </p>
           </button>
+
+          {/* AI chat card — scenario suggestion */}
           <button onClick={() => router.push("/chat")}
             className="text-left rounded-2xl p-4 transition-all duration-200 hover:-translate-y-0.5 group"
             style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
@@ -258,11 +277,18 @@ export default function DashboardPage() {
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
                 style={{ background: "rgba(56,189,248,0.08)" }}>🗣️</div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold leading-tight" style={{ color: "var(--color-text)" }}>AI Conversation</p>
+                <p className="text-sm font-semibold leading-tight" style={{ color: "var(--color-text)" }}>
+                  Practice Speaking
+                </p>
               </div>
             </div>
             <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-              Practice speaking with Emma
+              {data.continue_lesson
+                ? `Try using ${data.continue_lesson.level} vocabulary in conversation`
+                : "Chat with Emma — your AI language coach"}
+            </p>
+            <p className="text-[10px] mt-1.5 font-medium" style={{ color: "var(--color-brand-purple)" }}>
+              {data.continue_lesson ? "Apply what you've learned" : "No experience needed — Emma guides you"}
             </p>
           </button>
         </div>
@@ -303,11 +329,13 @@ export default function DashboardPage() {
               🃏
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>Flashcard Review</p>
+              <p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>
+                {data.cards_due_today > 0 ? "Daily Flashcard Review" : "Flashcards Complete"}
+              </p>
               <p className="text-xs mt-0.5" style={{ color: data.cards_due_today > 0 ? "var(--color-accent-light)" : "var(--color-text-muted)" }}>
                 {data.cards_due_today > 0
-                  ? `${data.cards_due_today} card${data.cards_due_today !== 1 ? "s" : ""} due for review`
-                  : "All caught up! Great job."}
+                  ? `${data.cards_due_today} card${data.cards_due_today !== 1 ? "s" : ""} waiting — ~${Math.max(1, Math.round(data.cards_due_today / 5))} min to complete`
+                  : "Nothing due — excellent work today!"}
               </p>
             </div>
           </button>
@@ -317,9 +345,13 @@ export default function DashboardPage() {
             <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
               style={{ background: "rgba(34,197,94,0.08)" }}>✅</div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>Take a Quiz</p>
+              <p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>
+                {data.avg_quiz_score > 0 ? "Knowledge Quiz" : "Discover Your Level"}
+              </p>
               <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
-                {data.avg_quiz_score > 0 ? `Your average: ${data.avg_quiz_score}%` : "Test your vocabulary"}
+                {data.avg_quiz_score > 0
+                  ? `Your average: ${data.avg_quiz_score}% — ${data.avg_quiz_score >= 80 ? "you're acing it!" : data.avg_quiz_score >= 60 ? "keep improving!" : "practice makes perfect"}`
+                  : "Find out what you already know"}
               </p>
             </div>
           </button>
