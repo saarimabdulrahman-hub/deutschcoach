@@ -6,6 +6,7 @@ import type { QuizSession, QuizQuestion } from "@/types";
 import { QuizSetup } from "@/components/quiz/QuizSetup";
 import { QuestionCard } from "@/components/quiz/QuestionCard";
 import { QuizResults } from "@/components/quiz/QuizResults";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 type QuizState = "setup" | "active" | "results";
 
@@ -110,7 +111,7 @@ export default function QuizPage() {
   if (state === "setup") {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>Quiz</h1>
+        <PageHeader title="Quiz" />
         <QuizSetup onStart={handleStart} />
       </div>
     );
@@ -132,7 +133,7 @@ export default function QuizPage() {
 
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>Quiz</h1>
+        <PageHeader title="Quiz" />
         <QuestionCard
           question={question}
           onAnswer={handleAnswer}
@@ -146,7 +147,7 @@ export default function QuizPage() {
   if (state === "results" && results) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold" style={{ color: "var(--color-text)" }}>Quiz</h1>
+        <PageHeader title="Quiz" />
         <QuizResults results={results} onRetry={handleRetry} />
       </div>
     );

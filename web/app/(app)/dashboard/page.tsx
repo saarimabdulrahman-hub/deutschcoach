@@ -9,6 +9,9 @@ import { ContinueHero } from "@/components/dashboard/ContinueHero";
 import { ProgressStrip } from "@/components/dashboard/ProgressStrip";
 import { QuickGrid } from "@/components/dashboard/QuickGrid";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/Card";
+import { ProgressBar } from "@/components/ui/ProgressBar";
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -219,19 +222,17 @@ export default function DashboardPage() {
       {/* ── Activity + Words ──────────────────── */}
       <div className="grid sm:grid-cols-2 gap-6">
         {/* Recent Activity */}
-        <div className="rounded-2xl p-5 sm:p-6"
-          style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
               📅 Recent Activity
             </h3>
           </div>
           <ActivityTimeline items={data.recent_activity} />
-        </div>
+        </Card>
 
         {/* Vocabulary / Weakest Words */}
-        <div className="rounded-2xl p-5 sm:p-6"
-          style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
               📝 Words to Practice
@@ -244,7 +245,7 @@ export default function DashboardPage() {
             )}
           </div>
           <WordCloud words={data.weakest_words} />
-        </div>
+        </Card>
       </div>
 
       {/* ── Tip ──────────────────────────────── */}

@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/Card";
 
 interface WeakWord { id: number; german: string; english: string; lapses: number; }
 
@@ -26,7 +27,7 @@ export function WeakestWords({ words }: { words: WeakWord[] }) {
   const router = useRouter();
 
   return (
-    <div className="rounded-2xl p-5 sm:p-6" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+    <Card className="p-5 sm:p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
           Words to Practice
@@ -74,6 +75,6 @@ export function WeakestWords({ words }: { words: WeakWord[] }) {
           ))}
         </div>
       )}
-    </div>
+    </Card>
   );
 }
