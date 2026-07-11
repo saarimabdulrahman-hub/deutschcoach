@@ -75,7 +75,7 @@ function Hero() {
             style={{ color: "#fff", textShadow: "0 2px 14px rgba(120,40,180,0.55)" }}>
             Your German learning
             <br />
-            <span style={{ background: "linear-gradient(90deg, #e879f9, #f472b6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", textShadow: "none" }}>journey starts here</span>
+            <span style={{ background: "linear-gradient(90deg, #ffffff 0%, #fbcfe8 30%, #f0abfc 56%, #e879f9 78%, #f472b6 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", textShadow: "none" }}>journey starts here</span>
           </h2>
           <p className="text-[11px] sm:text-xs leading-relaxed max-w-sm"
             style={{ color: "rgba(214,200,244,0.68)", textShadow: "0 1px 3px rgba(0,0,0,0.35)" }}>
