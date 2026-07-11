@@ -51,7 +51,7 @@ function Hero() {
 
       {/* Hero background image (vector CastleScene kept as backup) */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: "url('/hero.webp')", backgroundSize: "cover", backgroundPosition: "center right" }} />
+        style={{ backgroundImage: "url('/hero.webp')", backgroundSize: "150%", backgroundPosition: "right center", backgroundRepeat: "no-repeat" }} />
 
       {/* Light purple tint — barely tints, lets image dominate */}
       <div className="absolute inset-0 pointer-events-none"
