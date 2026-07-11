@@ -7,40 +7,40 @@
 
 :root {
   /* ── Color: Surface — Deep Premium Dark ─────────── */
-  --color-page-bg: #0B0820;
-  --color-card-bg: #13102E;
-  --color-card-alt: #181436;
-  --color-card-elevated: #1C1640;
-  --color-sidebar-bg: #0D0A22;
-  --color-header-bg: #0E0B24;
-  --color-input-bg: #13102E;
+  --color-page-bg: #0A071E;
+  --color-card-bg: rgba(20, 15, 50, 0.55);
+  --color-card-alt: rgba(25, 18, 58, 0.65);
+  --color-card-elevated: rgba(30, 22, 68, 0.75);
+  --color-sidebar-bg: #0C0922;
+  --color-header-bg: rgba(14, 10, 36, 0.7);
+  --color-input-bg: rgba(20, 15, 50, 0.4);
 
-  /* ── Color: Border — Subtle Glass ────────────────── */
-  --color-border: rgba(255, 255, 255, 0.06);
-  --color-border-light: rgba(255, 255, 255, 0.1);
-  --color-input-border: rgba(255, 255, 255, 0.1);
-  --color-input-focus: #7B3FFB;
+  /* ── Color: Border — Visible Glass ───────────────── */
+  --color-border: rgba(180, 160, 230, 0.1);
+  --color-border-light: rgba(180, 160, 230, 0.15);
+  --color-input-border: rgba(180, 160, 230, 0.12);
+  --color-input-focus: #8B46FF;
 
   /* ── Color: Text ────────────────────────────────── */
   --color-text: #FFFFFF;
-  --color-text-secondary: rgba(255, 255, 255, 0.7);
-  --color-text-muted: rgba(255, 255, 255, 0.4);
+  --color-text-secondary: rgba(255, 255, 255, 0.72);
+  --color-text-muted: rgba(220, 210, 245, 0.45);
 
   /* ── Color: Interactive ─────────────────────────── */
-  --color-hover-bg: rgba(123, 63, 251, 0.08);
-  --color-active-bg: rgba(123, 63, 251, 0.15);
-  --color-active-text: #A24BFF;
-  --color-badge-bg: rgba(123, 63, 251, 0.2);
-  --color-badge-text: #A24BFF;
+  --color-hover-bg: rgba(139, 70, 255, 0.1);
+  --color-active-bg: rgba(139, 70, 255, 0.18);
+  --color-active-text: #B57BFF;
+  --color-badge-bg: rgba(139, 70, 255, 0.22);
+  --color-badge-text: #B57BFF;
 
-  /* ── Color: Accent — Premium Violet Spectrum ──────── */
-  --color-accent: #7B3FFB;
-  --color-accent-light: #8B46FF;
-  --color-accent-dark: #6D28D9;
-  --color-accent-gradient: linear-gradient(135deg, #7B3FFB, #8B46FF, #A24BFF);
-  --color-accent-glow: rgba(123, 63, 251, 0.2);
-  --color-brand-gradient: linear-gradient(135deg, #7B3FFB, #A24BFF, #D56CFF);
-  --color-brand-purple: #A24BFF;
+  /* ── Color: Accent — Luminous Glass Violet ────────── */
+  --color-accent: #8B46FF;
+  --color-accent-light: #A24BFF;
+  --color-accent-dark: #7B3FFB;
+  --color-accent-gradient: linear-gradient(135deg, #8B46FF, #A24BFF, #C07BFF);
+  --color-accent-glow: rgba(139, 70, 255, 0.25);
+  --color-brand-gradient: linear-gradient(135deg, #8B46FF, #B57BFF, #D56CFF);
+  --color-brand-purple: #B57BFF;
   --color-brand-light: #D56CFF;
 
   /* ── Color: Semantic ────────────────────────────── */
@@ -128,8 +128,9 @@ body {
   font-family: var(--font-sans);
   min-height: 100vh;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(123, 63, 251, 0.08) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 15%, rgba(162, 75, 255, 0.04) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 0%, rgba(139, 70, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 10%, rgba(162, 100, 255, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 25% 90%, rgba(139, 70, 255, 0.03) 0%, transparent 40%),
     var(--color-page-bg);
   color: var(--color-text-secondary);
 }
@@ -154,24 +155,34 @@ body {
 
 .surface-primary {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.025) 0%, transparent 30%),
+    linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 30%, transparent 60%),
     var(--color-card-bg);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 1px 0 0 rgba(255,255,255,0.04) inset;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 1px 0 0 rgba(255,255,255,0.06) inset;
+  border: 1px solid rgba(180, 160, 230, 0.1);
+  backdrop-filter: blur(4px);
   transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
 }
 .surface-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 1px 0 0 rgba(255,255,255,0.05) inset;
-  border-color: rgba(123, 63, 251, 0.15);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 1px 0 0 rgba(255,255,255,0.08) inset;
+  border-color: rgba(180, 160, 230, 0.2);
 }
 
 .surface-elevated {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 25%),
+    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 30%, transparent 55%),
     var(--color-card-elevated);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 1px 0 0 rgba(123,63,251,0.06) inset;
-  border: 1px solid rgba(123, 63, 251, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 1px 0 0 rgba(139,70,255,0.08) inset;
+  border: 1px solid rgba(180, 160, 230, 0.15);
+  backdrop-filter: blur(6px);
+}
+
+.surface-glass {
+  background: rgba(20, 16, 45, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(200, 180, 240, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 0 0 rgba(255,255,255,0.06) inset;
 }
 
 .surface-glass {

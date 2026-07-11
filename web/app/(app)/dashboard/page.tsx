@@ -16,10 +16,11 @@ function getGreeting() { const h = new Date().getHours(); return h < 12 ? GREETI
 function formatDate() { return new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }).toUpperCase(); }
 
 const cardStyle: React.CSSProperties = {
-  background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, transparent 30%), var(--color-card-bg)",
-  border: "1px solid rgba(255,255,255,0.05)",
+  background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 40%), var(--color-card-bg)",
+  border: "1px solid rgba(180, 160, 230, 0.1)",
   borderRadius: 20,
-  boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
+  boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
+  backdropFilter: "blur(4px)",
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -139,14 +140,14 @@ function PlanCard({ icon, iconBg, title, subtitle, footer, href }: {
 
 function StatCell({ icon, value, label }: { icon: string; value: string; label: string }) {
   return (
-    <div className="rounded-xl p-3.5 transition-all duration-250 hover:-translate-y-0.5"
-      style={{ background: "var(--color-card-alt)", border: "1px solid rgba(255,255,255,0.04)", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
-      <div className="flex items-center gap-2.5 mb-2">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-          style={{ background: "rgba(123,63,251,0.08)", border: "1px solid rgba(123,63,251,0.06)" }}>{icon}</div>
-        <p className="text-lg font-bold" style={{ color: "var(--color-text)" }}>{value}</p>
+    <div className="rounded-xl p-3 transition-all duration-250 hover:-translate-y-0.5"
+      style={{ background: "rgba(20, 15, 50, 0.4)", border: "1px solid rgba(180, 160, 230, 0.08)", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", backdropFilter: "blur(2px)" }}>
+      <div className="flex items-center gap-2 mb-1.5">
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
+          style={{ background: "rgba(139,70,255,0.12)", border: "1px solid rgba(180,160,230,0.1)" }}>{icon}</div>
+        <p className="text-base font-bold" style={{ color: "var(--color-text)" }}>{value}</p>
       </div>
-      <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>{label}</p>
+      <p className="text-[9px] font-medium uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>{label}</p>
     </div>
   );
 }
@@ -187,7 +188,7 @@ export default function DashboardPage() {
   const greeting = getGreeting();
 
   return (
-    <div className="space-y-5 pb-4 dashboard-shell" style={{ maxWidth: 1280, margin: "0 auto" }}>
+    <div className="space-y-4 pb-4 dashboard-shell" style={{ maxWidth: 1280, margin: "0 auto" }}>
       {/* ── Greeting + Stats ───────────────── */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
         <div>
@@ -215,7 +216,7 @@ export default function DashboardPage() {
       {/* ── Today's Plan ──────────────────── */}
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-widest mb-4" style={{ color: "var(--color-text-muted)" }}>Today's Plan</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <PlanCard icon="📖" iconBg="rgba(77,163,255,0.1)" title="Your First Lesson" subtitle="Greetings & Introductions" footer="10 min · Beginner-friendly"
             href={data.continue_lesson ? `/curriculum/${data.continue_lesson.level.toLowerCase()}/${data.continue_lesson.id}` : "/curriculum"} />
           <PlanCard icon="Aa" iconBg="rgba(162,75,255,0.1)" title="German Grammar" subtitle="Understand how sentences work" footer="Start with articles & pronouns" href="/grammar" />
@@ -226,7 +227,7 @@ export default function DashboardPage() {
       {/* ── Your Progress ─────────────────── */}
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-widest mb-4" style={{ color: "var(--color-text-muted)" }}>Your Progress</p>
-        <div className="rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-6 sm:gap-10" style={cardStyle}>
+        <div className="rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6" style={cardStyle}>
           <ProgressRing pct={data.level_progress_pct} />
           <div className="flex-1 w-full">
             <div className="text-center sm:text-left mb-5">
@@ -234,7 +235,7 @@ export default function DashboardPage() {
               <p className="text-sm mb-3" style={{ color: "var(--color-text-muted)" }}>Start your first lesson to see your progress here.</p>
               <button onClick={()=>router.push("/curriculum")} className="px-5 py-2 rounded-xl text-sm font-medium transition-all" style={{background:"transparent",color:"var(--color-accent-light)",border:"1px solid var(--color-accent)"}}>View Roadmap</button>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               <StatCell icon="📖" value={`${data.level_progress_pct>0?Math.max(1,Math.round(data.level_progress_pct/6)):0} / 80`} label="Lessons Completed"/>
               <StatCell icon="📝" value={`${data.weakest_words.length>0?data.weakest_words.length*5:0} words`} label="Vocabulary Learned"/>
               <StatCell icon="📖" value={`${data.level_progress_pct>0?Math.max(1,Math.round(data.level_progress_pct/10)):0} topics`} label="Grammar Topics"/>
@@ -247,7 +248,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Review + Activity ─────────────── */}
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid sm:grid-cols-2 gap-3">
         <div className="rounded-2xl p-5 sm:p-6 space-y-4" style={cardStyle}>
           <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>Review & Practice</p>
           <div className="flex items-center gap-3 group cursor-pointer"><div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(123,63,251,0.1)" }}>🃏</div><div className="flex-1"><p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>Flashcards Complete</p><p className="text-xs" style={{ color: "var(--color-text-muted)" }}>Nothing due — excellent work!</p></div><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" style={{ color: "var(--color-text-muted)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg></div>
