@@ -47,9 +47,9 @@ function Hero() {
       {/* Gate image — fills width, gate visible in center-right */}
       <div className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: "url('/gate.jpg')",
-          backgroundSize: "110% auto",
-          backgroundPosition: "55% 35%",
+          backgroundImage: "url('/gate.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center 35%",
           backgroundRepeat: "no-repeat",
           opacity: 1,
         }} />
