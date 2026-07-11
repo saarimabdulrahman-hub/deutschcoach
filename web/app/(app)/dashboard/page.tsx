@@ -70,13 +70,13 @@ function Hero() {
       <div className="relative z-10 flex items-center h-full w-full px-6 sm:px-8 lg:px-10">
         {/* 3. Left text — blends with purple atmosphere */}
         <div className="flex-1 max-w-[460px]">
-          <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest mb-2"
-            style={{ color: "rgba(220,200,255,0.55)", textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>Welcome to DeutschFlow</p>
-          <h2 className="text-[1.4rem] sm:text-[1.7rem] lg:text-[2.1rem] font-extrabold leading-[1.04] mb-2.5"
-            style={{ color: "#fff", textShadow: "0 2px 12px rgba(80,40,160,0.6)" }}>
-            Your{" "}
-            <span style={{ background: "linear-gradient(90deg, #a855f7, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", textShadow: "none" }}>German learning</span>
-            <br />journey starts here
+          <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] mb-2"
+            style={{ color: "rgba(226,232,240,0.82)", textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>Welcome to DeutschFlow</p>
+          <h2 className="text-[1.5rem] sm:text-[1.9rem] lg:text-[2.35rem] font-extrabold leading-[1.03] tracking-[-0.02em] mb-2.5"
+            style={{ color: "#fff", textShadow: "0 2px 14px rgba(120,40,180,0.55)" }}>
+            Your German learning
+            <br />
+            <span style={{ background: "linear-gradient(90deg, #e879f9, #f472b6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", textShadow: "none" }}>journey starts here</span>
           </h2>
           <p className="text-[11px] sm:text-xs leading-relaxed max-w-sm"
             style={{ color: "rgba(214,200,244,0.68)", textShadow: "0 1px 3px rgba(0,0,0,0.35)" }}>
