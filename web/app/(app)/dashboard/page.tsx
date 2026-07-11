@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import type { DashboardData } from "@/types";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { GateIllustration } from "@/components/dashboard/GateIllustration";
 
 const GREETINGS = [
   { hi: "Guten Morgen", en: "Good morning" },
@@ -28,95 +29,33 @@ const cardStyle: React.CSSProperties = {
 function Hero() {
   const router = useRouter();
   return (
-    <div className="relative overflow-hidden rounded-[20px] h-[280px] sm:h-[300px] flex items-center"
+    <div className="relative overflow-hidden rounded-[20px] h-[300px] sm:h-[320px] flex items-center"
       style={{
         border: "1px solid rgba(255,255,255,0.06)",
         boxShadow: "0 12px 48px rgba(123,63,251,0.12)",
-        // Layer 1+2: Brandenburg Gate night photo + deep indigo blend
-        backgroundImage: `url('https://images.unsplash.com/photo-1599946347371-68eb71b16afc?w=1400&q=85&fit=crop'),
-          linear-gradient(170deg, #040418 0%, #0a0628 25%, #140a40 55%, #0a0628 80%, #040418 100%)`,
-        backgroundSize: "cover, 100% 100%",
-        backgroundPosition: "center 65%, center",
-        backgroundBlendMode: "soft-light, normal",
+        background: "linear-gradient(180deg, #040418 0%, #0a0628 30%, #0d0830 55%, #0a0628 80%, #040418 100%)",
       }}>
-      {/* Layer 3: Purple galaxy/nebula overlay */}
-      <div className="absolute inset-0 opacity-45 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% 30%, rgba(162,75,255,0.25) 0%, transparent 45%), radial-gradient(ellipse at 55% 45%, rgba(123,63,251,0.2) 0%, transparent 35%), radial-gradient(ellipse at 45% 50%, rgba(213,108,255,0.12) 0%, transparent 40%), radial-gradient(ellipse at 60% 25%, rgba(139,70,255,0.15) 0%, transparent 30%)" }} />
-
-      {/* Layer 4: Massive moon glow behind gate center */}
-      <div className="absolute pointer-events-none" style={{ left: "50%", top: "5%", width: 180, height: 180, transform: "translateX(-50%)" }}>
-        <div className="absolute rounded-full" style={{ inset: -40, background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(213,180,255,0.06) 20%, rgba(162,75,255,0.03) 40%, transparent 65%)", filter: "blur(16px)" }} />
-        <div className="absolute rounded-full" style={{ inset: -15, background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(235,210,255,0.04) 25%, transparent 55%)", filter: "blur(8px)" }} />
-        <div className="absolute inset-0 rounded-full" style={{ background: "radial-gradient(circle at 55% 40%, rgba(255,255,255,0.06) 0%, rgba(213,180,255,0.03) 35%, transparent 70%)" }} />
-      </div>
-
-      {/* Layer 5: Brandenburg Gate — centered in background, ~40% width */}
-      <div className="absolute inset-0 pointer-events-none hidden sm:flex items-center justify-center" style={{ zIndex: 0 }}>
-        <div className="w-[42%] h-full relative opacity-90">
-          {/* The gate silhouette rendered as a rich SVG with architectural detail */}
-          <svg viewBox="0 0 300 400" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <linearGradient id="gateBody" x1="0%" y1="100%" x2="0%" y2="0%">
-                <stop offset="0%" stopColor="#1a1050" stopOpacity="0.7"/>
-                <stop offset="30%" stopColor="#2d1570" stopOpacity="0.45"/>
-                <stop offset="60%" stopColor="#1a1050" stopOpacity="0.3"/>
-                <stop offset="100%" stopColor="#0d0830" stopOpacity="0.15"/>
-              </linearGradient>
-              <linearGradient id="gateEdge" x1="0%" y1="100%" x2="0%" y2="0%">
-                <stop offset="0%" stopColor="#fff" stopOpacity="0.5"/>
-                <stop offset="40%" stopColor="#c4b5fd" stopOpacity="0.2"/>
-                <stop offset="100%" stopColor="#fff" stopOpacity="0.03"/>
-              </linearGradient>
-            </defs>
-            {/* Pediment */}
-            <polygon points="20,80 150,8 280,80" fill="url(#gateBody)" stroke="url(#gateEdge)" strokeWidth="2"/>
-            {/* Horizontal beams */}
-            <rect x="12" y="80" width="276" height="8" fill="url(#gateBody)" stroke="url(#gateEdge)" strokeWidth="1.5"/>
-            <rect x="12" y="220" width="276" height="10" fill="url(#gateBody)" stroke="url(#gateEdge)" strokeWidth="1.5"/>
-            {/* 6 columns */}
-            {[22,68,114,156,202,248].map((x,i) => (
-              <rect key={i} x={x} y="88" width={i===2?24:i===3?24:22} height="132" fill="url(#gateBody)" stroke="url(#gateEdge)" strokeWidth="1.5"/>
-            ))}
-            {/* Center archway */}
-            <path d="M134 220 L134 140 Q150 115 166 140 L166 220" fill="rgba(10,5,30,0.4)" stroke="url(#gateEdge)" strokeWidth="1.5"/>
-            {/* Quadriga — statue on top */}
-            <g transform="translate(135,30) scale(0.5)" fill="none" stroke="url(#gateEdge)" strokeWidth="3" opacity="0.6">
-              <circle cx="15" cy="10" r="8"/>
-              <line x1="15" y1="18" x2="15" y2="35"/>
-              <line x1="0" y1="20" x2="30" y2="20"/>
-              <line x1="5" y1="25" x2="25" y2="25"/>
-            </g>
-          </svg>
+      {/* Illustrated Gate — the centerpiece, extends ~55% of hero width */}
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center" style={{ zIndex: 0, width: "100%" }}>
+        <div className="w-[50%] sm:w-[44%] h-[95%]">
+          <GateIllustration />
         </div>
       </div>
 
-      {/* Layer 6: Atmospheric fog — purple mist at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-[40%] pointer-events-none"
-        style={{ background: "linear-gradient(to top, rgba(40,15,80,0.55) 0%, rgba(25,10,60,0.25) 35%, rgba(15,5,40,0.08) 70%, transparent 100%)" }} />
-      {/* Right-side fog behind gate */}
-      <div className="absolute bottom-0 right-0 w-[50%] h-[55%] pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 65% 75%, rgba(162,75,255,0.1) 0%, transparent 55%)" }} />
+      {/* Fog overlay — blends gate base into background */}
+      <div className="absolute bottom-0 left-0 right-0 h-[45%] pointer-events-none"
+        style={{ background: "linear-gradient(to top, rgba(8,4,24,0.9) 0%, rgba(12,8,40,0.5) 30%, rgba(15,10,45,0.15) 60%, transparent 100%)" }} />
 
-      {/* Layer 7: Floating particles */}
-      {Array.from({length:30}).map((_,i) => {
-        const x=(i*43+19)%100; const y=(i*61+7)%88;
-        return (<div key={i} className="absolute rounded-full pointer-events-none"
-          style={{ left:`${x}%`, top:`${y}%`, width: i%7===0?3:i%4===0?2:1.5, height: i%7===0?3:i%4===0?2:1.5,
-            background: i%7===0?`rgba(255,255,255,${[0.35,0.25,0.4][i%3]})`:`rgba(255,255,255,${[0.2,0.15,0.25,0.1][i%4]})`,
-            boxShadow: i%7===0?`0 0 4px rgba(213,180,255,0.3)`:'none',
-            animation: `twinkle ${2.5+(i%4)*0.8}s ease-in-out ${i*0.3}s infinite` }} />);
-      })}
-
-      {/* Layer 8: Vignette */}
+      {/* Vignette */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ boxShadow: "inset 0 0 120px 40px rgba(0,0,0,0.65), inset 0 0 50px 15px rgba(0,0,0,0.45)" }} />
+        style={{ boxShadow: "inset 0 0 100px 30px rgba(0,0,0,0.6), inset 0 0 40px 10px rgba(0,0,0,0.35)" }} />
 
-      {/* ── Content Row: TEXT | spacer | CTA ── */}
+      {/* Content Row: TEXT | GATE (illustration) | CTA */}
       <div className="relative z-10 flex items-center w-full px-6 sm:px-8 lg:px-12">
-        <div className="flex-1 max-w-[400px]">
+        <div className="flex-1 max-w-[380px]">
           <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-2.5"
             style={{ color: "rgba(255,255,255,0.4)", textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}>Welcome to DeutschFlow</p>
-          <h2 className="text-2xl sm:text-3xl lg:text-[2.5rem] font-bold leading-[1.06] mb-3.5"
+          <h2 className="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold leading-[1.08] mb-3.5"
             style={{ color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.5)" }}>
             Your German learning<br />journey starts here
           </h2>
@@ -132,22 +71,18 @@ function Hero() {
           </div>
         </div>
 
-        {/* Center spacer — gate occupies this area */}
         <div className="hidden sm:block flex-1" />
 
-        {/* Right: Glass CTA — floating above artwork */}
         <div className="hidden lg:block rounded-2xl p-6 w-[250px] flex-shrink-0"
           style={{
             background: "rgba(12,16,32,0.25)",
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
             border: "1px solid rgba(255,255,255,0.12)",
-            boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 0 0 1px rgba(123,63,251,0.08)",
+            boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 1px 0 0 rgba(255,255,255,0.06) inset",
           }}>
           <p className="text-base font-bold mb-2" style={{ color: "#fff" }}>Ready to begin?</p>
-          <p className="text-xs mb-5 leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
-            Start your first lesson and track your progress.
-          </p>
+          <p className="text-xs mb-5 leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>Start your first lesson and track your progress.</p>
           <button onClick={() => router.push("/curriculum")}
             className="w-full px-6 py-3.5 rounded-xl text-sm font-bold glossy-accent flex items-center justify-center gap-2">
             Start Your First Lesson
@@ -155,7 +90,6 @@ function Hero() {
           </button>
         </div>
       </div>
-      <style>{`@keyframes twinkle{0%,100%{opacity:0.08}50%{opacity:1}}`}</style>
     </div>
   );
 }
