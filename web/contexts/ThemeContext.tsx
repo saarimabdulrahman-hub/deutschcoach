@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 export type ThemeName =
+  | "neon"
   | "indigo" | "amber" | "emerald" | "rose" | "mono"
   | "ocean" | "sunset" | "forest" | "plum" | "steel"
   | "cherry" | "mint" | "lavender" | "copper" | "onyx";
@@ -13,7 +14,7 @@ function palette(p: {
   bg: string; card: string; border: string;
   accent: string; accentLight: string; accentDark: string;
   accentText: string; text: string; muted: string; secondary: string;
-}): ThemeColors {
+}, gradient?: string): ThemeColors {
   return {
     "--color-page-bg": p.bg,
     "--color-card-bg": p.card,
@@ -29,7 +30,7 @@ function palette(p: {
     "--color-accent": p.accent,
     "--color-accent-light": p.accentLight,
     "--color-accent-dark": p.accentDark,
-    "--color-accent-gradient": `linear-gradient(135deg, ${p.accentDark}, ${p.accent})`,
+    "--color-accent-gradient": gradient || `linear-gradient(135deg, ${p.accentDark}, ${p.accent})`,
     "--color-accent-glow": p.accent.replace(")", ",0.25)").replace("rgb", "rgba"),
     "--color-sidebar-bg": p.bg,
     "--color-header-bg": p.card,
@@ -46,6 +47,12 @@ function palette(p: {
 }
 
 const THEMES: Record<ThemeName, ThemeColors> = {
+  // ── 0. Neon (DeutschFlow synthwave — default) ──
+  neon: palette({ bg: "#030212", card: "rgba(20,14,45,0.62)", border: "rgba(190,170,240,0.16)",
+    accent: "#8b5cf6", accentLight: "#d946ef", accentDark: "#7c3aed",
+    accentText: "#e9d5ff", text: "#ffffff", muted: "#94a3b8", secondary: "rgba(255,255,255,0.78)" },
+    "linear-gradient(135deg, #ec4899, #d946ef, #8b5cf6)"),
+
   // ── 1. Indigo ──
   indigo: palette({ bg: "#0f172a", card: "#1e293b", border: "#334155",
     accent: "#6366f1", accentLight: "#818cf8", accentDark: "#4f46e5",
@@ -131,7 +138,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeName>("indigo");
+  const [theme, setThemeState] = useState<ThemeName>("neon");
 
   useEffect(() => {
     const stored = localStorage.getItem("theme") as ThemeName | null;
@@ -171,6 +178,7 @@ export { THEMES };
 
 // Derived list of themes for UI pickers — single source of truth
 export const THEME_LIST: { key: ThemeName; label: string; color: string }[] = [
+  { key: "neon", label: "Neon", color: "#d946ef" },
   { key: "indigo", label: "Indigo", color: "#6366f1" },
   { key: "ocean", label: "Ocean", color: "#0ea5e9" },
   { key: "steel", label: "Steel", color: "#64748b" },

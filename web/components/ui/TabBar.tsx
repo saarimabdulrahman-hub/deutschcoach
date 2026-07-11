@@ -97,8 +97,8 @@ export function TabBar({ onOpenCommand }: TabBarProps) {
             className="relative px-4 py-2 text-sm font-semibold rounded-xl transition-all whitespace-nowrap"
             style={{
               color: active === tab.key ? "#fff" : "rgba(255,255,255,0.5)",
-              background: active === tab.key ? "linear-gradient(135deg, #A855F7, #C084FC, #D946EF)" : "transparent",
-              boxShadow: active === tab.key ? "0 0 22px rgba(168,85,247,0.4), 0 1px 0 0 rgba(255,255,255,0.15) inset" : "none",
+              background: active === tab.key ? "linear-gradient(135deg, #7c3aed, #db2777)" : "transparent",
+              boxShadow: active === tab.key ? "0 0 22px rgba(219,39,119,0.4), 0 1px 0 0 rgba(255,255,255,0.15) inset" : "none",
               border: active === tab.key ? "1px solid rgba(255,255,255,0.15)" : "1px solid transparent",
             }}
           >

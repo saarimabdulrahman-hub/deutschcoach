@@ -77,7 +77,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Header bar */}
       <header
-        className="sticky top-0 z-30 flex items-center justify-between h-12 sm:h-13 px-4 sm:px-6"
+        className="sticky top-0 z-30 flex items-center justify-between h-14 sm:h-[72px] px-4 sm:px-6"
         style={{
           background: "var(--color-header-bg)",
           borderBottom: "1px solid var(--color-border)",
@@ -92,7 +92,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </span>
             <span
               className="text-xl font-bold tracking-[1px]"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #f59e0b)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}
+              style={{ background: "linear-gradient(135deg, #8b5cf6, #d946ef)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}
             >
               Flow
             </span>
@@ -106,12 +106,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
         {/* Right: Search button (desktop) + User avatar */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          {/* Search shortcut */}
+          {/* Search shortcut — bordered pill */}
           <button
             onClick={() => setCommandOpen(true)}
             title="Search (Ctrl+K)"
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs hover:text-slate-300 hover:bg-white/5 transition-colors"
-            style={{ color: "var(--color-text-muted)" }}
+            className="hidden sm:flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full text-xs transition-colors hover:bg-white/5"
+            style={{ color: "var(--color-text-muted)", border: "1px solid var(--color-border)", background: "rgba(255,255,255,0.02)" }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +127,30 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
               />
             </svg>
-            <span className="opacity-60">Ctrl+K</span>
+            <span className="opacity-60">Search</span>
+            <span
+              className="ml-1 px-1.5 py-0.5 rounded-md text-[10px] font-medium leading-none"
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--color-border)" }}
+            >
+              Ctrl K
+            </span>
+          </button>
+
+          {/* Notification bell */}
+          <button
+            title="Notifications"
+            className="relative hidden sm:flex items-center justify-center w-9 h-9 rounded-lg hover:bg-white/5 transition-colors"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span
+              className="absolute top-1 right-1 min-w-[15px] h-[15px] px-1 rounded-full flex items-center justify-center text-[9px] font-bold text-white"
+              style={{ background: "#ec4899", boxShadow: "0 0 8px rgba(236,72,153,0.6)" }}
+            >
+              3
+            </span>
           </button>
 
           {/* User menu */}

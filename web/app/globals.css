@@ -7,7 +7,7 @@
 
 :root {
   /* ── Color: Surface — Deep Premium Dark ─────────── */
-  --color-page-bg: #0B0725;
+  --color-page-bg: #030212;
   --color-card-bg: rgba(30, 20, 65, 0.6);
   --color-card-alt: rgba(35, 24, 72, 0.7);
   --color-card-elevated: rgba(40, 28, 82, 0.8);
@@ -24,7 +24,7 @@
   /* ── Color: Text ────────────────────────────────── */
   --color-text: #FFFFFF;
   --color-text-secondary: rgba(255, 255, 255, 0.75);
-  --color-text-muted: rgba(210, 200, 240, 0.5);
+  --color-text-muted: #94a3b8;
 
   /* ── Color: Interactive ─────────────────────────── */
   --color-hover-bg: rgba(139, 70, 255, 0.14);
@@ -33,15 +33,15 @@
   --color-badge-bg: rgba(139, 70, 255, 0.25);
   --color-badge-text: #C48BFF;
 
-  /* ── Color: Accent — Luminous Glass Violet ────────── */
-  --color-accent: #8B46FF;
-  --color-accent-light: #A85CFF;
-  --color-accent-dark: #7B3FFB;
-  --color-accent-gradient: linear-gradient(135deg, #8B46FF, #B05AFF, #D080FF);
-  --color-accent-glow: rgba(139, 70, 255, 0.3);
-  --color-brand-gradient: linear-gradient(135deg, #8B46FF, #C480FF, #E0A0FF);
-  --color-brand-purple: #C480FF;
-  --color-brand-light: #E0A0FF;
+  /* ── Color: Accent — Synthwave Neon (pink → magenta → violet) ── */
+  --color-accent: #8b5cf6;
+  --color-accent-light: #d946ef;
+  --color-accent-dark: #7c3aed;
+  --color-accent-gradient: linear-gradient(135deg, #ec4899, #d946ef, #8b5cf6);
+  --color-accent-glow: rgba(217, 70, 239, 0.35);
+  --color-brand-gradient: linear-gradient(135deg, #ec4899, #d946ef, #8b5cf6);
+  --color-brand-purple: #d946ef;
+  --color-brand-light: #f0abfc;
 
   /* ── Color: Semantic ────────────────────────────── */
   --color-success: #2ED573;
@@ -194,15 +194,15 @@ body {
 }
 
 .glossy-accent {
-  background: linear-gradient(135deg, #A855F7 0%, #C084FC 50%, #D946EF 100%);
-  box-shadow: 0 6px 22px rgba(168,85,247,0.35), 0 1px 0 0 rgba(255,255,255,0.12) inset;
+  background: linear-gradient(135deg, #ec4899 0%, #d946ef 50%, #8b5cf6 100%);
+  box-shadow: 0 6px 22px rgba(217,70,239,0.4), 0 1px 0 0 rgba(255,255,255,0.12) inset;
   transition: all 250ms ease;
   color: #fff;
   border: none;
 }
 .glossy-accent:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 30px rgba(168,85,247,0.5), 0 1px 0 0 rgba(255,255,255,0.18) inset;
+  box-shadow: 0 8px 30px rgba(217,70,239,0.55), 0 1px 0 0 rgba(255,255,255,0.18) inset;
 }
 
 /* Smooth transitions on all interactive elements */

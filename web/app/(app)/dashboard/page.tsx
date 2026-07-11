@@ -6,6 +6,8 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import type { DashboardData } from "@/types";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { GateScene } from "@/components/dashboard/GateScene";
+import { ReadingArt } from "@/components/dashboard/ReadingArt";
 
 const GREETINGS = [
   { hi: "Guten Morgen", en: "Good morning" },
@@ -38,7 +40,7 @@ const shinyCard: React.CSSProperties = {
 function Hero() {
   const router = useRouter();
   return (
-    <div className="relative overflow-hidden rounded-[20px] h-[190px] sm:h-[210px]"
+    <div className="relative overflow-hidden rounded-[20px] h-[250px] sm:h-[290px] lg:h-[310px]"
       style={{
         border: "1px solid rgba(123,63,251,0.15)",
         boxShadow: "0 0 80px rgba(123,63,251,0.12), 0 0 40px rgba(139,70,255,0.06), 0 4px 20px rgba(0,0,0,0.5)",
@@ -48,20 +50,8 @@ function Hero() {
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at 58% 25%, rgba(139,70,255,0.22) 0%, transparent 45%), radial-gradient(ellipse at 60% 40%, rgba(162,75,255,0.14) 0%, transparent 40%), radial-gradient(ellipse at 75% 50%, rgba(123,63,251,0.1) 0%, transparent 35%), radial-gradient(ellipse at 35% 50%, rgba(139,70,255,0.08) 0%, transparent 35%), radial-gradient(ellipse at 55% 55%, rgba(213,108,255,0.06) 0%, transparent 30%)" }} />
 
-      {/* 7. Planet/moon — follows gate position */}
-      <div className="absolute pointer-events-none" style={{ left:"58%",top:"10%",width:100,height:100,transform:"translateX(-50%)" }}>
-        <div className="absolute rounded-full" style={{ inset:-30,background:"radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(213,180,255,0.08) 20%, transparent 55%)",filter:"blur(12px)" }} />
-        <div className="absolute inset-0 rounded-full" style={{ background:"radial-gradient(circle at 55% 40%, rgba(255,255,255,0.06) 0%, rgba(200,170,255,0.03) 35%, transparent 65%)" }} />
-      </div>
-
-      {/* Gate image — fills width, gate visible in center-right */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: "url('/gate.png?v=2')",
-          backgroundSize: "85% auto",
-          backgroundPosition: "58% 35%",
-          backgroundRepeat: "no-repeat",
-        }} />
+      {/* Hand-built neon Brandenburg Gate scene (replaces /gate.png) */}
+      <GateScene />
 
       {/* Light purple tint — barely tints, lets image dominate */}
       <div className="absolute inset-0 pointer-events-none"
@@ -84,17 +74,18 @@ function Hero() {
             style={{ color: "rgba(220,200,255,0.55)", textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>Welcome to DeutschFlow</p>
           <h2 className="text-[1.4rem] sm:text-[1.7rem] lg:text-[2.1rem] font-extrabold leading-[1.04] mb-2.5"
             style={{ color: "#fff", textShadow: "0 2px 12px rgba(80,40,160,0.6)" }}>
-            Your German learning<br />journey starts here
+            Your{" "}
+            <span style={{ background: "linear-gradient(90deg, #a855f7, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", textShadow: "none" }}>German learning</span>
+            <br />journey starts here
           </h2>
           <p className="text-[11px] sm:text-xs leading-relaxed max-w-sm"
             style={{ color: "rgba(200,180,240,0.5)", textShadow: "0 1px 3px rgba(0,0,0,0.3)" }}>
             Structured lessons, smart flashcards, and an AI tutor—everything you need to go from zero to fluent.
           </p>
-          <div className="flex items-center gap-5 mt-3 text-[10px] sm:text-[11px]"
-            style={{ color: "rgba(180,160,220,0.4)" }}>
-            <span>✓ Beginner-friendly</span><span className="opacity-25">|</span>
-            <span>⏱ 10 min lessons</span><span className="opacity-25">|</span>
-            <span>📚 80+ lessons</span>
+          <div className="flex flex-wrap items-center gap-2 mt-3.5 text-[10px] sm:text-[11px]">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium" style={{ background: "rgba(139,70,255,0.12)", border: "1px solid rgba(168,85,247,0.28)", color: "rgba(224,208,255,0.85)" }}>✓ Beginner-friendly</span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium" style={{ background: "rgba(139,70,255,0.12)", border: "1px solid rgba(168,85,247,0.28)", color: "rgba(224,208,255,0.85)" }}>⏱ 10 min lessons</span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium" style={{ background: "rgba(139,70,255,0.12)", border: "1px solid rgba(168,85,247,0.28)", color: "rgba(224,208,255,0.85)" }}>📚 80+ lessons</span>
           </div>
         </div>
 
@@ -141,6 +132,7 @@ function PlanCard({ icon, iconBg, iconColor, title, subtitle, footer, href }: {
         <div className="flex-1 min-w-0">
           <p className="text-[15px] font-semibold truncate" style={{ color: "#fff" }}>{title}</p>
           <p className="text-[13px] truncate" style={{ color: "var(--color-text-muted)" }}>{subtitle}</p>
+          <p className="text-[11px] font-medium truncate mt-0.5" style={{ color: iconColor }}>{footer}</p>
         </div>
         <span className="text-lg flex-shrink-0" style={{ color: "var(--color-text-muted)" }}>›</span>
       </div>
@@ -182,7 +174,7 @@ function ProgressRing({ pct }: { pct: number }) {
   return (
     <div className="relative w-24 h-24 flex-shrink-0">
       <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-        <defs><linearGradient id="prg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#A855F7"/><stop offset="50%" stopColor="#C084FC"/><stop offset="100%" stopColor="#D946EF"/></linearGradient></defs>
+        <defs><linearGradient id="prg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#ec4899"/><stop offset="50%" stopColor="#d946ef"/><stop offset="100%" stopColor="#8b5cf6"/></linearGradient></defs>
         <circle cx="50" cy="50" r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6"/>
         <circle cx="50" cy="50" r={r} fill="none" stroke="url(#prg)" strokeWidth="6" strokeLinecap="round"
           strokeDasharray={circ} strokeDashoffset={off} style={{transition:"stroke-dashoffset 1s ease",filter:"drop-shadow(0 0 6px rgba(123,63,251,0.3))"}}/>
@@ -196,7 +188,7 @@ function ProgressRing({ pct }: { pct: number }) {
 }
 
 function Skeleton() {
-  return (<div className="space-y-5"><div className="flex gap-4"><div className="flex-1 space-y-2"><div className="h-4 w-32 rounded shimmer"/><div className="h-8 w-64 rounded shimmer"/></div><div className="flex gap-3">{[...Array(2)].map((_,i)=><div key={i} className="h-20 w-36 rounded-2xl shimmer"/>)}</div></div><div className="h-[270px] rounded-[20px] shimmer"/><div className="grid grid-cols-3 gap-4">{[...Array(3)].map((_,i)=><div key={i} className="h-32 rounded-2xl shimmer"/>)}</div><div className="h-72 rounded-2xl shimmer"/><div className="grid grid-cols-2 gap-4">{[...Array(2)].map((_,i)=><div key={i} className="h-48 rounded-2xl shimmer"/>)}</div></div>);
+  return (<div className="space-y-5"><div className="flex gap-4"><div className="flex-1 space-y-2"><div className="h-4 w-32 rounded shimmer"/><div className="h-8 w-64 rounded shimmer"/></div><div className="flex gap-3">{[...Array(2)].map((_,i)=><div key={i} className="h-20 w-36 rounded-2xl shimmer"/>)}</div></div><div className="h-[290px] rounded-[20px] shimmer"/><div className="grid grid-cols-3 gap-4">{[...Array(3)].map((_,i)=><div key={i} className="h-32 rounded-2xl shimmer"/>)}</div><div className="h-72 rounded-2xl shimmer"/><div className="grid grid-cols-2 gap-4">{[...Array(2)].map((_,i)=><div key={i} className="h-48 rounded-2xl shimmer"/>)}</div></div>);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -233,11 +225,11 @@ export default function DashboardPage() {
           <div className="rounded-2xl py-2.5 px-3.5 flex flex-col justify-center min-w-[210px]" style={cardStyle}>
             <span className="text-[10px] font-medium uppercase tracking-[.08em] mb-1.5" style={{color:"var(--color-text-muted)"}}>Current Level</span>
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-[7px] flex items-center justify-center text-[10px] font-extrabold" style={{background:"linear-gradient(135deg,#A855F7,#C084FC,#D946EF)",color:"#fff"}}>A1</div>
+              <div className="w-6 h-6 rounded-[7px] flex items-center justify-center text-[10px] font-extrabold" style={{background:"linear-gradient(135deg,#ec4899,#d946ef,#8b5cf6)",color:"#fff"}}>A1</div>
               <b className="text-[13px]" style={{color:"#fff"}}>A1 Beginner</b>
             </div>
             <div className="w-full h-1 rounded-full mt-1.5" style={{background:"#2A2A45",overflow:"hidden"}}>
-              <div className="h-full rounded-full" style={{width:`${data.level_progress_pct}%`,background:"linear-gradient(135deg,#A855F7,#C084FC,#D946EF)"}}/>
+              <div className="h-full rounded-full" style={{width:`${data.level_progress_pct}%`,background:"linear-gradient(135deg,#ec4899,#d946ef,#8b5cf6)"}}/>
             </div>
             <p className="text-[10px] mt-1" style={{color:"var(--color-text-muted)"}}>120 / 300 XP to A2</p>
           </div>
@@ -273,10 +265,10 @@ export default function DashboardPage() {
           {/* Center: KPI Grid 3x2 */}
           <div className="grid grid-cols-3 grid-rows-2 gap-2">
             <KpiCard icon="📘" iconBg="rgba(59,130,246,.14)" iconColor="#3B82F6" value={`${data.level_progress_pct>0?Math.max(1,Math.round(data.level_progress_pct/6)):0}`} unit="/ 80" label="Lessons Completed"/>
-            <KpiCard icon="🌿" iconBg="rgba(34,197,94,.14)" iconColor="#22C55E" value={`${data.weakest_words.length>0?data.weakest_words.length*5:0}`} unit="" label="Words learned"/>
-            <KpiCard icon="🧩" iconBg="rgba(168,85,247,.14)" iconColor="#A855F7" value="80+" unit="" label="Grammar Topics"/>
-            <KpiCard icon="🎯" iconBg="rgba(245,158,11,.14)" iconColor="#F59E0B" value={data.avg_quiz_score>0?`${data.avg_quiz_score}%`: "0%"} unit="" label="Quiz average"/>
-            <KpiCard icon="🕒" iconBg="rgba(59,130,246,.14)" iconColor="#3B82F6" value={`${data.cards_due_today}`} unit="" label="Cards due"/>
+            <KpiCard icon="🌿" iconBg="rgba(34,197,94,.14)" iconColor="#22C55E" value={`${data.weakest_words.length>0?data.weakest_words.length*5:0}`} unit="" label="Vocabulary Learned"/>
+            <KpiCard icon="🧩" iconBg="rgba(168,85,247,.14)" iconColor="#A855F7" value={`${data.level_progress_pct>0?Math.max(1,Math.round(data.level_progress_pct/12)):0}`} unit=" topics" label="Grammar Topics"/>
+            <KpiCard icon="🎯" iconBg="rgba(245,158,11,.14)" iconColor="#F59E0B" value={data.avg_quiz_score>0?`${data.avg_quiz_score}%`: "0%"} unit="" label="Quiz Accuracy"/>
+            <KpiCard icon="🕒" iconBg="rgba(59,130,246,.14)" iconColor="#3B82F6" value={`${data.cards_due_today}`} unit="" label="Cards to Review"/>
             <KpiCard icon="⏱" iconBg="rgba(56,189,248,.14)" iconColor="#38BDF8" value={data.level_progress_pct>0?`${Math.max(1,Math.round(data.level_progress_pct/6)*10)}m`:"0m"} unit="" label="Study Time"/>
           </div>
           {/* Right: Review & Practice */}
@@ -302,10 +294,10 @@ export default function DashboardPage() {
           </div>
           <div className="grid grid-cols-2 gap-2">
             <KpiCard icon="📘" iconBg="rgba(59,130,246,.14)" iconColor="#3B82F6" value={`${data.level_progress_pct>0?Math.max(1,Math.round(data.level_progress_pct/6)):0}`} unit="/ 80" label="Lessons Completed"/>
-            <KpiCard icon="🌿" iconBg="rgba(34,197,94,.14)" iconColor="#22C55E" value={`${data.weakest_words.length>0?data.weakest_words.length*5:0}`} unit="" label="Words learned"/>
-            <KpiCard icon="🧩" iconBg="rgba(168,85,247,.14)" iconColor="#A855F7" value="80+" unit="" label="Grammar Topics"/>
-            <KpiCard icon="🎯" iconBg="rgba(245,158,11,.14)" iconColor="#F59E0B" value={data.avg_quiz_score>0?`${data.avg_quiz_score}%`: "0%"} unit="" label="Quiz average"/>
-            <KpiCard icon="🕒" iconBg="rgba(59,130,246,.14)" iconColor="#3B82F6" value={`${data.cards_due_today}`} unit="" label="Cards due"/>
+            <KpiCard icon="🌿" iconBg="rgba(34,197,94,.14)" iconColor="#22C55E" value={`${data.weakest_words.length>0?data.weakest_words.length*5:0}`} unit="" label="Vocabulary Learned"/>
+            <KpiCard icon="🧩" iconBg="rgba(168,85,247,.14)" iconColor="#A855F7" value={`${data.level_progress_pct>0?Math.max(1,Math.round(data.level_progress_pct/12)):0}`} unit=" topics" label="Grammar Topics"/>
+            <KpiCard icon="🎯" iconBg="rgba(245,158,11,.14)" iconColor="#F59E0B" value={data.avg_quiz_score>0?`${data.avg_quiz_score}%`: "0%"} unit="" label="Quiz Accuracy"/>
+            <KpiCard icon="🕒" iconBg="rgba(59,130,246,.14)" iconColor="#3B82F6" value={`${data.cards_due_today}`} unit="" label="Cards to Review"/>
             <KpiCard icon="⏱" iconBg="rgba(56,189,248,.14)" iconColor="#38BDF8" value={data.level_progress_pct>0?`${Math.max(1,Math.round(data.level_progress_pct/6)*10)}m`:"0m"} unit="" label="Study Time"/>
           </div>
           <div className="flex flex-col gap-3">
@@ -335,13 +327,19 @@ export default function DashboardPage() {
             <button onClick={()=>router.push("/curriculum")} className="px-5 py-2 rounded-xl text-xs font-bold glossy-accent">Start Lesson →</button>
           </div>
         </div>
-        <div className="rounded-[20px] p-4 flex flex-col gap-3" style={cardStyle}>
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm" style={{ background: "rgba(245,158,11,.14)", color: "#F59E0B" }}>💡</div>
-            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>Tip of the Day</p>
+        <div className="rounded-[20px] p-4 flex items-center gap-3" style={cardStyle}>
+          <div className="flex flex-col gap-3 flex-1 min-w-0">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm" style={{ background: "rgba(245,158,11,.14)", color: "#F59E0B" }}>💡</div>
+              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>Tip of the Day</p>
+            </div>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>Review before bed — sleep helps your brain consolidate new vocabulary.</p>
+            <button onClick={()=>router.push("/curriculum")} className="text-xs font-medium hover:underline self-start" style={{ color: "var(--color-accent-light)" }}>Browse lessons →</button>
           </div>
-          <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>Review before bed — sleep helps your brain consolidate new vocabulary.</p>
-          <button onClick={()=>router.push("/curriculum")} className="text-xs font-medium hover:underline" style={{ color: "var(--color-accent-light)" }}>Browse lessons →</button>
+          {/* Reading art — woman reading in bed at night */}
+          <div className="hidden sm:block flex-shrink-0" aria-hidden="true">
+            <ReadingArt />
+          </div>
         </div>
       </div>
     </div>
