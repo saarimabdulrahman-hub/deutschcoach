@@ -19,45 +19,68 @@ function formatDate() { return new Date().toLocaleDateString("en-US", { weekday:
 function Hero() {
   const router = useRouter();
   return (
-    <div className="relative overflow-hidden rounded-[20px] h-[220px] flex items-center"
+    <div className="relative overflow-hidden rounded-[20px] h-[240px] sm:h-[260px] flex items-center"
       style={{
-        background: "linear-gradient(135deg, #0a0a1a 0%, #1a1040 25%, #2d1060 50%, #1a1040 75%, #0a0a1a 100%)",
+        background: "linear-gradient(160deg, #0a0a24 0%, #150d3a 15%, #1a0d50 30%, #2d1060 50%, #1a0d50 70%, #150d3a 85%, #0a0a24 100%)",
         border: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "0 8px 40px rgba(123,63,251,0.08)",
       }}>
-      {/* Moon glow */}
-      <div className="absolute right-[15%] top-[10%] w-32 h-32 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(213,108,255,0.12) 0%, rgba(162,75,255,0.06) 30%, transparent 70%)", filter: "blur(4px)" }} />
-      <div className="absolute right-[12%] top-[8%] w-20 h-20 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%)" }} />
-      {/* Stars */}
-      {[[15,15],[70,10],[55,40],[85,55],[25,70],[60,80],[10,50]].map(([x,y],i) => (
-        <div key={i} className="absolute rounded-full pointer-events-none" style={{ left:`${x}%`, top:`${y}%`, width:2, height:2, background:"rgba(255,255,255,0.3)" }} />
+      {/* Atmospheric glow behind monument */}
+      <div className="absolute right-[10%] top-[5%] w-48 h-48 rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(213,108,255,0.15) 0%, rgba(162,75,255,0.08) 25%, rgba(123,63,251,0.03) 50%, transparent 70%)", filter: "blur(8px)" }} />
+      <div className="absolute right-[8%] top-[3%] w-28 h-28 rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 30%, transparent 60%)" }} />
+      {/* More scattered stars */}
+      {[[10,8],[25,5],[40,12],[58,6],[72,15],[88,8],[55,25],[78,22],[32,18],[15,30],[65,35],[82,42],[20,45],[45,50],[70,48],[90,52],[30,60],[55,65],[80,58],[10,70]].map(([x,y],i) => (
+        <div key={i} className="absolute rounded-full pointer-events-none"
+          style={{ left:`${x}%`, top:`${y}%`, width: i % 3 === 0 ? 2 : 1, height: i % 3 === 0 ? 2 : 1,
+            background: i % 5 === 0 ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.2)",
+            animation: `twinkle ${2 + (i % 3)}s ease-in-out infinite`, animationDelay: `${i * 0.3}s` }} />
       ))}
+      {/* Brandenburg Gate SVG silhouette */}
+      <div className="absolute right-0 bottom-0 w-[42%] h-full pointer-events-none hidden sm:block" style={{ opacity: 0.15 }}>
+        <svg viewBox="0 0 200 300" className="absolute right-0 bottom-0 h-[130%]" preserveAspectRatio="xMaxYMax slice">
+          <defs><linearGradient id="gateGrad" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stopColor="#fff" stopOpacity="0.6"/><stop offset="100%" stopColor="#fff" stopOpacity="0.05"/></linearGradient></defs>
+          <g stroke="url(#gateGrad)" strokeWidth="2" fill="none">
+            <polygon points="15,50 100,0 185,50" fill="rgba(255,255,255,0.03)"/>
+            <line x1="10" y1="50" x2="190" y2="50" strokeWidth="3"/>
+            <line x1="10" y1="140" x2="190" y2="140" strokeWidth="3"/>
+            <line x1="18" y1="50" x2="18" y2="140"/><line x1="44" y1="50" x2="44" y2="140"/>
+            <line x1="72" y1="50" x2="72" y2="140"/><line x1="98" y1="50" x2="98" y2="140"/>
+            <line x1="102" y1="50" x2="102" y2="140"/><line x1="128" y1="50" x2="128" y2="140"/>
+            <line x1="156" y1="50" x2="156" y2="140"/><line x1="182" y1="50" x2="182" y2="140"/>
+            <rect x="74" y="70" width="52" height="70" fill="rgba(255,255,255,0.04)" stroke="none"/>
+          </g>
+        </svg>
+      </div>
 
-      <div className="relative z-10 flex items-center w-full px-8 sm:px-12">
-        <div className="flex-1 max-w-lg">
+      <div className="relative z-10 flex items-center w-full px-6 sm:px-10 lg:px-14">
+        <div className="flex-1 max-w-xl">
           <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.4)" }}>Welcome to DeutschFlow</p>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-3" style={{ color: "#fff" }}>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] mb-4" style={{ color: "#fff" }}>
             Your German learning<br />journey starts here
           </h2>
-          <p className="text-xs sm:text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>
-            Structured lessons, smart flashcards, and an AI tutor—<br />everything you need to go from zero to fluent.
+          <p className="text-sm sm:text-base leading-relaxed max-w-md" style={{ color: "rgba(255,255,255,0.45)" }}>
+            Structured lessons, smart flashcards, and an AI tutor—everything you need to go from zero to fluent.
           </p>
-          <div className="flex items-center gap-4 mt-4 text-[10px] sm:text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>
-            <span>✓ Beginner-friendly</span> <span>⏱ 10 min lessons</span> <span>📚 80+ lessons</span>
+          <div className="flex items-center gap-5 mt-5 text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
+            <span>✓ Beginner-friendly</span> <span className="opacity-30">|</span> <span>⏱ 10 min lessons</span> <span className="opacity-30">|</span> <span>📚 80+ lessons</span>
           </div>
         </div>
-        <div className="hidden lg:block ml-auto rounded-2xl p-5 w-[260px] flex-shrink-0"
-          style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <p className="text-sm font-semibold mb-1" style={{ color: "#fff" }}>Ready to begin?</p>
-          <p className="text-xs mb-4" style={{ color: "rgba(255,255,255,0.4)" }}>Start your first lesson and see your progress here.</p>
+        {/* Glassmorphic CTA panel */}
+        <div className="hidden lg:block ml-auto rounded-2xl p-6 w-[280px] flex-shrink-0 surface-glass"
+          style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+          <p className="text-base font-bold mb-1" style={{ color: "#fff" }}>Ready to begin?</p>
+          <p className="text-xs mb-5 leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>Start your first lesson and see your progress here.</p>
           <button onClick={() => router.push("/curriculum")}
-            className="w-full px-5 py-2.5 rounded-xl text-sm font-bold glossy-accent flex items-center justify-center gap-2">
+            className="w-full px-6 py-3 rounded-xl text-sm font-bold glossy-accent flex items-center justify-center gap-2">
             Start Your First Lesson
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
           </button>
         </div>
       </div>
+      {/* Twinkle animation keyframes via style tag */}
+      <style>{`@keyframes twinkle{0%,100%{opacity:0.3}50%{opacity:1}}`}</style>
     </div>
   );
 }
@@ -70,8 +93,8 @@ function PlanCard({ icon, iconBg, title, subtitle, footer, href }: {
   return (
     <button onClick={() => router.push(href)}
       className="text-left rounded-2xl p-5 transition-all duration-250 hover:-translate-y-1 w-full"
-      style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" }}>
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-3" style={{ background: iconBg }}>{icon}</div>
+      style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, transparent 30%), var(--color-card-bg)", border: "1px solid rgba(255,255,255,0.05)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" }}>
+      <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl mb-3" style={{ background: iconBg, border: "1px solid rgba(255,255,255,0.04)" }}>{icon}</div>
       <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text)" }}>{title}</p>
       <p className="text-xs mb-3" style={{ color: "var(--color-text-muted)" }}>{subtitle}</p>
       <div className="flex items-center justify-between">
@@ -128,7 +151,7 @@ export default function DashboardPage() {
   const greeting = getGreeting();
 
   return (
-    <div className="space-y-5 sm:space-y-6 pb-4" style={{ maxWidth: 1280, margin: "0 auto" }}>
+    <div className="space-y-5 sm:space-y-6 pb-4 dashboard-shell" style={{ maxWidth: 1280, margin: "0 auto" }}>
       {/* ── Greeting + Stats ───────────────── */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
         <div>
