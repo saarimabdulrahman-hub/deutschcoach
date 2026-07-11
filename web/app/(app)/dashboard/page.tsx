@@ -19,58 +19,91 @@ function formatDate() { return new Date().toLocaleDateString("en-US", { weekday:
 function Hero() {
   const router = useRouter();
   return (
-    <div className="relative overflow-hidden rounded-[20px] h-[240px] sm:h-[260px] flex items-center"
-      style={{
-        background: "linear-gradient(160deg, #0a0a24 0%, #150d3a 15%, #1a0d50 30%, #2d1060 50%, #1a0d50 70%, #150d3a 85%, #0a0a24 100%)",
-        border: "1px solid rgba(255,255,255,0.06)",
-        boxShadow: "0 8px 40px rgba(123,63,251,0.08)",
-      }}>
-      {/* Atmospheric glow behind monument */}
-      <div className="absolute right-[10%] top-[5%] w-48 h-48 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(213,108,255,0.15) 0%, rgba(162,75,255,0.08) 25%, rgba(123,63,251,0.03) 50%, transparent 70%)", filter: "blur(8px)" }} />
-      <div className="absolute right-[8%] top-[3%] w-28 h-28 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 30%, transparent 60%)" }} />
-      {/* More scattered stars */}
-      {[[10,8],[25,5],[40,12],[58,6],[72,15],[88,8],[55,25],[78,22],[32,18],[15,30],[65,35],[82,42],[20,45],[45,50],[70,48],[90,52],[30,60],[55,65],[80,58],[10,70]].map(([x,y],i) => (
-        <div key={i} className="absolute rounded-full pointer-events-none"
-          style={{ left:`${x}%`, top:`${y}%`, width: i % 3 === 0 ? 2 : 1, height: i % 3 === 0 ? 2 : 1,
-            background: i % 5 === 0 ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.2)",
-            animation: `twinkle ${2 + (i % 3)}s ease-in-out infinite`, animationDelay: `${i * 0.3}s` }} />
-      ))}
-      {/* Brandenburg Gate SVG silhouette */}
-      <div className="absolute right-0 bottom-0 w-[42%] h-full pointer-events-none hidden sm:block" style={{ opacity: 0.15 }}>
-        <svg viewBox="0 0 200 300" className="absolute right-0 bottom-0 h-[130%]" preserveAspectRatio="xMaxYMax slice">
-          <defs><linearGradient id="gateGrad" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stopColor="#fff" stopOpacity="0.6"/><stop offset="100%" stopColor="#fff" stopOpacity="0.05"/></linearGradient></defs>
-          <g stroke="url(#gateGrad)" strokeWidth="2" fill="none">
-            <polygon points="15,50 100,0 185,50" fill="rgba(255,255,255,0.03)"/>
-            <line x1="10" y1="50" x2="190" y2="50" strokeWidth="3"/>
-            <line x1="10" y1="140" x2="190" y2="140" strokeWidth="3"/>
-            <line x1="18" y1="50" x2="18" y2="140"/><line x1="44" y1="50" x2="44" y2="140"/>
-            <line x1="72" y1="50" x2="72" y2="140"/><line x1="98" y1="50" x2="98" y2="140"/>
-            <line x1="102" y1="50" x2="102" y2="140"/><line x1="128" y1="50" x2="128" y2="140"/>
-            <line x1="156" y1="50" x2="156" y2="140"/><line x1="182" y1="50" x2="182" y2="140"/>
-            <rect x="74" y="70" width="52" height="70" fill="rgba(255,255,255,0.04)" stroke="none"/>
+    <div className="relative overflow-hidden rounded-[20px] h-[260px] sm:h-[280px] flex items-center"
+      style={{ border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 40px rgba(123,63,251,0.1)" }}>
+      {/* Layer 1: Deep space background */}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(170deg, #06061a 0%, #0c0828 20%, #140a40 40%, #1a0d50 55%, #140a40 70%, #0c0828 85%, #06061a 100%)" }} />
+      {/* Layer 2: Nebula texture — scattered radial blobs */}
+      <div className="absolute inset-0 opacity-40" style={{ background: "radial-gradient(ellipse at 70% 30%, rgba(162,75,255,0.12) 0%, transparent 50%), radial-gradient(ellipse at 55% 60%, rgba(123,63,251,0.08) 0%, transparent 40%), radial-gradient(ellipse at 80% 45%, rgba(213,108,255,0.06) 0%, transparent 35%)" }} />
+
+      {/* Layer 3: Large glowing moon */}
+      <div className="absolute pointer-events-none" style={{ right: "22%", top: "8%", width: 140, height: 140 }}>
+        {/* Outer glow */}
+        <div className="absolute rounded-full" style={{ inset: -30, background: "radial-gradient(circle, rgba(213,108,255,0.15) 0%, rgba(162,75,255,0.06) 30%, transparent 60%)", filter: "blur(12px)" }} />
+        {/* Moon body */}
+        <div className="absolute inset-0 rounded-full" style={{ background: "radial-gradient(circle at 60% 40%, rgba(255,255,255,0.08) 0%, rgba(213,108,255,0.06) 30%, rgba(162,75,255,0.04) 60%, rgba(123,63,251,0.02) 100%)" }} />
+        {/* Bright core */}
+        <div className="absolute rounded-full" style={{ left: "30%", top: "25%", width: "40%", height: "40%", background: "radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 60%)" }} />
+      </div>
+
+      {/* Layer 4: Volumetric light rays from moon */}
+      <div className="absolute inset-0 pointer-events-none opacity-15"
+        style={{ background: "conic-gradient(from 200deg at 72% 20%, rgba(213,108,255,0.15) 0deg, transparent 60deg, rgba(162,75,255,0.08) 120deg, transparent 200deg, rgba(213,108,255,0.1) 280deg, transparent 360deg)" }} />
+
+      {/* Layer 5: Twinkling stars — dense field */}
+      {Array.from({length:35}).map((_,i) => {
+        const x = (i*37+13)%100; const y = (i*53+7)%90;
+        const size = i%4===0?2.5:i%7===0?1.5:1;
+        const alpha = [0.2,0.35,0.25,0.5,0.3,0.4,0.2,0.15][i%8];
+        return (
+          <div key={i} className="absolute rounded-full pointer-events-none"
+            style={{ left:`${x}%`, top:`${y}%`, width:size, height:size, background:`rgba(255,255,255,${alpha})`,
+              animation: `twinkle ${2+(i%4)}s ease-in-out ${i*0.25}s infinite` }} />
+        );
+      })}
+
+      {/* Layer 6: Brandenburg Gate silhouette — right-aligned */}
+      <div className="absolute right-0 bottom-0 w-[38%] h-[90%] pointer-events-none hidden sm:block" style={{ opacity: 0.12 }}>
+        <svg viewBox="0 0 200 300" className="absolute right-0 bottom-0 h-[140%]" preserveAspectRatio="xMaxYMax slice">
+          <defs><linearGradient id="gateGrad" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stopColor="#fff" stopOpacity="0.5"/><stop offset="40%" stopColor="#fff" stopOpacity="0.15"/><stop offset="100%" stopColor="#fff" stopOpacity="0.02"/></linearGradient></defs>
+          <g stroke="url(#gateGrad)" strokeWidth="2.5" fill="none">
+            <polygon points="12,50 100,-5 188,50" fill="rgba(255,255,255,0.02)"/>
+            <line x1="8" y1="50" x2="192" y2="50" strokeWidth="3.5"/>
+            <line x1="8" y1="145" x2="192" y2="145" strokeWidth="3.5"/>
+            <line x1="16" y1="50" x2="16" y2="145"/><line x1="42" y1="50" x2="42" y2="145"/>
+            <line x1="70" y1="50" x2="70" y2="145"/><line x1="96" y1="50" x2="96" y2="145"/>
+            <line x1="104" y1="50" x2="104" y2="145"/><line x1="130" y1="50" x2="130" y2="145"/>
+            <line x1="158" y1="50" x2="158" y2="145"/><line x1="184" y1="50" x2="184" y2="145"/>
+            <rect x="72" y="72" width="56" height="73" fill="rgba(255,255,255,0.03)" stroke="none"/>
           </g>
         </svg>
       </div>
 
+      {/* Layer 7: Atmospheric fog — purple mist at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-[35%] pointer-events-none"
+        style={{ background: "linear-gradient(to top, rgba(123,63,251,0.1) 0%, rgba(162,75,255,0.04) 40%, transparent 100%)" }} />
+      {/* Fog right side behind gate */}
+      <div className="absolute bottom-0 right-0 w-[45%] h-[50%] pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at 70% 80%, rgba(162,75,255,0.08) 0%, transparent 60%)" }} />
+
+      {/* Layer 8: Vignette — darkens edges */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ boxShadow: "inset 0 0 80px 20px rgba(0,0,0,0.5), inset 0 0 30px 10px rgba(0,0,0,0.3)" }} />
+
+      {/* Content + Glass CTA */}
       <div className="relative z-10 flex items-center w-full px-6 sm:px-10 lg:px-14">
         <div className="flex-1 max-w-xl">
-          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.4)" }}>Welcome to DeutschFlow</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] mb-4" style={{ color: "#fff" }}>
+          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.4)", textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}>Welcome to DeutschFlow</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.05] mb-4" style={{ color: "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
             Your German learning<br />journey starts here
           </h2>
-          <p className="text-sm sm:text-base leading-relaxed max-w-md" style={{ color: "rgba(255,255,255,0.45)" }}>
+          <p className="text-sm sm:text-base leading-relaxed max-w-md" style={{ color: "rgba(255,255,255,0.45)", textShadow: "0 1px 3px rgba(0,0,0,0.3)" }}>
             Structured lessons, smart flashcards, and an AI tutor—everything you need to go from zero to fluent.
           </p>
           <div className="flex items-center gap-5 mt-5 text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
             <span>✓ Beginner-friendly</span> <span className="opacity-30">|</span> <span>⏱ 10 min lessons</span> <span className="opacity-30">|</span> <span>📚 80+ lessons</span>
           </div>
         </div>
-        {/* Glassmorphic CTA panel */}
-        <div className="hidden lg:block ml-auto rounded-2xl p-6 w-[280px] flex-shrink-0 surface-glass"
-          style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
-          <p className="text-base font-bold mb-1" style={{ color: "#fff" }}>Ready to begin?</p>
+        {/* Glass CTA panel — stronger glass effect */}
+        <div className="hidden lg:block ml-auto rounded-2xl p-6 w-[280px] flex-shrink-0"
+          style={{
+            background: "rgba(16,20,38,0.35)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.5), 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 0 0 1px rgba(123,63,251,0.08)",
+          }}>
+          <p className="text-base font-bold mb-1.5" style={{ color: "#fff" }}>Ready to begin?</p>
           <p className="text-xs mb-5 leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>Start your first lesson and see your progress here.</p>
           <button onClick={() => router.push("/curriculum")}
             className="w-full px-6 py-3 rounded-xl text-sm font-bold glossy-accent flex items-center justify-center gap-2">
@@ -79,8 +112,7 @@ function Hero() {
           </button>
         </div>
       </div>
-      {/* Twinkle animation keyframes via style tag */}
-      <style>{`@keyframes twinkle{0%,100%{opacity:0.3}50%{opacity:1}}`}</style>
+      <style>{`@keyframes twinkle{0%,100%{opacity:0.15}50%{opacity:1}}`}</style>
     </div>
   );
 }
@@ -108,9 +140,14 @@ function PlanCard({ icon, iconBg, title, subtitle, footer, href }: {
 // ── Stat Cell ────────────────────────────────────────────────
 function StatCell({ icon, value, label }: { icon: string; value: string; label: string }) {
   return (
-    <div className="rounded-xl p-4 transition-all duration-250 hover:-translate-y-0.5"
-      style={{ background: "var(--color-card-alt)", border: "1px solid var(--color-border)" }}>
-      <span className="text-lg mb-2 block">{icon}</span>
+    <div className="rounded-xl p-4 transition-all duration-250 hover:-translate-y-1"
+      style={{
+        background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, transparent 30%), var(--color-card-alt)",
+        border: "1px solid rgba(255,255,255,0.04)",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+      }}>
+      <div className="w-9 h-9 rounded-lg flex items-center justify-center text-base mb-3"
+        style={{ background: "rgba(123,63,251,0.08)", border: "1px solid rgba(123,63,251,0.08)" }}>{icon}</div>
       <p className="text-lg font-bold mb-0.5" style={{ color: "var(--color-text)" }}>{value}</p>
       <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>{label}</p>
     </div>
@@ -215,8 +252,8 @@ export default function DashboardPage() {
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="rounded-2xl p-5 sm:p-6 space-y-4" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" }}>
           <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>Review & Practice</p>
-          <div className="flex items-center gap-3"><div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(123,63,251,0.1)" }}>🃏</div><div className="flex-1"><p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>Flashcards Complete</p><p className="text-xs" style={{ color: "var(--color-text-muted)" }}>Nothing due — excellent work!</p></div><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" style={{ color: "var(--color-text-muted)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg></div>
-          <div className="flex items-center gap-3"><div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(46,213,115,0.1)" }}>🎯</div><div className="flex-1"><p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>Discover Your Level</p><p className="text-xs" style={{ color: "var(--color-text-muted)" }}>Find out what you already know</p></div><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" style={{ color: "var(--color-text-muted)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg></div>
+          <div className="flex items-center gap-3 group cursor-pointer"><div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(123,63,251,0.1)" }}>🃏</div><div className="flex-1"><p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>Flashcards Complete</p><p className="text-xs" style={{ color: "var(--color-text-muted)" }}>Nothing due — excellent work!</p></div><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" style={{ color: "var(--color-text-muted)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg></div>
+          <div className="flex items-center gap-3 group cursor-pointer"><div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(46,213,115,0.1)" }}>🎯</div><div className="flex-1"><p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>Discover Your Level</p><p className="text-xs" style={{ color: "var(--color-text-muted)" }}>Find out what you already know</p></div><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" style={{ color: "var(--color-text-muted)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg></div>
         </div>
         <div className="rounded-2xl p-5 sm:p-6" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" }}>
           <p className="text-[11px] font-semibold uppercase tracking-widest mb-4" style={{ color: "var(--color-text-muted)" }}>Recent Activity</p>
