@@ -44,24 +44,28 @@ function Hero() {
         <div className="absolute inset-0 rounded-full" style={{ background:"radial-gradient(circle at 55% 40%, rgba(255,255,255,0.06) 0%, rgba(200,170,255,0.03) 35%, transparent 65%)" }} />
       </div>
 
-      {/* 2. Brandenburg Gate — no mask, blended purely with overlays */}
+      {/* Full-width gate image — covers entire hero background */}
       <div className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage: "url('/gate.jpg')",
-          backgroundSize: "35% auto",
-          backgroundPosition: "58% 35%",
+          backgroundSize: "cover",
+          backgroundPosition: "center 30%",
           backgroundRepeat: "no-repeat",
-          opacity: 0.9,
+          opacity: 1,
         }} />
 
-      {/* 8. Gradient overlays — dissolve image edges into purple atmosphere */}
+      {/* Purple overlay — tints the photo to match DeutschFlow brand */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "linear-gradient(90deg, rgba(8,6,40,0.6) 0%, rgba(8,6,40,0.25) 25%, rgba(8,6,40,0.05) 58%, rgba(8,6,40,0.08) 68%, rgba(8,6,40,0.35) 85%, rgba(8,6,40,0.7) 100%)" }} />
+        style={{ background: "linear-gradient(135deg, rgba(60,20,120,0.55) 0%, rgba(40,10,80,0.4) 30%, rgba(20,5,50,0.3) 60%, rgba(60,20,120,0.45) 100%)" }} />
+      {/* Edge darkening for text readability */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "linear-gradient(to top, rgba(8,6,40,0.7) 0%, rgba(8,6,40,0.3) 40%, transparent 100%)" }} />
-      {/* Vignette — soft, not harsh */}
+        style={{ background: "linear-gradient(90deg, rgba(4,4,20,0.7) 0%, rgba(4,4,20,0.3) 30%, transparent 55%, transparent 70%, rgba(4,4,20,0.25) 85%, rgba(4,4,20,0.6) 100%)" }} />
+      {/* Bottom gradient — keeps text readable */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ boxShadow: "inset 0 0 50px 15px rgba(0,0,0,0.35)" }} />
+        style={{ background: "linear-gradient(to top, rgba(4,4,20,0.6) 0%, transparent 50%)" }} />
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ boxShadow: "inset 0 0 60px 20px rgba(0,0,0,0.4)" }} />
 
       {/* Content */}
       <div className="relative z-10 flex items-center h-full w-full px-6 sm:px-8 lg:px-10">
