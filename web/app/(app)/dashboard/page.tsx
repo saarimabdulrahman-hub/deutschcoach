@@ -16,11 +16,12 @@ function getGreeting() { const h = new Date().getHours(); return h < 12 ? GREETI
 function formatDate() { return new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }).toUpperCase(); }
 
 const cardStyle: React.CSSProperties = {
-  background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 40%), var(--color-card-bg)",
-  border: "1px solid rgba(180, 160, 230, 0.1)",
+  background: "linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 40%, transparent 70%), var(--color-card-bg)",
+  border: "1px solid rgba(190, 170, 240, 0.15)",
   borderRadius: 20,
-  boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
-  backdropFilter: "blur(4px)",
+  boxShadow: "0 8px 24px rgba(0,0,0,0.3), 0 1px 0 0 rgba(255,255,255,0.04) inset",
+  backdropFilter: "blur(6px)",
+  WebkitBackdropFilter: "blur(6px)",
 };
 
 // ═══════════════════════════════════════════════════════════════════

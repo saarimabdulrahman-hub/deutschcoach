@@ -7,41 +7,41 @@
 
 :root {
   /* ── Color: Surface — Deep Premium Dark ─────────── */
-  --color-page-bg: #0A071E;
-  --color-card-bg: rgba(20, 15, 50, 0.55);
-  --color-card-alt: rgba(25, 18, 58, 0.65);
-  --color-card-elevated: rgba(30, 22, 68, 0.75);
-  --color-sidebar-bg: #0C0922;
-  --color-header-bg: rgba(14, 10, 36, 0.7);
-  --color-input-bg: rgba(20, 15, 50, 0.4);
+  --color-page-bg: #0B0725;
+  --color-card-bg: rgba(30, 20, 65, 0.6);
+  --color-card-alt: rgba(35, 24, 72, 0.7);
+  --color-card-elevated: rgba(40, 28, 82, 0.8);
+  --color-sidebar-bg: #0E0A28;
+  --color-header-bg: rgba(16, 12, 40, 0.75);
+  --color-input-bg: rgba(30, 20, 65, 0.5);
 
   /* ── Color: Border — Visible Glass ───────────────── */
-  --color-border: rgba(180, 160, 230, 0.1);
-  --color-border-light: rgba(180, 160, 230, 0.15);
-  --color-input-border: rgba(180, 160, 230, 0.12);
+  --color-border: rgba(190, 170, 240, 0.14);
+  --color-border-light: rgba(190, 170, 240, 0.2);
+  --color-input-border: rgba(190, 170, 240, 0.16);
   --color-input-focus: #8B46FF;
 
   /* ── Color: Text ────────────────────────────────── */
   --color-text: #FFFFFF;
-  --color-text-secondary: rgba(255, 255, 255, 0.72);
-  --color-text-muted: rgba(220, 210, 245, 0.45);
+  --color-text-secondary: rgba(255, 255, 255, 0.75);
+  --color-text-muted: rgba(210, 200, 240, 0.5);
 
   /* ── Color: Interactive ─────────────────────────── */
-  --color-hover-bg: rgba(139, 70, 255, 0.1);
-  --color-active-bg: rgba(139, 70, 255, 0.18);
-  --color-active-text: #B57BFF;
-  --color-badge-bg: rgba(139, 70, 255, 0.22);
-  --color-badge-text: #B57BFF;
+  --color-hover-bg: rgba(139, 70, 255, 0.14);
+  --color-active-bg: rgba(139, 70, 255, 0.22);
+  --color-active-text: #C48BFF;
+  --color-badge-bg: rgba(139, 70, 255, 0.25);
+  --color-badge-text: #C48BFF;
 
   /* ── Color: Accent — Luminous Glass Violet ────────── */
   --color-accent: #8B46FF;
-  --color-accent-light: #A24BFF;
+  --color-accent-light: #A85CFF;
   --color-accent-dark: #7B3FFB;
-  --color-accent-gradient: linear-gradient(135deg, #8B46FF, #A24BFF, #C07BFF);
-  --color-accent-glow: rgba(139, 70, 255, 0.25);
-  --color-brand-gradient: linear-gradient(135deg, #8B46FF, #B57BFF, #D56CFF);
-  --color-brand-purple: #B57BFF;
-  --color-brand-light: #D56CFF;
+  --color-accent-gradient: linear-gradient(135deg, #8B46FF, #B05AFF, #D080FF);
+  --color-accent-glow: rgba(139, 70, 255, 0.3);
+  --color-brand-gradient: linear-gradient(135deg, #8B46FF, #C480FF, #E0A0FF);
+  --color-brand-purple: #C480FF;
+  --color-brand-light: #E0A0FF;
 
   /* ── Color: Semantic ────────────────────────────── */
   --color-success: #2ED573;
