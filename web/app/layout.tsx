@@ -3,9 +3,9 @@ import { Providers } from "@/contexts/Providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DeutschCoach — Learn German",
+  title: "DeutschFlow — Learn German",
   description:
-    "Master German vocabulary, grammar, and conversation with spaced repetition and interactive quizzes.",
+    "Learn German with structured CEFR-aligned lessons, an AI tutor, and scientifically-proven spaced repetition.",
 };
 
 export default function RootLayout({

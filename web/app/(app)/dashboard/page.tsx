@@ -225,7 +225,7 @@ export default function DashboardPage() {
             <div className="w-full h-1 rounded-full mt-1.5" style={{background:"#2A2A45",overflow:"hidden"}}>
               <div className="h-full rounded-full" style={{width:`${data.level_progress_pct}%`,background:"linear-gradient(90deg,#ec4899,#f472b6,#d946ef,#8b5cf6)",boxShadow:"0 0 8px rgba(217,70,239,0.5)"}}/>
             </div>
-            <p className="text-[10px] mt-1" style={{color:"var(--color-text-muted)"}}>120 / 300 XP to A2</p>
+            <p className="text-[10px] mt-1" style={{color:"var(--color-text-muted)"}}>Progress to A2</p>
           </div>
         </div>
       </div>
