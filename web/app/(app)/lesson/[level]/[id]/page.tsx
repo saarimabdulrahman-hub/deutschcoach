@@ -15,6 +15,8 @@ import { VocabularyContent } from "@/components/lesson/VocabularyContent";
 import { GrammarContent } from "@/components/lesson/GrammarContent";
 import { SpeakingPlaceholder } from "@/components/lesson/SpeakingPlaceholder";
 import { CompletionContent } from "@/components/lesson/CompletionContent";
+import { EmmaProvider, useEmma, EmmaUI } from "@/components/emma";
+import { useEffect } from "react";
 import { MatchingExercise } from "@/components/interaction/MatchingExercise";
 import { FillInExercise } from "@/components/interaction/FillInExercise";
 import { RecallExercise } from "@/components/interaction/RecallExercise";
@@ -143,17 +145,60 @@ export default function LessonPage() {
   }, [data, isLoading, dialogueLines, vocabWords, nextLesson, level, router]);
 
   return (
-    <LessonNavigator
-      lessonTitle={`${level} · ${lesson?.title ?? "Lesson"}`}
-      stages={DEFAULT_LESSON_STAGES}
-      onExit={(reason) => {
-        if (reason === "save") seedMutation.mutate();
-        router.push("/curriculum");
-      }}
-      onFinish={() => seedMutation.mutate()}
-      renderStage={renderStage}
-      loading={isLoading}
-      error={error ? { message: error instanceof Error ? error.message : "Failed to load lesson", onRetry: () => queryClient.invalidateQueries({ queryKey: ["lesson", level, id] }) } : null}
-    />
+    <EmmaProvider>
+      <LessonPageInner
+        lessonTitle={`${level} · ${lesson?.title ?? "Lesson"}`}
+        stages={DEFAULT_LESSON_STAGES}
+        onExit={(reason: "save" | "discard") => {
+          if (reason === "save") seedMutation.mutate();
+          router.push("/curriculum");
+        }}
+        onFinish={() => seedMutation.mutate()}
+        renderStage={renderStage}
+        loading={isLoading}
+        error={error ? { message: error instanceof Error ? error.message : "Failed to load lesson", onRetry: () => queryClient.invalidateQueries({ queryKey: ["lesson", level, id] }) } : null}
+        lessonData={data}
+      />
+    </EmmaProvider>
+  );
+}
+
+// Inner component — lives inside EmmaProvider so it can call useEmma().setContext
+// on every stage change.
+function LessonPageInner({ lessonTitle, stages, onExit, onFinish, renderStage, loading, error, lessonData }: {
+  lessonTitle: string; stages: typeof DEFAULT_LESSON_STAGES;
+  onExit: (reason: "save" | "discard") => void; onFinish: () => void;
+  renderStage: (s: LessonStageDef, n: LessonNavApi) => React.ReactNode;
+  loading: boolean; error: any; lessonData: LessonDetail | undefined;
+}) {
+  const { setContext } = useEmma();
+  const onStageChange = useCallback((key: string, _index: number) => {
+    if (!lessonData) return;
+    const stage = stages.find((s) => s.key === key);
+    setContext({
+      lessonTitle: lessonData.lesson.title,
+      stage: key,
+      stageLabel: stage?.label ?? key,
+      vocabulary: lessonData.vocabulary.map((v) => v.german),
+      grammarPattern: lessonData.grammar_topics?.[0]?.title,
+      progressStep: stages.findIndex((s) => s.key === key) + 1,
+      progressTotal: stages.length,
+    });
+  }, [lessonData, stages, setContext]);
+
+  return (
+    <>
+      <LessonNavigator
+        lessonTitle={lessonTitle}
+        stages={stages}
+        onExit={onExit}
+        onFinish={onFinish}
+        onStageChange={onStageChange}
+        renderStage={renderStage}
+        loading={loading}
+        error={error}
+      />
+      <EmmaUI />
+    </>
   );
 }
