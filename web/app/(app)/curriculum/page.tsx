@@ -175,20 +175,23 @@ export default function CurriculumPage() {
                 Continue Learning
               </p>
               {/* Avatar + name row */}
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3.5 mb-3.5">
                 <div className="relative flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold"
+                  {/* Outer glow ring */}
+                  <div className="absolute -inset-1 rounded-full opacity-60" style={{ background: "linear-gradient(135deg, #6D3BFF, #FF3CA6)", filter: "blur(8px)" }} />
+                  {/* Avatar circle */}
+                  <div className="relative w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold ring-1 ring-white/15"
                     style={{
                       background: "linear-gradient(135deg, #6D3BFF, #FF3CA6)",
                       color: "#fff",
-                      boxShadow: "0 0 0 3px rgba(109,59,255,0.3), 0 0 18px rgba(109,59,255,0.25)",
+                      boxShadow: "0 0 0 4px rgba(109,59,255,0.35), 0 0 24px rgba(109,59,255,0.3), 0 0 48px rgba(255,60,166,0.12)",
                     }}>
                     {(user?.name || "S").charAt(0).toUpperCase()}
                   </div>
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-bold truncate" style={{ color: "#fff" }}>{user?.name || "Student"}</p>
-                  <p className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>{viewLevel} · {LEVEL_NAME[viewLevel] || viewLevel}</p>
+                  <p className="text-[11px] mt-0.5" style={{ color: "var(--color-text-muted)" }}>{viewLevel} · {LEVEL_NAME[viewLevel] || viewLevel}</p>
                 </div>
               </div>
               {/* Lesson title */}
