@@ -1,58 +1,74 @@
 "use client";
 
-import { useState } from "react";
 import type { VocabEntry } from "@/types";
+import { useInteractionController } from "@/components/interaction/useInteractionController";
+import { QuestionCard, ProgressDots, PageNav } from "@/components/interaction/InteractionPrimitives";
+import type { InteractionItem } from "@/components/interaction/types";
 
-// Vocabulary stage — flip cards in chunked sets (LESSON_WIREFRAMES Screen 4).
-// Renders inside LessonShell's content slot. Real vocabulary from the API.
-
-interface Props { vocabulary: VocabEntry[]; }
+// Vocabulary stage — thin wrapper over the interaction engine (Sprint 8.2).
+// No longer maintains its own index/flip/prev/next state.
 
 const DISPLAY_POS: Record<string, string> = { noun: "der/die/das · noun", verb: "verb", adjective: "adj.", greeting: "greeting", phrase: "phrase" };
 
+function vocabToItems(vocab: VocabEntry[]): InteractionItem[] {
+  return vocab.map((v) => ({
+    id: v.id,
+    front: v.german ?? "",
+    back: v.english ?? "",
+    meta: DISPLAY_POS[v.part_of_speech ?? ""] ?? v.part_of_speech ?? "",
+    hint: v.gender ? `Gender: ${v.gender}` : undefined,
+  }));
+}
+
+interface Props { vocabulary: VocabEntry[]; }
+
 export function VocabularyContent({ vocabulary }: Props) {
-  const [index, setIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const max = vocabulary.length;
-  if (!max) return <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>No vocabulary for this lesson.</p>;
+  const items = vocabulary.length ? vocabToItems(vocabulary) : [{ id: "empty", front: "No vocabulary", back: "for this lesson" }];
+  const ctrl = useInteractionController({ mode: "flashcard", items });
 
-  const current = vocabulary[index];
-  const pos = current.part_of_speech ?? "";
-  const setsLabel = max <= 6 ? `Set 1 of 1` : `Set ${Math.ceil((index + 1) / 6)} of ${Math.ceil(max / 6)}`;
+  if (!vocabulary.length) {
+    return <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>No vocabulary for this lesson.</p>;
+  }
 
-  const goNext = () => { setFlipped(false); setIndex((i) => (i + 1) % max); };
-  const goPrev = () => { setFlipped(false); setIndex((i) => (i - 1 + max) % max); };
+  const front = ctrl.current.front;
+  const back = ctrl.current.back ?? "";
+  const meta = ctrl.current.meta ?? "";
+  const isFlipped = ctrl.phase === "revealed";
 
   return (
     <div className="max-w-lg mx-auto py-2">
-      <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
-        Your words &middot; {setsLabel}
-      </p>
-      <div role="button" tabIndex={0} aria-label={`${current.german}. Tap to flip.`}
-        onClick={() => setFlipped((f) => !f)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setFlipped((f) => !f); } }}
-        className="mt-3 rounded-2xl p-6 text-center cursor-pointer transition-all min-h-[180px] flex flex-col justify-center"
-        style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-        {!flipped ? (
-          <>
-            <p className="text-2xl sm:text-3xl font-semibold" style={{ color: "var(--color-text)" }}>{current.german}</p>
-            <p className="text-xs mt-1.5" style={{ color: "var(--color-text-muted)" }}>
-              {DISPLAY_POS[pos] || pos} {current.gender ? `(${current.gender})` : ""}
-            </p>
-            <p className="text-[11px] mt-3 opacity-60" style={{ color: "var(--color-text-muted)" }}>Tap to flip</p>
-          </>
-        ) : (
-          <>
-            <p className="text-xl sm:text-2xl font-medium" style={{ color: "var(--color-text)" }}>{current.english}</p>
-            {current.example_sentence && <p className="text-sm mt-2 italic" style={{ color: "var(--color-text-secondary)" }}>{current.example_sentence}</p>}
-            {current.plural_form && <p className="text-[11px] mt-1" style={{ color: "var(--color-text-muted)" }}>Plural: {current.plural_form}</p>}
-          </>
-        )}
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
+          Your words · {ctrl.index + 1} of {ctrl.total}
+        </p>
+        <ProgressDots total={ctrl.total} current={ctrl.index} completed={ctrl.completedCount} />
       </div>
-      <div className="flex items-center justify-center gap-3 mt-4">
-        <button onClick={goPrev} aria-label="Previous word" className="w-11 h-11 rounded-lg hover:bg-white/5 flex items-center justify-center text-lg" style={{ color: "var(--color-text-muted)" }}>‹</button>
-        <span className="text-[11px] tabular-nums" style={{ color: "var(--color-text-muted)" }}>{index + 1} / {max}</span>
-        <button onClick={goNext} aria-label="Next word" className="w-11 h-11 rounded-lg hover:bg-white/5 flex items-center justify-center text-lg" style={{ color: "var(--color-text-muted)" }}>›</button>
-      </div>
+
+      <QuestionCard>
+        <div className="text-center min-h-[160px] flex flex-col justify-center cursor-pointer"
+          role="button" tabIndex={0} aria-label={`${front}. Tap to flip.`}
+          onClick={isFlipped ? undefined : ctrl.reveal}
+          onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && !isFlipped) { e.preventDefault(); ctrl.reveal(); } }}>
+          {/* FRONT */}
+          {!isFlipped ? (
+            <>
+              <p className="text-2xl sm:text-3xl font-semibold" style={{ color: "var(--color-text)" }}>{front}</p>
+              {meta && <p className="text-xs mt-1.5" style={{ color: "var(--color-text-muted)" }}>{meta}</p>}
+              <p className="text-[11px] mt-3 opacity-60" style={{ color: "var(--color-text-muted)" }}>Tap to flip</p>
+            </>
+          ) : (
+            <>
+              <p className="text-xl sm:text-2xl font-medium" style={{ color: "var(--color-text)" }}>{back}</p>
+              <button onClick={ctrl.retry} className="mt-3 min-h-[44px] px-4 text-xs font-semibold hover:underline"
+                style={{ color: "var(--color-accent-light)" }}>Flip back</button>
+            </>
+          )}
+        </div>
+      </QuestionCard>
+
+      <PageNav current={ctrl.index} total={ctrl.total}
+        onPrev={ctrl.goPrev} onNext={ctrl.goNext}
+        canPrev={ctrl.canGoPrev} canNext={ctrl.canGoNext} />
     </div>
   );
 }
