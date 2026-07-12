@@ -158,7 +158,7 @@ export default function CurriculumPage() {
             style={{
               backgroundImage: "url('/learn-hero.webp')",
               backgroundSize: "cover",
-              backgroundPosition: "center",
+              backgroundPosition: "45% 50%",
               opacity: 0.4,
             }} />
           {/* Dark overlay for text legibility */}
@@ -204,7 +204,7 @@ export default function CurriculumPage() {
               </div>
               {/* CTA */}
               <button onClick={() => goLesson(nextLesson!.id)}
-                className="px-6 py-3 rounded-full text-sm font-bold inline-flex items-center gap-2 w-auto"
+                className="px-5 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-1.5 w-auto"
                 style={{
                   background: "linear-gradient(135deg, #FF3CA6, #6D3BFF, #3B82F6)",
                   color: "#fff",
@@ -218,7 +218,7 @@ export default function CurriculumPage() {
 
             {/* RIGHT: Progress widget (overlapping circle) */}
             <div className="hidden md:flex flex-col justify-center flex-shrink-0" style={{ flexBasis: "25%" }}>
-              <div className="relative pt-12 pb-5 px-5 rounded-2xl"
+              <div className="relative pt-14 pb-5 px-5 rounded-2xl"
                 style={{
                   background: "rgba(20,20,35,0.75)",
                   backdropFilter: "blur(16px)",
@@ -226,20 +226,20 @@ export default function CurriculumPage() {
                   border: "1px solid rgba(255,255,255,0.08)",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
                 }}>
-                {/* Large circular progress — overflows the top of the card */}
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2">
-                  <div className="relative w-[72px] h-[72px]">
+                {/* Large circular progress — covers the top half of the card */}
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2">
+                  <div className="relative w-[88px] h-[88px]">
                     {/* Glow ring behind the circle */}
-                    <div className="absolute -inset-2 rounded-full opacity-40" style={{ background: "radial-gradient(circle, rgba(109,59,255,0.5), transparent 70%)", filter: "blur(6px)" }} />
-                    <svg className="w-full h-full -rotate-90 relative z-10" viewBox="0 0 72 72">
-                      <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
-                      <circle cx="36" cy="36" r="30" fill="none"
-                        stroke="url(#heroPctGrad)" strokeWidth="5" strokeLinecap="round"
-                        strokeDasharray={2 * Math.PI * 30}
-                        strokeDashoffset={2 * Math.PI * 30 * (1 - (currentUnit ? currentUnit.completed / Math.max(currentUnit.total, 1) : 0))}
-                        style={{ transition: "stroke-dashoffset 0.8s ease", filter: "drop-shadow(0 0 6px rgba(255,60,166,0.5))" }} />
+                    <div className="absolute -inset-3 rounded-full opacity-40" style={{ background: "radial-gradient(circle, rgba(109,59,255,0.5), transparent 70%)", filter: "blur(8px)" }} />
+                    <svg className="w-full h-full -rotate-90 relative z-10" viewBox="0 0 88 88">
+                      <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
+                      <circle cx="44" cy="44" r="38" fill="none"
+                        stroke="url(#heroPctGrad)" strokeWidth="6" strokeLinecap="round"
+                        strokeDasharray={2 * Math.PI * 38}
+                        strokeDashoffset={2 * Math.PI * 38 * (1 - (currentUnit ? currentUnit.completed / Math.max(currentUnit.total, 1) : 0))}
+                        style={{ transition: "stroke-dashoffset 0.8s ease", filter: "drop-shadow(0 0 8px rgba(255,60,166,0.5))" }} />
                     </svg>
-                    <span className="absolute inset-0 z-10 flex items-center justify-center text-base font-extrabold" style={{ color: "#fff" }}>
+                    <span className="absolute inset-0 z-10 flex items-center justify-center text-lg font-extrabold" style={{ color: "#fff" }}>
                       {currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%
                     </span>
                   </div>
