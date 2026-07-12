@@ -227,24 +227,29 @@ export default function CurriculumPage() {
       <div className="flex flex-col lg:flex-row gap-6">
         {/* LEFT: Main learning area — 70% */}
         <div className="flex-1 min-w-0 space-y-6" style={{ flexBasis: "70%" }}>
-          {/* Today's Mission — outer card wrapping 3 mini-cards */}
+          {/* Today's Mission — outer card, text beside icon */}
           {nextLesson && (
             <section aria-labelledby="mission-heading" className="rounded-2xl p-5"
               style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.06)" }}>
               <h2 id="mission-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "var(--color-text)" }}>Today's Mission</h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
-                  { icon: "📖", title: `Complete Lesson ${nextLesson.order}`, subtitle: nextLesson.title, meta: `~${MIN_PER_LESSON} min`, onClick: () => goLesson(nextLesson!.id) },
-                  { icon: "🃏", title: cardsDue > 0 ? `Review ${cardsDue} cards` : "Vocabulary — all caught up", subtitle: cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now", meta: cardsDue > 0 ? "~2 min" : "✓", onClick: () => router.push("/review") },
-                  { icon: "🎤", title: "Practice speaking", subtitle: "Chat with Emma — your AI coach", meta: "~2 min", onClick: () => router.push("/chat") },
+                  { icon: "📖", iconBg: "rgba(59,130,246,0.18)", iconColor: "#60A5FA", title: `Complete Lesson ${nextLesson.order}`, subtitle: nextLesson.title, meta: `~${MIN_PER_LESSON} min`, onClick: () => goLesson(nextLesson!.id) },
+                  { icon: "🃏", iconBg: "rgba(245,158,11,0.18)", iconColor: "#FBBF24", title: cardsDue > 0 ? `Review ${cardsDue} cards` : "Vocabulary — all caught up", subtitle: cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now", meta: cardsDue > 0 ? "~2 min" : "✓", onClick: () => router.push("/review") },
+                  { icon: "🎤", iconBg: "rgba(34,197,94,0.18)", iconColor: "#4ADE80", title: "Practice speaking", subtitle: "Chat with Emma — your AI coach", meta: "~2 min", onClick: () => router.push("/chat") },
                 ].map((m, i) => (
                   <button key={i} onClick={m.onClick}
-                    className="text-left rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5"
+                    className="text-left rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-3.5"
                     style={{ background: "#17172C", border: "1px solid rgba(255,255,255,0.04)" }}>
-                    <span className="text-2xl block mb-3">{m.icon}</span>
-                    <p className="text-[15px] font-bold mb-1" style={{ color: "var(--color-text)" }}>{m.title}</p>
-                    <p className="text-[13px] mb-3" style={{ color: "var(--color-text-muted)" }}>{m.subtitle}</p>
-                    <span className="text-[11px] font-semibold" style={{ color: "var(--color-accent-light)" }}>{m.meta}</span>
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                      style={{ background: m.iconBg, color: m.iconColor }}>
+                      {m.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[15px] font-bold mb-0.5 truncate" style={{ color: "var(--color-text)" }}>{m.title}</p>
+                      <p className="text-[12px] truncate" style={{ color: "var(--color-text-muted)" }}>{m.subtitle}</p>
+                      <span className="text-[10px] font-semibold mt-1 block" style={{ color: "var(--color-accent-light)" }}>{m.meta}</span>
+                    </div>
                   </button>
                 ))}
               </div>
@@ -313,9 +318,9 @@ export default function CurriculumPage() {
 
         {/* RIGHT: Roadmap timeline — 30% */}
         <div className="lg:w-72 flex-shrink-0 flex flex-col">
-          <div className="rounded-2xl p-5" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
+          <div className="rounded-2xl p-5 flex-1 flex flex-col" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
             <h3 className="text-sm font-bold mb-4" style={{ color: "var(--color-text)" }}>Roadmap</h3>
-            <div className="space-y-0">
+            <div className="space-y-0 flex-1">
               {units.map((u, i) => {
                 const isCurrent = u.unit === currentUnit?.unit;
                 const isComp = u.isComplete;
@@ -339,12 +344,17 @@ export default function CurriculumPage() {
                 );
               })}
             </div>
+            {/* View full roadmap */}
+            <button onClick={() => setOverride(units[0]?.unit ? viewLevel : viewLevel)}
+              className="mt-3 text-xs font-semibold hover:underline self-start" style={{ color: "var(--color-accent-light)" }}>
+              View full roadmap →
+            </button>
           </div>
 
-          {/* CEFR Journey — flex-1 to fill remaining height */}
+          {/* Complete Journey summary */}
           {levels && levels.length > 0 && (
-            <div className="rounded-2xl p-5 mt-4 flex-1 flex flex-col" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <h3 className="text-sm font-bold mb-3" style={{ color: "var(--color-text)" }}>CEFR Journey</h3>
+            <div className="rounded-2xl p-5 mt-4" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
+              <h3 className="text-sm font-bold mb-3" style={{ color: "var(--color-text)" }}>Complete Journey</h3>
               <LevelPath levels={levels} currentLevel={viewLevel} onSelect={setOverride} />
             </div>
           )}
