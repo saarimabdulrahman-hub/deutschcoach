@@ -153,6 +153,14 @@ export default function CurriculumPage() {
           {/* Purple ambient glow */}
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: "radial-gradient(ellipse at 65% 50%, rgba(109,59,255,0.25) 0%, transparent 55%), radial-gradient(ellipse at 60% 60%, rgba(255,60,166,0.10) 0%, transparent 40%)" }} />
+          {/* Hero background image */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: "url('/learn-hero.webp')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              opacity: 0.4,
+            }} />
           {/* Dark overlay for text legibility */}
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: "linear-gradient(90deg, rgba(16,10,36,0.55) 0%, rgba(16,10,36,0.15) 45%, transparent 65%, rgba(16,10,36,0.2) 85%, rgba(16,10,36,0.45) 100%)" }} />
