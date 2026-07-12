@@ -230,25 +230,25 @@ export default function CurriculumPage() {
           {/* Today's Mission — outer card, text beside icon */}
           {nextLesson && (
             <section aria-labelledby="mission-heading" className="rounded-2xl p-5"
-              style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <h2 id="mission-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "var(--color-text)" }}>Today's Mission</h2>
+              style={{ background: "#111126", border: "1px solid rgba(255,255,255,0.04)", boxShadow: "0 20px 40px rgba(0,0,0,0.35)" }}>
+              <h2 id="mission-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "#FFFFFF" }}>Today's Mission</h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
-                  { icon: "📖", iconBg: "rgba(59,130,246,0.18)", iconColor: "#60A5FA", title: `Complete Lesson ${nextLesson.order}`, subtitle: nextLesson.title, meta: `~${MIN_PER_LESSON} min`, onClick: () => goLesson(nextLesson!.id) },
-                  { icon: "🃏", iconBg: "rgba(245,158,11,0.18)", iconColor: "#FBBF24", title: cardsDue > 0 ? `Review ${cardsDue} cards` : "Vocabulary — all caught up", subtitle: cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now", meta: cardsDue > 0 ? "~2 min" : "✓", onClick: () => router.push("/review") },
-                  { icon: "🎤", iconBg: "rgba(34,197,94,0.18)", iconColor: "#4ADE80", title: "Practice speaking", subtitle: "Chat with Emma — your AI coach", meta: "~2 min", onClick: () => router.push("/chat") },
+                  { icon: "📖", iconBg: "rgba(168,85,247,0.18)", iconColor: "#A855F7", title: `Complete Lesson ${nextLesson.order}`, subtitle: nextLesson.title, meta: `~${MIN_PER_LESSON} min`, onClick: () => goLesson(nextLesson!.id) },
+                  { icon: "🃏", iconBg: "rgba(255,180,60,0.18)", iconColor: "#E19C18", title: cardsDue > 0 ? `Review ${cardsDue} cards` : "Vocabulary — all caught up", subtitle: cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now", meta: cardsDue > 0 ? "~2 min" : "✓", onClick: () => router.push("/review") },
+                  { icon: "🎤", iconBg: "rgba(34,197,94,0.16)", iconColor: "#22C55E", title: "Practice speaking", subtitle: "Chat with Emma — your AI coach", meta: "~2 min", onClick: () => router.push("/chat") },
                 ].map((m, i) => (
                   <button key={i} onClick={m.onClick}
                     className="text-left rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-3.5"
-                    style={{ background: "#17172C", border: "1px solid rgba(255,255,255,0.04)" }}>
+                    style={{ background: "#17172D", border: "1px solid rgba(255,255,255,0.04)" }}>
                     <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
                       style={{ background: m.iconBg, color: m.iconColor }}>
                       {m.icon}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[15px] font-bold mb-0.5 truncate" style={{ color: "var(--color-text)" }}>{m.title}</p>
-                      <p className="text-[12px] truncate" style={{ color: "var(--color-text-muted)" }}>{m.subtitle}</p>
-                      <span className="text-[10px] font-semibold mt-1 block" style={{ color: "var(--color-accent-light)" }}>{m.meta}</span>
+                      <p className="text-[15px] font-bold mb-0.5 truncate" style={{ color: "#FFFFFF" }}>{m.title}</p>
+                      <p className="text-[12px] truncate" style={{ color: "#9CA3AF" }}>{m.subtitle}</p>
+                      <span className="text-[10px] font-semibold mt-1 block" style={{ color: "#6B7280" }}>{m.meta}</span>
                     </div>
                   </button>
                 ))}
@@ -261,10 +261,10 @@ export default function CurriculumPage() {
             <div className="space-y-3">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}</div>
           ) : currentUnit ? (
             <section aria-labelledby="unit-heading">
-              <h2 id="unit-heading" className="text-[22px] font-extrabold mb-1" style={{ color: "var(--color-text)" }}>
+              <h2 id="unit-heading" className="text-[22px] font-extrabold mb-1" style={{ color: "#FFFFFF" }}>
                 Unit {currentUnit.unit}{currentUnit.theme ? ` · ${currentUnit.theme}` : ""}
               </h2>
-              <p className="text-sm mb-4" style={{ color: "var(--color-text-muted)" }}>
+              <p className="text-sm mb-4" style={{ color: "#9CA3AF" }}>
                 {currentUnit.completed} of {currentUnit.total} lessons complete · {Math.round((currentUnit.completed / currentUnit.total) * 100)}%
               </p>
               {/* Lessons — 4-column layout */}
@@ -277,28 +277,34 @@ export default function CurriculumPage() {
                       onClick={() => router.push(`/curriculum/${viewLevel.toLowerCase()}/${l.id}`)}
                       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(`/curriculum/${viewLevel.toLowerCase()}/${l.id}`); } }}
                       className="flex items-center gap-4 rounded-2xl px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
-                      style={{ background: isActive ? "#17172C" : "#121224", border: isActive ? "1px solid var(--color-accent)" : "1px solid rgba(255,255,255,0.05)" }}>
+                      style={{
+                        background: isActive ? "#17172D" : "#111126",
+                        border: isActive ? "1px solid rgba(168,85,247,0.3)" : "1px solid rgba(255,255,255,0.04)",
+                        boxShadow: isActive ? "0 0 20px rgba(217,70,239,0.1)" : "none",
+                      }}>
                       {/* Number circle */}
                       <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
                         style={{
-                          background: isComp ? "rgba(34,197,94,0.15)" : isActive ? "var(--color-accent-gradient)" : "transparent",
-                          color: isComp ? "#22c55e" : isActive ? "#fff" : "var(--color-text-muted)",
-                          border: (!isComp && !isActive) ? "1px solid var(--color-border)" : "none",
+                          background: isComp ? "rgba(34,197,94,0.15)" : isActive ? "linear-gradient(180deg, #FFB547, #D97706)" : "transparent",
+                          color: isComp ? "#22C55E" : isActive ? "#fff" : "#6B7280",
+                          border: (!isComp && !isActive) ? "1px solid #2A2644" : "none",
+                          boxShadow: isActive ? "0 0 10px rgba(255,180,60,0.15)" : "none",
                         }}>
                         {isComp ? "✓" : l.order}
                       </div>
                       {/* Lesson info */}
                       <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-semibold truncate" style={{ color: isComp ? "var(--color-text-muted)" : "var(--color-text)" }}>{l.title}</p>
-                        <p className="text-xs mt-0.5 truncate" style={{ color: "var(--color-text-muted)" }}>{(l.topics || []).slice(0, 3).join(" · ")}</p>
+                        <p className="text-[15px] font-semibold truncate" style={{ color: isComp ? "#6B7280" : "#D1D5DB" }}>{l.title}</p>
+                        <p className="text-xs mt-0.5 truncate" style={{ color: "#6B7280" }}>{(l.topics || []).slice(0, 3).join(" · ")}</p>
                       </div>
                       {/* Duration */}
-                      <span className="text-xs flex-shrink-0 hidden sm:block" style={{ color: "var(--color-text-muted)" }}>~{MIN_PER_LESSON} min</span>
+                      <span className="text-xs flex-shrink-0 hidden sm:block" style={{ color: "#6B7280" }}>~{MIN_PER_LESSON} min</span>
                       {/* Status chip */}
                       <span className="flex-shrink-0 text-[11px] font-semibold px-3 py-1 rounded-full"
                         style={{
-                          background: isComp ? "rgba(34,197,94,0.12)" : isActive ? "var(--color-accent-gradient)" : "rgba(255,255,255,0.04)",
-                          color: isComp ? "#22c55e" : isActive ? "#fff" : "var(--color-text-muted)",
+                          background: isComp ? "rgba(34,197,94,0.12)" : isActive ? "linear-gradient(90deg, #C026FF, #8B5CF6)" : "rgba(255,255,255,0.04)",
+                          color: isComp ? "#22C55E" : isActive ? "#fff" : "#6B7280",
+                          boxShadow: isActive ? "0 0 12px rgba(217,70,239,0.25)" : "none",
                         }}>
                         {isComp ? "Completed" : isActive ? "Current" : "Locked"}
                       </span>
@@ -308,18 +314,18 @@ export default function CurriculumPage() {
               </div>
             </section>
           ) : lessons && lessons.length === 0 ? (
-            <div className="rounded-2xl p-8 text-center" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
+            <div className="rounded-2xl p-8 text-center" style={{ background: "#111126", border: "1px solid rgba(255,255,255,0.04)", boxShadow: "0 20px 40px rgba(0,0,0,0.35)" }}>
               <div className="text-4xl mb-3">📚</div>
-              <p className="text-sm font-medium mb-1" style={{ color: "var(--color-text)" }}>{viewLevel} lessons are coming soon</p>
-              <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>We're building this level — check back shortly.</p>
+              <p className="text-sm font-medium mb-1" style={{ color: "#FFFFFF" }}>{viewLevel} lessons are coming soon</p>
+              <p className="text-xs" style={{ color: "#9CA3AF" }}>We're building this level — check back shortly.</p>
             </div>
           ) : null}
         </div>
 
         {/* RIGHT: Roadmap timeline — 30%, full height */}
         <div className="flex-1 min-w-0 flex flex-col" style={{ flexBasis: "30%" }}>
-          <div className="rounded-2xl p-5 flex-1 flex flex-col" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
-            <h3 className="text-sm font-bold mb-4" style={{ color: "var(--color-text)" }}>Roadmap</h3>
+          <div className="rounded-2xl p-5 flex-1 flex flex-col" style={{ background: "#111126", border: "1px solid rgba(255,255,255,0.04)", boxShadow: "0 20px 40px rgba(0,0,0,0.35)" }}>
+            <h3 className="text-sm font-bold mb-4" style={{ color: "#FFFFFF" }}>Roadmap</h3>
             <div className="space-y-0 flex-1">
               {units.map((u, i) => {
                 const isCurrent = u.unit === currentUnit?.unit;
@@ -329,14 +335,17 @@ export default function CurriculumPage() {
                   <div key={u.unit} className="flex gap-3">
                     <div className="flex flex-col items-center flex-shrink-0">
                       <div className="w-3 h-3 rounded-full flex-shrink-0"
-                        style={{ background: isComp ? "#22c55e" : isCurrent ? "var(--color-accent)" : "var(--color-border)" }} />
-                      {!isLast && <div className="w-0.5 flex-1 min-h-[24px]" style={{ background: "var(--color-border)" }} />}
+                        style={{
+                          background: isComp ? "#22C55E" : isCurrent ? "#D946EF" : "#4B5563",
+                          boxShadow: isCurrent ? "0 0 6px rgba(217,70,239,0.4), inset 0 0 0 1.5px #fff" : isComp ? "0 0 6px rgba(34,197,94,0.2)" : "none",
+                        }} />
+                      {!isLast && <div className="w-0.5 flex-1 min-h-[24px]" style={{ background: isComp ? "#22C55E" : "#2A2644" }} />}
                     </div>
                     <div className={`pb-4 ${isLast ? "" : ""}`}>
-                      <p className="text-sm font-semibold" style={{ color: isCurrent ? "var(--color-text)" : "var(--color-text-secondary)" }}>
+                      <p className="text-sm font-semibold" style={{ color: isCurrent ? "#FFFFFF" : "#D1D5DB" }}>
                         Unit {u.unit}{u.theme ? ` · ${u.theme}` : ""}
                       </p>
-                      <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
+                      <p className="text-xs mt-0.5" style={{ color: "#6B7280" }}>
                         {u.total} lessons · {isComp ? "Complete" : isCurrent ? "In progress" : "Up next"}
                       </p>
                     </div>
@@ -345,7 +354,8 @@ export default function CurriculumPage() {
               })}
             </div>
             <button onClick={() => setOverride(units[0]?.unit ? viewLevel : viewLevel)}
-              className="mt-3 text-xs font-semibold hover:underline self-start" style={{ color: "var(--color-accent-light)" }}>
+              className="mt-3 text-xs font-semibold hover:underline self-start"
+              style={{ color: "#A855F7" }}>
               View full roadmap →
             </button>
           </div>
@@ -355,8 +365,8 @@ export default function CurriculumPage() {
       {/* ── Complete Journey (horizontal, replacing tools) ── */}
       {levels && levels.length > 0 && (
         <section aria-labelledby="journey-heading">
-          <h2 id="journey-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "var(--color-text)" }}>Complete Journey</h2>
-          <div className="rounded-2xl p-5" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
+          <h2 id="journey-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "#FFFFFF" }}>Complete Journey</h2>
+          <div className="rounded-2xl p-5" style={{ background: "#111126", border: "1px solid rgba(255,255,255,0.04)", boxShadow: "0 20px 40px rgba(0,0,0,0.35)" }}>
             <LevelPath levels={levels} currentLevel={viewLevel} onSelect={setOverride} />
           </div>
         </section>
