@@ -248,7 +248,7 @@ export default function CurriculumPage() {
                     <div className="min-w-0">
                       <p className="text-[15px] font-bold mb-0.5 truncate" style={{ color: "#FFFFFF" }}>{m.title}</p>
                       <p className="text-[12px] truncate" style={{ color: "#9CA3AF" }}>{m.subtitle}</p>
-                      <span className="text-[10px] font-semibold mt-1 block" style={{ color: "#6B7280" }}>{m.meta}</span>
+                      <span className="text-[10px] font-semibold mt-1.5 block" style={{ color: "#6B7280" }}>{m.meta}</span>
                     </div>
                   </button>
                 ))}
@@ -261,14 +261,14 @@ export default function CurriculumPage() {
             <div className="space-y-3">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}</div>
           ) : currentUnit ? (
             <section aria-labelledby="unit-heading">
-              <h2 id="unit-heading" className="text-[22px] font-extrabold mb-1" style={{ color: "#FFFFFF" }}>
+              <h2 id="unit-heading" className="text-[22px] font-extrabold mb-2" style={{ color: "#FFFFFF" }}>
                 Unit {currentUnit.unit}{currentUnit.theme ? ` · ${currentUnit.theme}` : ""}
               </h2>
-              <p className="text-sm mb-4" style={{ color: "#9CA3AF" }}>
+              <p className="text-sm mb-5" style={{ color: "#9CA3AF" }}>
                 {currentUnit.completed} of {currentUnit.total} lessons complete · {Math.round((currentUnit.completed / currentUnit.total) * 100)}%
               </p>
               {/* Lessons — 4-column layout */}
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {currentUnit.lessons.map((l) => {
                   const isActive = nextLesson?.id === l.id;
                   const isComp = l.completed;
@@ -276,7 +276,7 @@ export default function CurriculumPage() {
                     <div key={l.id} role="button" tabIndex={0}
                       onClick={() => router.push(`/curriculum/${viewLevel.toLowerCase()}/${l.id}`)}
                       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(`/curriculum/${viewLevel.toLowerCase()}/${l.id}`); } }}
-                      className="flex items-center gap-4 rounded-2xl px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+                      className="flex items-center gap-5 rounded-2xl px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
                       style={{
                         background: isActive ? "#17172D" : "#111126",
                         border: isActive ? "1px solid rgba(168,85,247,0.3)" : "1px solid rgba(255,255,255,0.04)",
@@ -339,9 +339,9 @@ export default function CurriculumPage() {
                           background: isComp ? "#22C55E" : isCurrent ? "#D946EF" : "#4B5563",
                           boxShadow: isCurrent ? "0 0 6px rgba(217,70,239,0.4), inset 0 0 0 1.5px #fff" : isComp ? "0 0 6px rgba(34,197,94,0.2)" : "none",
                         }} />
-                      {!isLast && <div className="w-0.5 flex-1 min-h-[24px]" style={{ background: isComp ? "#22C55E" : "#2A2644" }} />}
+                      {!isLast && <div className="w-0.5 flex-1 min-h-[28px]" style={{ background: isComp ? "#22C55E" : "#2A2644" }} />}
                     </div>
-                    <div className={`pb-4 ${isLast ? "" : ""}`}>
+                    <div className={isLast ? "pb-0" : "pb-4"}>
                       <p className="text-sm font-semibold" style={{ color: isCurrent ? "#FFFFFF" : "#D1D5DB" }}>
                         Unit {u.unit}{u.theme ? ` · ${u.theme}` : ""}
                       </p>
