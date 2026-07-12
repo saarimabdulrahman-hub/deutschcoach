@@ -172,10 +172,10 @@ export default function CurriculumPage() {
               <p className="text-[11px] font-semibold uppercase tracking-[0.15em] mb-3" style={{ color: "rgba(200,190,240,0.7)" }}>
                 Continue Learning
               </p>
-              {/* Avatar beside lesson name + details */}
-              <div className="flex items-center gap-3.5 mb-3">
-                {/* Avatar — gradient circle */}
-                <div className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold"
+              {/* Avatar (larger) + lesson title stack */}
+              <div className="flex items-center gap-4 mb-3">
+                {/* Avatar — bigger */}
+                <div className="flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold"
                   style={{
                     background: "linear-gradient(135deg, #6D3BFF, #FF3CA6)",
                     color: "#fff",
@@ -184,14 +184,19 @@ export default function CurriculumPage() {
                   }}>
                   {(user?.name || "S").charAt(0).toUpperCase()}
                 </div>
+                {/* Lesson title stack beside avatar */}
                 <div className="min-w-0">
-                  <p className="text-sm font-bold truncate" style={{ color: "#fff" }}>{user?.name || "Student"}</p>
-                  <p className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>
-                    {viewLevel} · {LEVEL_NAME[viewLevel] || viewLevel} · Lesson {nextLesson.order} — {nextLesson.title}
+                  <p className="text-sm font-bold" style={{ color: "var(--color-active-text)" }}>
+                    Lesson {nextLesson.order}
+                  </p>
+                  <h1 id="continue-heading" className="text-[1.8rem] sm:text-[2.2rem] font-extrabold leading-[1.05]" style={{ color: "#fff" }}>
+                    {nextLesson.title}
+                  </h1>
+                  <p className="text-xs sm:text-sm mt-1" style={{ color: "var(--color-text-secondary)" }}>
+                    {(nextLesson.topics || []).slice(0, 3).join(" · ")}
                   </p>
                 </div>
               </div>
-              <p className="text-xs sm:text-sm leading-relaxed mb-3 max-w-[340px]" style={{ color: "var(--color-text-secondary)" }}>{objective}</p>
               {/* Metadata row */}
               <div className="flex items-center gap-3 sm:gap-5 text-[11px] mb-4" style={{ color: "var(--color-text-muted)" }}>
                 <span className="flex items-center gap-1">⏱ ~{MIN_PER_LESSON}m</span>
@@ -212,48 +217,45 @@ export default function CurriculumPage() {
               </button>
             </div>
 
-            {/* CENTER: Empty spacer (background image slot — ready for your image) */}
+            {/* CENTER: Empty spacer */}
 
-            {/* RIGHT: Unit Progress — 60/40 split with circular KPI */}
-            <div className="hidden md:flex flex-col justify-center flex-shrink-0" style={{ flexBasis: "25%" }}>
-              <div className="rounded-[16px] p-4"
+            {/* RIGHT: Unit Progress — narrow + tall, right extreme */}
+            <div className="hidden md:flex flex-col justify-center flex-shrink-0" style={{ flexBasis: "22%" }}>
+              <div className="rounded-[16px] p-4 flex flex-col items-center text-center"
                 style={{
                   background: "rgba(20,20,35,0.75)",
                   backdropFilter: "blur(16px)",
                   WebkitBackdropFilter: "blur(16px)",
                   border: "1px solid rgba(255,255,255,0.08)",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
-                  maxWidth: 260,
+                  width: 160,
+                  minHeight: 170,
                 }}>
-                <div className="flex items-center gap-4">
-                  {/* LEFT: 60% — title + subtitle + bar */}
-                  <div className="flex-1 min-w-0" style={{ flexBasis: "60%" }}>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: "var(--color-text-muted)" }}>Unit Progress</p>
-                    <p className="text-[10px] mb-2" style={{ color: "var(--color-text-secondary)" }}>
-                      1 of 2 lessons
-                    </p>
-                    <div className="h-[5px] rounded-full" style={{ background: "rgba(255,255,255,0.08)", overflow: "hidden", width: "75%" }}>
-                      <div className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: "42%",
-                          background: "linear-gradient(90deg, #6D3BFF, #8B5CF6)",
-                        }} />
-                    </div>
-                  </div>
-                  {/* RIGHT: 40% — circular KPI */}
-                  <div className="flex-shrink-0 relative" style={{ width: 64, height: 64 }}>
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 64 64">
-                      <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
-                      <circle cx="32" cy="32" r="27" fill="none"
-                        stroke="url(#heroPctGrad)" strokeWidth="5" strokeLinecap="round"
-                        strokeDasharray={2 * Math.PI * 27}
-                        strokeDashoffset={2 * Math.PI * 27 * (1 - (currentUnit ? currentUnit.completed / Math.max(currentUnit.total, 1) : 0))}
-                        style={{ transition: "stroke-dashoffset 0.8s ease", filter: "drop-shadow(0 0 4px rgba(109,59,255,0.4))" }} />
-                    </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-sm font-extrabold" style={{ color: "#fff" }}>
-                      {currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%
-                    </span>
-                  </div>
+                {/* Circular KPI — large, centered */}
+                <div className="relative mb-3" style={{ width: 72, height: 72 }}>
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+                    <circle cx="36" cy="36" r="30" fill="none"
+                      stroke="url(#heroPctGrad)" strokeWidth="5" strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * 30}
+                      strokeDashoffset={2 * Math.PI * 30 * (1 - (currentUnit ? currentUnit.completed / Math.max(currentUnit.total, 1) : 0))}
+                      style={{ transition: "stroke-dashoffset 0.8s ease", filter: "drop-shadow(0 0 6px rgba(109,59,255,0.4))" }} />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-base font-extrabold" style={{ color: "#fff" }}>
+                    {currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%
+                  </span>
+                </div>
+                {/* Label + bar below */}
+                <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Unit Progress</p>
+                <p className="text-[10px] mb-2" style={{ color: "var(--color-text-secondary)" }}>
+                  1 of 2 lessons
+                </p>
+                <div className="w-full h-[5px] rounded-full" style={{ background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                  <div className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%`,
+                      background: "linear-gradient(90deg, #6D3BFF, #8B5CF6)",
+                    }} />
                 </div>
               </div>
             </div>
