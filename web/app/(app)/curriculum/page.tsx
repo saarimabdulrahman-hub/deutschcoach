@@ -147,7 +147,7 @@ export default function CurriculumPage() {
             background: "linear-gradient(120deg, #100A24 0%, #1B1437 40%, #1B1437 60%, #100A24 100%)",
             border: "1px solid rgba(255,255,255,0.06)",
             boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
-            minHeight: 240,
+            minHeight: 200,
           }}>
           {/* ── Background layers ─────────────────────────────── */}
           {/* Purple ambient glow */}
@@ -158,7 +158,7 @@ export default function CurriculumPage() {
             style={{
               backgroundImage: "url('/learn-hero.webp')",
               backgroundSize: "cover",
-              backgroundPosition: "45% 50%",
+              backgroundPosition: "38% 50%",
               opacity: 0.4,
             }} />
           {/* Dark overlay for text legibility */}
@@ -169,12 +169,12 @@ export default function CurriculumPage() {
           <div className="relative z-10 flex flex-col sm:flex-row gap-6 h-full">
             {/* LEFT: Lesson info + avatar + CTA (35%) */}
             <div className="flex-1 flex flex-col justify-center min-w-0" style={{ flexBasis: "35%" }}>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] mb-2" style={{ color: "rgba(200,190,240,0.7)" }}>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] mb-3" style={{ color: "rgba(200,190,240,0.7)" }}>
                 Continue Learning
               </p>
-              {/* Avatar + name row */}
-              <div className="flex items-center gap-3.5 mb-3.5">
-                {/* Avatar — gradient circle with visible glow */}
+              {/* Avatar beside lesson name + details */}
+              <div className="flex items-center gap-3.5 mb-3">
+                {/* Avatar — gradient circle */}
                 <div className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold"
                   style={{
                     background: "linear-gradient(135deg, #6D3BFF, #FF3CA6)",
@@ -186,14 +186,11 @@ export default function CurriculumPage() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-bold truncate" style={{ color: "#fff" }}>{user?.name || "Student"}</p>
-                  <p className="text-[11px] mt-0.5" style={{ color: "var(--color-text-muted)" }}>{viewLevel} · {LEVEL_NAME[viewLevel] || viewLevel}</p>
+                  <p className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>
+                    {viewLevel} · {LEVEL_NAME[viewLevel] || viewLevel} · Lesson {nextLesson.order} — {nextLesson.title}
+                  </p>
                 </div>
               </div>
-              {/* Lesson title */}
-              <p className="text-[11px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Current Lesson</p>
-              <h1 id="continue-heading" className="text-[1.65rem] sm:text-[2rem] font-extrabold leading-[1.1] mb-2" style={{ color: "#fff" }}>
-                {nextLesson.title}
-              </h1>
               <p className="text-xs sm:text-sm leading-relaxed mb-3 max-w-[340px]" style={{ color: "var(--color-text-secondary)" }}>{objective}</p>
               {/* Metadata row */}
               <div className="flex items-center gap-3 sm:gap-5 text-[11px] mb-4" style={{ color: "var(--color-text-muted)" }}>
@@ -217,9 +214,9 @@ export default function CurriculumPage() {
 
             {/* CENTER: Empty spacer (background image slot — ready for your image) */}
 
-            {/* RIGHT: Progress widget (overlapping circle) */}
+            {/* RIGHT: Progress widget — two purple bars side by side */}
             <div className="hidden md:flex flex-col justify-center flex-shrink-0" style={{ flexBasis: "25%" }}>
-              <div className="relative pt-14 pb-5 px-5 rounded-2xl"
+              <div className="rounded-2xl p-4"
                 style={{
                   background: "rgba(20,20,35,0.75)",
                   backdropFilter: "blur(16px)",
@@ -227,41 +224,35 @@ export default function CurriculumPage() {
                   border: "1px solid rgba(255,255,255,0.08)",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
                 }}>
-                {/* Large circular progress — covers the top half of the card */}
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2">
-                  <div className="relative w-[88px] h-[88px]">
-                    {/* Glow ring behind the circle */}
-                    <div className="absolute -inset-3 rounded-full opacity-40" style={{ background: "radial-gradient(circle, rgba(109,59,255,0.5), transparent 70%)", filter: "blur(8px)" }} />
-                    <svg className="w-full h-full -rotate-90 relative z-10" viewBox="0 0 88 88">
-                      <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
-                      <circle cx="44" cy="44" r="38" fill="none"
-                        stroke="url(#heroPctGrad)" strokeWidth="6" strokeLinecap="round"
-                        strokeDasharray={2 * Math.PI * 38}
-                        strokeDashoffset={2 * Math.PI * 38 * (1 - (currentUnit ? currentUnit.completed / Math.max(currentUnit.total, 1) : 0))}
-                        style={{ transition: "stroke-dashoffset 0.8s ease", filter: "drop-shadow(0 0 8px rgba(255,60,166,0.5))" }} />
-                    </svg>
-                    <span className="absolute inset-0 z-10 flex items-center justify-center text-lg font-extrabold" style={{ color: "#fff" }}>
-                      {currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%
-                    </span>
-                  </div>
-                </div>
-                {/* Text + progress bar below the circle */}
-                <p className="text-[10px] font-semibold uppercase tracking-wider mb-1 text-center" style={{ color: "var(--color-text-muted)" }}>Unit Progress</p>
-                <p className="text-xs font-bold text-center mb-3" style={{ color: "#fff" }}>
+                <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--color-text-muted)" }}>Unit Progress</p>
+                <p className="text-xs font-bold mb-3" style={{ color: "#fff" }}>
                   Unit {currentUnitNum || 1} of {units.length || 2}
                 </p>
-                {/* Progress bar — thicker, with glow */}
-                <div className="h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
-                  <div className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%`,
-                      background: "linear-gradient(90deg, #FF3CA6, #6D3BFF)",
-                      boxShadow: "0 0 8px rgba(255,60,166,0.4)",
-                    }} />
+                {/* Two progress bars side by side */}
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div>
+                    <p className="text-[9px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Lessons</p>
+                    <div className="h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                      <div className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%`,
+                          background: "linear-gradient(90deg, #6D3BFF, #8B5CF6)",
+                        }} />
+                    </div>
+                    <p className="text-[9px] mt-1" style={{ color: "var(--color-text-muted)" }}>{currentUnit?.completed ?? 0}/{currentUnit?.total ?? 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Overall</p>
+                    <div className="h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                      <div className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%`,
+                          background: "linear-gradient(90deg, #A78BFA, #C4B5FD)",
+                        }} />
+                    </div>
+                    <p className="text-[9px] mt-1" style={{ color: "var(--color-text-muted)" }}>{currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%</p>
+                  </div>
                 </div>
-                <p className="text-[10px] mt-2 text-center" style={{ color: "var(--color-text-muted)" }}>
-                  {currentUnit?.completed ?? 0} of {currentUnit?.total ?? 0} lessons completed
-                </p>
               </div>
             </div>
           </div>
