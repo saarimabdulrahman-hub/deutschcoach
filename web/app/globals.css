@@ -127,6 +127,7 @@
 body {
   font-family: var(--font-sans);
   min-height: 100vh;
+  scroll-behavior: smooth;
   background:
     radial-gradient(ellipse at 50% 0%, rgba(139, 70, 255, 0.1) 0%, transparent 50%),
     radial-gradient(ellipse at 75% 10%, rgba(162, 100, 255, 0.06) 0%, transparent 40%),

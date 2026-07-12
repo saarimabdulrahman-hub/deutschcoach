@@ -11,7 +11,7 @@ export const EmmaButton = React.memo(function EmmaButton({ open, onClick }: Prop
   return (
     <button onClick={onClick} aria-label={open ? "Close Emma" : "Open Emma — your AI tutor"}
       title={open ? "Close Emma" : "Ask Emma"}
-      className="fixed z-40 right-4 sm:right-6 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105 active:scale-95"
+      className="fixed z-40 right-4 sm:right-6 rounded-full flex items-center justify-center shadow-lg transition-transform transition-colors duration-200 hover:scale-105 active:scale-95"
       style={{
         width: 52, height: 52,
         bottom: "calc(80px + env(safe-area-inset-bottom))",
