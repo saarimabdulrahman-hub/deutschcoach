@@ -225,8 +225,8 @@ export default function CurriculumPage() {
 
       {/* ── 2. 2-Column: Today's Mission + Unit | Roadmap ── */}
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* LEFT: Main learning area — 70% */}
-        <div className="flex-1 min-w-0 space-y-6" style={{ flexBasis: "70%" }}>
+        {/* LEFT: Main learning area — 60% */}
+        <div className="flex-1 min-w-0 space-y-6" style={{ flexBasis: "60%" }}>
           {/* Today's Mission — outer card, text beside icon */}
           {nextLesson && (
             <section aria-labelledby="mission-heading" className="rounded-2xl p-5"
@@ -316,8 +316,8 @@ export default function CurriculumPage() {
           ) : null}
         </div>
 
-        {/* RIGHT: Roadmap timeline — 30%, full height */}
-        <div className="lg:w-72 flex-shrink-0 flex flex-col flex-1">
+        {/* RIGHT: Roadmap timeline — 40%, full height */}
+        <div className="flex-1 min-w-0 flex flex-col" style={{ flexBasis: "40%" }}>
           <div className="rounded-2xl p-5 flex-1 flex flex-col" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
             <h3 className="text-sm font-bold mb-4" style={{ color: "var(--color-text)" }}>Roadmap</h3>
             <div className="space-y-0 flex-1">
