@@ -19,8 +19,9 @@ export function Logo({ size = 40 }: { size?: number }) {
           <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.6" />
         </linearGradient>
         <linearGradient id="logoLetter" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="100%" stopColor="#f0abfc" />
+          <stop offset="0%" stopColor="#ec4899" />
+          <stop offset="50%" stopColor="#d946ef" />
+          <stop offset="100%" stopColor="#8b5cf6" />
         </linearGradient>
         <linearGradient id="logoAccent" x1="0%" y1="100%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#ec4899" />
