@@ -316,8 +316,8 @@ export default function CurriculumPage() {
           ) : null}
         </div>
 
-        {/* RIGHT: Roadmap timeline — 30% */}
-        <div className="lg:w-72 flex-shrink-0 flex flex-col">
+        {/* RIGHT: Roadmap timeline — 30%, full height */}
+        <div className="lg:w-72 flex-shrink-0 flex flex-col flex-1">
           <div className="rounded-2xl p-5 flex-1 flex flex-col" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
             <h3 className="text-sm font-bold mb-4" style={{ color: "var(--color-text)" }}>Roadmap</h3>
             <div className="space-y-0 flex-1">
@@ -344,43 +344,23 @@ export default function CurriculumPage() {
                 );
               })}
             </div>
-            {/* View full roadmap */}
             <button onClick={() => setOverride(units[0]?.unit ? viewLevel : viewLevel)}
               className="mt-3 text-xs font-semibold hover:underline self-start" style={{ color: "var(--color-accent-light)" }}>
               View full roadmap →
             </button>
           </div>
-
-          {/* Complete Journey summary */}
-          {levels && levels.length > 0 && (
-            <div className="rounded-2xl p-5 mt-4" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <h3 className="text-sm font-bold mb-3" style={{ color: "var(--color-text)" }}>Complete Journey</h3>
-              <LevelPath levels={levels} currentLevel={viewLevel} onSelect={setOverride} />
-            </div>
-          )}
         </div>
       </div>
 
-      {/* ── 9. Additional Learning Tools ────────────────────────────── */}
-      <section aria-labelledby="tools-heading">
-        <h2 id="tools-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "var(--color-text)" }}>More ways to practice</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { label: "Practice Words", icon: "🃏", href: "/review", desc: "Spaced repetition" },
-            { label: "Take a Quiz", icon: "✅", href: "/quiz", desc: "Test yourself" },
-            { label: "AI Chat", icon: "🗣️", href: "/chat", desc: "Practice speaking" },
-            { label: "Grammar", icon: "📖", href: "/grammar", desc: "Browse topics" },
-          ].map((item) => (
-            <button key={item.label} onClick={() => router.push(item.href)}
-              className="rounded-xl p-4 text-left transition-all hover:-translate-y-0.5"
-              style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-              <span className="text-xl mb-2 block">{item.icon}</span>
-              <p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>{item.label}</p>
-              <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>{item.desc}</p>
-            </button>
-          ))}
-        </div>
-      </section>
+      {/* ── Complete Journey (horizontal, replacing tools) ── */}
+      {levels && levels.length > 0 && (
+        <section aria-labelledby="journey-heading">
+          <h2 id="journey-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "var(--color-text)" }}>Complete Journey</h2>
+          <div className="rounded-2xl p-5" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
+            <LevelPath levels={levels} currentLevel={viewLevel} onSelect={setOverride} />
+          </div>
+        </section>
+      )}
     </div>
   );
 }
