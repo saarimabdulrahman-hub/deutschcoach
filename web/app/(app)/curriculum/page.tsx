@@ -172,37 +172,37 @@ export default function CurriculumPage() {
               <p className="text-[11px] font-semibold uppercase tracking-[0.15em] mb-3" style={{ color: "rgba(200,190,240,0.7)" }}>
                 Continue Learning
               </p>
-              {/* Avatar (larger) + lesson title stack */}
-              <div className="flex items-center gap-4 mb-3">
-                {/* Avatar — bigger */}
-                <div className="flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold"
+              {/* Avatar (biggest) + lesson title stack */}
+              <div className="flex items-center gap-5 mb-4">
+                {/* Avatar — 80px */}
+                <div className="flex-shrink-0 w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold"
                   style={{
                     background: "linear-gradient(135deg, #6D3BFF, #FF3CA6)",
                     color: "#fff",
                     border: "2px solid rgba(255,255,255,0.18)",
-                    boxShadow: "0 0 0 5px rgba(109,59,255,0.25), 0 0 30px rgba(109,59,255,0.25)",
+                    boxShadow: "0 0 0 6px rgba(109,59,255,0.25), 0 0 36px rgba(109,59,255,0.25)",
                   }}>
                   {(user?.name || "S").charAt(0).toUpperCase()}
                 </div>
                 {/* Lesson title stack beside avatar */}
                 <div className="min-w-0">
-                  <p className="text-sm font-bold" style={{ color: "var(--color-active-text)" }}>
+                  <p className="text-base sm:text-lg font-bold" style={{ color: "var(--color-active-text)" }}>
                     Lesson {nextLesson.order}
                   </p>
-                  <h1 id="continue-heading" className="text-[1.8rem] sm:text-[2.2rem] font-extrabold leading-[1.05]" style={{ color: "#fff" }}>
+                  <h1 id="continue-heading" className="text-[2.2rem] sm:text-[2.6rem] font-extrabold leading-[1.05]" style={{ color: "#fff" }}>
                     {nextLesson.title}
                   </h1>
-                  <p className="text-xs sm:text-sm mt-1" style={{ color: "var(--color-text-secondary)" }}>
+                  <p className="text-sm sm:text-base mt-1.5" style={{ color: "var(--color-text-secondary)" }}>
                     {(nextLesson.topics || []).slice(0, 3).join(" · ")}
                   </p>
                 </div>
               </div>
-              {/* Metadata row */}
-              <div className="flex items-center gap-3 sm:gap-5 text-[11px] mb-4" style={{ color: "var(--color-text-muted)" }}>
-                <span className="flex items-center gap-1">⏱ ~{MIN_PER_LESSON}m</span>
-                <span className="flex items-center gap-1">📖 8 words</span>
-                <span className="flex items-center gap-1">✍ grammar</span>
-                <span className="flex items-center gap-1">📝 practice</span>
+              {/* Metadata — stacked vertically */}
+              <div className="space-y-1.5 mb-4 text-xs sm:text-sm" style={{ color: "var(--color-text-muted)" }}>
+                <p>⏱ ~{MIN_PER_LESSON}m</p>
+                <p>📖 8 words</p>
+                <p>✍ grammar</p>
+                <p>📝 practice</p>
               </div>
               {/* CTA */}
               <button onClick={() => goLesson(nextLesson!.id)}
@@ -217,44 +217,42 @@ export default function CurriculumPage() {
               </button>
             </div>
 
-            {/* RIGHT: Unit Progress — side by side, right extreme */}
-            <div className="hidden md:flex flex-col justify-center ml-auto flex-shrink-0">
-              <div className="rounded-[16px] p-4"
+            {/* RIGHT: Unit Progress — bigger circle centered, shorter card */}
+            <div className="hidden md:flex flex-col ml-auto flex-shrink-0" style={{ justifyContent: "flex-start", paddingTop: 4 }}>
+              <div className="rounded-[16px] p-4 flex items-center gap-4"
                 style={{
                   background: "rgba(20,20,35,0.75)",
                   backdropFilter: "blur(16px)",
                   WebkitBackdropFilter: "blur(16px)",
                   border: "1px solid rgba(255,255,255,0.08)",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
-                  width: 200,
-                  minHeight: 130,
+                  width: 210,
                 }}>
-                <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--color-text-muted)" }}>Unit Progress</p>
-                <p className="text-[10px] mb-2" style={{ color: "var(--color-text-secondary)" }}>1 of 2 lessons</p>
-                {/* Bar + Circle side by side */}
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="h-[5px] rounded-full" style={{ background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
-                      <div className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: `${currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%`,
-                          background: "linear-gradient(90deg, #6D3BFF, #8B5CF6)",
-                        }} />
-                    </div>
+                {/* Left: text + bar */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Unit Progress</p>
+                  <p className="text-[10px] mb-2" style={{ color: "var(--color-text-secondary)" }}>1 of 2 lessons</p>
+                  <div className="h-[5px] rounded-full" style={{ background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                    <div className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%`,
+                        background: "linear-gradient(90deg, #6D3BFF, #8B5CF6)",
+                      }} />
                   </div>
-                  <div className="relative flex-shrink-0" style={{ width: 56, height: 56 }}>
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 56 56">
-                      <circle cx="28" cy="28" r="23" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4.5" />
-                      <circle cx="28" cy="28" r="23" fill="none"
-                        stroke="url(#heroPctGrad)" strokeWidth="4.5" strokeLinecap="round"
-                        strokeDasharray={2 * Math.PI * 23}
-                        strokeDashoffset={2 * Math.PI * 23 * (1 - (currentUnit ? currentUnit.completed / Math.max(currentUnit.total, 1) : 0))}
-                        style={{ transition: "stroke-dashoffset 0.8s ease", filter: "drop-shadow(0 0 4px rgba(109,59,255,0.4))" }} />
-                    </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-xs font-extrabold" style={{ color: "#fff" }}>
-                      {currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%
-                    </span>
-                  </div>
+                </div>
+                {/* Right: bigger circle — centered vertically */}
+                <div className="relative flex-shrink-0" style={{ width: 68, height: 68 }}>
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 68 68">
+                    <circle cx="34" cy="34" r="28" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+                    <circle cx="34" cy="34" r="28" fill="none"
+                      stroke="url(#heroPctGrad)" strokeWidth="5" strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * 28}
+                      strokeDashoffset={2 * Math.PI * 28 * (1 - (currentUnit ? currentUnit.completed / Math.max(currentUnit.total, 1) : 0))}
+                      style={{ transition: "stroke-dashoffset 0.8s ease", filter: "drop-shadow(0 0 5px rgba(109,59,255,0.4))" }} />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-sm font-extrabold" style={{ color: "#fff" }}>
+                    {currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%
+                  </span>
                 </div>
               </div>
             </div>
