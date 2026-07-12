@@ -153,16 +153,6 @@ export default function CurriculumPage() {
           {/* Purple ambient glow */}
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: "radial-gradient(ellipse at 65% 50%, rgba(109,59,255,0.25) 0%, transparent 55%), radial-gradient(ellipse at 60% 60%, rgba(255,60,166,0.10) 0%, transparent 40%)" }} />
-          {/* Castle image in the center-right */}
-          <div className="absolute inset-0 pointer-events-none hidden sm:block"
-            style={{
-              backgroundImage: "url('/hero.webp')",
-              backgroundSize: "cover",
-              backgroundPosition: "62% 50%",
-              opacity: 0.35,
-              maskImage: "linear-gradient(to right, transparent 35%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.8) 70%, transparent 95%), linear-gradient(to top, transparent 5%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.4) 70%, transparent 95%)",
-              WebkitMaskImage: "linear-gradient(to right, transparent 35%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.8) 70%, transparent 95%), linear-gradient(to top, transparent 5%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.4) 70%, transparent 95%)",
-            }} />
           {/* Dark overlay for text legibility */}
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: "linear-gradient(90deg, rgba(16,10,36,0.55) 0%, rgba(16,10,36,0.15) 45%, transparent 65%, rgba(16,10,36,0.2) 85%, rgba(16,10,36,0.45) 100%)" }} />
@@ -206,7 +196,7 @@ export default function CurriculumPage() {
               </div>
               {/* CTA */}
               <button onClick={() => goLesson(nextLesson!.id)}
-                className="px-6 py-3 rounded-full text-sm font-bold flex items-center gap-2 w-full sm:w-auto"
+                className="px-6 py-3 rounded-full text-sm font-bold inline-flex items-center gap-2 w-auto"
                 style={{
                   background: "linear-gradient(135deg, #FF3CA6, #6D3BFF, #3B82F6)",
                   color: "#fff",
@@ -216,12 +206,11 @@ export default function CurriculumPage() {
               </button>
             </div>
 
-            {/* CENTER: Castle occupies the middle (40%) — handled by background layers above */}
+            {/* CENTER: Empty spacer (background image slot — ready for your image) */}
 
-            {/* RIGHT: Progress widget card (25%) */}
+            {/* RIGHT: Progress widget (overlapping circle) */}
             <div className="hidden md:flex flex-col justify-center flex-shrink-0" style={{ flexBasis: "25%" }}>
-              <div
-                className="rounded-2xl p-4 sm:p-5"
+              <div className="relative pt-12 pb-5 px-5 rounded-2xl"
                 style={{
                   background: "rgba(20,20,35,0.75)",
                   backdropFilter: "blur(16px)",
@@ -229,37 +218,41 @@ export default function CurriculumPage() {
                   border: "1px solid rgba(255,255,255,0.08)",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
                 }}>
-                <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Unit Progress</p>
-                <p className="text-xs mb-2" style={{ color: "var(--color-text-secondary)" }}>
-                  Unit {currentUnitNum || 1} of {units.length || 2}
-                </p>
-                {/* Progress bar */}
-                <div className="h-1 rounded-full mb-2" style={{ background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
-                  <div className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%`,
-                      background: "linear-gradient(90deg, #FF3CA6, #6D3BFF)",
-                    }} />
-                </div>
-                {/* Circular progress */}
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-[10px]" style={{ color: "var(--color-text-muted)" }}>
-                    {currentUnit?.completed ?? 0} of {currentUnit?.total ?? 0} lessons
-                  </span>
-                  <div className="relative w-11 h-11 flex-shrink-0">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 48 48">
-                      <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
-                      <circle cx="24" cy="24" r="20" fill="none"
-                        stroke="url(#heroPctGrad)" strokeWidth="4" strokeLinecap="round"
-                        strokeDasharray={2 * Math.PI * 20}
-                        strokeDashoffset={2 * Math.PI * 20 * (1 - (currentUnit ? currentUnit.completed / Math.max(currentUnit.total, 1) : 0))}
-                        style={{ transition: "stroke-dashoffset 0.8s ease", filter: "drop-shadow(0 0 4px rgba(109,59,255,0.4))" }} />
+                {/* Large circular progress — overflows the top of the card */}
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2">
+                  <div className="relative w-[72px] h-[72px]">
+                    {/* Glow ring behind the circle */}
+                    <div className="absolute -inset-2 rounded-full opacity-40" style={{ background: "radial-gradient(circle, rgba(109,59,255,0.5), transparent 70%)", filter: "blur(6px)" }} />
+                    <svg className="w-full h-full -rotate-90 relative z-10" viewBox="0 0 72 72">
+                      <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+                      <circle cx="36" cy="36" r="30" fill="none"
+                        stroke="url(#heroPctGrad)" strokeWidth="5" strokeLinecap="round"
+                        strokeDasharray={2 * Math.PI * 30}
+                        strokeDashoffset={2 * Math.PI * 30 * (1 - (currentUnit ? currentUnit.completed / Math.max(currentUnit.total, 1) : 0))}
+                        style={{ transition: "stroke-dashoffset 0.8s ease", filter: "drop-shadow(0 0 6px rgba(255,60,166,0.5))" }} />
                     </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-xs font-bold" style={{ color: "#fff" }}>
+                    <span className="absolute inset-0 z-10 flex items-center justify-center text-base font-extrabold" style={{ color: "#fff" }}>
                       {currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%
                     </span>
                   </div>
                 </div>
+                {/* Text + progress bar below the circle */}
+                <p className="text-[10px] font-semibold uppercase tracking-wider mb-1 text-center" style={{ color: "var(--color-text-muted)" }}>Unit Progress</p>
+                <p className="text-xs font-bold text-center mb-3" style={{ color: "#fff" }}>
+                  Unit {currentUnitNum || 1} of {units.length || 2}
+                </p>
+                {/* Progress bar — thicker, with glow */}
+                <div className="h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                  <div className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${currentUnit ? Math.round((currentUnit.completed / Math.max(currentUnit.total, 1)) * 100) : 0}%`,
+                      background: "linear-gradient(90deg, #FF3CA6, #6D3BFF)",
+                      boxShadow: "0 0 8px rgba(255,60,166,0.4)",
+                    }} />
+                </div>
+                <p className="text-[10px] mt-2 text-center" style={{ color: "var(--color-text-muted)" }}>
+                  {currentUnit?.completed ?? 0} of {currentUnit?.total ?? 0} lessons completed
+                </p>
               </div>
             </div>
           </div>
