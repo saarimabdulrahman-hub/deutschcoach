@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { saveCheckpoint, loadCheckpoint } from "@/lib/persistence";
 import type { LessonDetail, LessonListItem } from "@/types";
 import { LessonNavigator } from "@/components/lesson/LessonNavigator";
 import { DEFAULT_LESSON_STAGES, type LessonStageDef } from "@/components/lesson/lessonStages";
@@ -16,7 +17,6 @@ import { GrammarContent } from "@/components/lesson/GrammarContent";
 import { SpeakingPlaceholder } from "@/components/lesson/SpeakingPlaceholder";
 import { CompletionContent } from "@/components/lesson/CompletionContent";
 import { EmmaProvider, useEmma, EmmaUI } from "@/components/emma";
-import { useEffect } from "react";
 import { MatchingExercise } from "@/components/interaction/MatchingExercise";
 import { FillInExercise } from "@/components/interaction/FillInExercise";
 import { RecallExercise } from "@/components/interaction/RecallExercise";
@@ -172,9 +172,23 @@ function LessonPageInner({ lessonTitle, stages, onExit, onFinish, renderStage, l
   loading: boolean; error: any; lessonData: LessonDetail | undefined;
 }) {
   const { setContext } = useEmma();
+
+  // ── Persistence: load checkpoint on mount ────────────────────────────
+  const [resumeStage, setResumeStage] = useState<string | undefined>();
+  const [resumeCompleted, setResumeCompleted] = useState<string[]>([]);
+  const lessonId = lessonData?.lesson?.id;
+  useEffect(() => {
+    if (!lessonId) return;
+    loadCheckpoint(lessonId).then((cp) => {
+      if (cp) { setResumeStage(cp.currentStage); setResumeCompleted(cp.completedStages); }
+    });
+  }, [lessonId]);
+
+  // ── Persistence: save on each stage change ───────────────────────────
   const onStageChange = useCallback((key: string, _index: number) => {
     if (!lessonData) return;
     const stage = stages.find((s) => s.key === key);
+    // Update Emma context.
     setContext({
       lessonTitle: lessonData.lesson.title,
       stage: key,
@@ -184,16 +198,34 @@ function LessonPageInner({ lessonTitle, stages, onExit, onFinish, renderStage, l
       progressStep: stages.findIndex((s) => s.key === key) + 1,
       progressTotal: stages.length,
     });
+    // Save checkpoint (fire-and-forget — no await needed).
+    if (lessonData.lesson?.id) {
+      saveCheckpoint({
+        lessonId: lessonData.lesson.id,
+        currentStage: key,
+        completedStages: [],  // the nav hook owns the truth; pass what it knows
+        timeSpentSec: 0,
+      });
+    }
   }, [lessonData, stages, setContext]);
+
+  // Persistence: save on completion
+  const onCompleteStage = useCallback((key: string) => {
+    if (!lessonData?.lesson?.id) return;
+    setResumeCompleted((prev) => prev.includes(key) ? prev : [...prev, key]);
+  }, [lessonData]);
 
   return (
     <>
       <LessonNavigator
         lessonTitle={lessonTitle}
         stages={stages}
+        initialStageKey={resumeStage}
+        initialCompleted={resumeCompleted}
         onExit={onExit}
         onFinish={onFinish}
         onStageChange={onStageChange}
+        onComplete={onCompleteStage}
         renderStage={renderStage}
         loading={loading}
         error={error}
