@@ -329,18 +329,22 @@ export default function DashboardPage() {
             <button onClick={()=>router.push("/curriculum")} className="px-5 py-2 rounded-xl text-xs font-bold glossy-accent">Start Lesson →</button>
           </div>
         </div>
-        <div className="rounded-[20px] p-4 flex items-center gap-3" style={cardStyle}>
-          <div className="flex flex-col gap-3 flex-1 min-w-0">
+        <div className="rounded-[20px] relative overflow-hidden flex items-center p-4"
+          style={{
+            ...cardStyle,
+            backgroundImage: "url('/tip.webp')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}>
+          {/* Subtle dark overlay so text is legible */}
+          <div className="absolute inset-0 pointer-events-none rounded-[20px]" style={{ background: "linear-gradient(135deg, rgba(3,2,12,0.72) 0%, rgba(3,2,12,0.30) 50%, rgba(3,2,12,0.35) 100%)" }} />
+          <div className="relative z-10 flex flex-col gap-3 flex-1 min-w-0">
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm" style={{ background: "rgba(245,158,11,.14)", color: "#F59E0B" }}>💡</div>
               <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>Tip of the Day</p>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>Review before bed — sleep helps your brain consolidate new vocabulary.</p>
             <button onClick={()=>router.push("/curriculum")} className="text-xs font-medium hover:underline self-start" style={{ color: "var(--color-accent-light)" }}>Browse lessons →</button>
-          </div>
-          {/* Reading art — generated image (ReadingArt component kept as backup) */}
-          <div className="hidden sm:block flex-shrink-0 rounded-[14px] overflow-hidden" aria-hidden="true" style={{ width: 90, height: 90 }}>
-            <img src="/tip.webp" alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
         </div>
       </div>
