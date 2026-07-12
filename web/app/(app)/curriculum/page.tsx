@@ -204,11 +204,12 @@ export default function CurriculumPage() {
               </div>
               {/* CTA */}
               <button onClick={() => goLesson(nextLesson!.id)}
-                className="px-5 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-1.5 w-auto"
+                className="px-5 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-1.5 self-start"
                 style={{
                   background: "linear-gradient(135deg, #FF3CA6, #6D3BFF, #3B82F6)",
                   color: "#fff",
                   boxShadow: "0 4px 18px rgba(255,60,166,0.35)",
+                  width: "fit-content",
                 }}>
                 Continue Lesson →
               </button>
