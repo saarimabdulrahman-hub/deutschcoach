@@ -7,7 +7,6 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import type { CurriculumLevel, LessonListItem, DashboardData } from "@/types";
 import { LevelPath } from "@/components/curriculum/LevelPath";
-import { LessonCard } from "@/components/curriculum/LessonCard";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 
@@ -66,29 +65,6 @@ function CurriculumSkeleton() {
 // ── Small building blocks (reuse existing design tokens only) ─────────
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "var(--color-text-muted)" }}>{children}</p>;
-}
-
-function MissionItem({ done, label, sublabel, onClick }: { done: boolean; label: string; sublabel: string; onClick: () => void }) {
-  return (
-    <button onClick={onClick}
-      className="w-full flex items-center gap-3 rounded-xl p-3 text-left transition-colors hover:bg-white/[0.03]"
-      style={{ border: "1px solid var(--color-border)" }}
-      aria-label={`${label}. ${sublabel}`}>
-      <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs"
-        style={{
-          background: done ? "rgba(34,197,94,0.15)" : "var(--color-hover-bg)",
-          color: done ? "#22c55e" : "var(--color-accent-light)",
-          border: done ? "1px solid rgba(34,197,94,0.3)" : "1px solid var(--color-border)",
-        }}>
-        {done ? "✓" : ""}
-      </span>
-      <span className="flex-1 min-w-0">
-        <span className="block text-sm font-medium" style={{ color: done ? "var(--color-text-muted)" : "var(--color-text)" }}>{label}</span>
-        <span className="block text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>{sublabel}</span>
-      </span>
-      <span className="text-sm flex-shrink-0" style={{ color: "var(--color-text-muted)" }}>›</span>
-    </button>
-  );
 }
 
 // ── Page ──────────────────────────────────────────────────────────────
@@ -247,105 +223,138 @@ export default function CurriculumPage() {
         </section>
       ) : null}
 
-      {/* ── 2. Today's Mission ──────────────────────────────────────── */}
+      {/* ── 2. Today's Mission — full-width, 3 equal horizontal mini-cards ── */}
       {nextLesson && (
         <section aria-labelledby="mission-heading">
-          <h2 id="mission-heading" className="text-lg font-bold mb-3" style={{ color: "var(--color-text)" }}>Today's Mission</h2>
-          <div className="rounded-2xl p-3 sm:p-4 space-y-2.5" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-            <MissionItem done={false} label={`Complete Lesson ${nextLesson.order}: ${nextLesson.title}`}
-              sublabel={`~${MIN_PER_LESSON} min · adds new words to your review deck`} onClick={() => goLesson(nextLesson!.id)} />
-            <MissionItem done={cardsDue === 0}
-              label={cardsDue > 0 ? `Review ${cardsDue} vocabulary card${cardsDue === 1 ? "" : "s"}` : "Vocabulary — all caught up"}
-              sublabel={cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now"} onClick={() => router.push("/review")} />
-            <MissionItem done={false} label="Practice speaking with Emma" sublabel="A few minutes of real conversation" onClick={() => router.push("/chat")} />
-          </div>
-        </section>
-      )}
-
-      {/* ── 3–5. Current Unit (title, description, progress, lessons) ── */}
-      {lessonsLoading ? (
-        <div className="space-y-3">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl" />)}</div>
-      ) : currentUnit ? (
-        <section aria-labelledby="unit-heading">
-          <div className="flex items-end justify-between gap-3 mb-1">
-            <div className="min-w-0">
-              <SectionLabel>Current Unit</SectionLabel>
-              <h2 id="unit-heading" className="text-lg sm:text-xl font-bold" style={{ color: "var(--color-text)" }}>
-                Unit {currentUnit.unit}{currentUnit.theme ? ` · ${currentUnit.theme}` : ""}
-              </h2>
-              <p className="text-sm mt-0.5" style={{ color: "var(--color-text-secondary)" }}>
-                {currentUnit.completed} of {currentUnit.total} lessons complete
-              </p>
-            </div>
-            <span className="text-sm font-semibold flex-shrink-0" style={{ color: "var(--color-accent-light)" }}>
-              {Math.round((currentUnit.completed / currentUnit.total) * 100)}%
-            </span>
-          </div>
-          {/* Lesson progress */}
-          <div className="h-1.5 rounded-full mt-2 mb-4" style={{ background: "var(--color-border)", overflow: "hidden" }}>
-            <div className="h-full rounded-full" style={{ width: `${(currentUnit.completed / currentUnit.total) * 100}%`, background: "var(--color-accent-gradient)" }} />
-          </div>
-          <div className="space-y-3">
-            {currentUnit.lessons.map((l) => (
-              <LessonCard key={l.id} id={l.id} title={l.title} level={viewLevel} unit={l.unit} order={l.order}
-                topics={l.topics || []} completed={l.completed} isNext={nextLesson?.id === l.id} index={l.order} />
+          <h2 id="mission-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "var(--color-text)" }}>Today's Mission</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { icon: "📖", title: `Complete Lesson ${nextLesson.order}`, subtitle: nextLesson.title, meta: `~${MIN_PER_LESSON} min`, onClick: () => goLesson(nextLesson!.id) },
+              { icon: "🃏", title: cardsDue > 0 ? `Review ${cardsDue} cards` : "Vocabulary — all caught up", subtitle: cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now", meta: cardsDue > 0 ? "~2 min" : "✓", onClick: () => router.push("/review") },
+              { icon: "🎤", title: "Practice speaking", subtitle: "Chat with Emma — your AI coach", meta: "~2 min", onClick: () => router.push("/chat") },
+            ].map((m, i) => (
+              <button key={i} onClick={m.onClick}
+                className="text-left rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5"
+                style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <span className="text-2xl block mb-3">{m.icon}</span>
+                <p className="text-[15px] font-bold mb-1" style={{ color: "var(--color-text)" }}>{m.title}</p>
+                <p className="text-[13px] mb-3" style={{ color: "var(--color-text-muted)" }}>{m.subtitle}</p>
+                <span className="text-[11px] font-semibold" style={{ color: "var(--color-accent-light)" }}>{m.meta}</span>
+              </button>
             ))}
           </div>
         </section>
-      ) : lessons && lessons.length === 0 ? (
-        <div className="rounded-2xl p-8 text-center" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-          <div className="text-4xl mb-3">📚</div>
-          <p className="text-sm font-medium mb-1" style={{ color: "var(--color-text)" }}>{viewLevel} lessons are coming soon</p>
-          <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>We're building this level — check back shortly.</p>
+      )}
+
+      {/* ── 3. 2-Column: Unit+Lessons (70%) | Roadmap (30%) ── */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* LEFT: Main learning area — 70% */}
+        <div className="flex-1 min-w-0" style={{ flexBasis: "70%" }}>
+          {/* Current Unit */}
+          {lessonsLoading ? (
+            <div className="space-y-3">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}</div>
+          ) : currentUnit ? (
+            <section aria-labelledby="unit-heading">
+              <h2 id="unit-heading" className="text-[22px] font-extrabold mb-1" style={{ color: "var(--color-text)" }}>
+                Unit {currentUnit.unit}{currentUnit.theme ? ` · ${currentUnit.theme}` : ""}
+              </h2>
+              <p className="text-sm mb-4" style={{ color: "var(--color-text-muted)" }}>
+                {currentUnit.completed} of {currentUnit.total} lessons complete · {Math.round((currentUnit.completed / currentUnit.total) * 100)}%
+              </p>
+              {/* Lessons — 4-column layout */}
+              <div className="space-y-2">
+                {currentUnit.lessons.map((l) => {
+                  const isActive = nextLesson?.id === l.id;
+                  const isComp = l.completed;
+                  return (
+                    <div key={l.id} role="button" tabIndex={0}
+                      onClick={() => router.push(`/curriculum/${viewLevel.toLowerCase()}/${l.id}`)}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(`/curriculum/${viewLevel.toLowerCase()}/${l.id}`); } }}
+                      className="flex items-center gap-4 rounded-2xl px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+                      style={{ background: isActive ? "#17172C" : "#121224", border: isActive ? "1px solid var(--color-accent)" : "1px solid rgba(255,255,255,0.05)" }}>
+                      {/* Number circle */}
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
+                        style={{
+                          background: isComp ? "rgba(34,197,94,0.15)" : isActive ? "var(--color-accent-gradient)" : "transparent",
+                          color: isComp ? "#22c55e" : isActive ? "#fff" : "var(--color-text-muted)",
+                          border: (!isComp && !isActive) ? "1px solid var(--color-border)" : "none",
+                        }}>
+                        {isComp ? "✓" : l.order}
+                      </div>
+                      {/* Lesson info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[15px] font-semibold truncate" style={{ color: isComp ? "var(--color-text-muted)" : "var(--color-text)" }}>{l.title}</p>
+                        <p className="text-xs mt-0.5 truncate" style={{ color: "var(--color-text-muted)" }}>{(l.topics || []).slice(0, 3).join(" · ")}</p>
+                      </div>
+                      {/* Duration */}
+                      <span className="text-xs flex-shrink-0 hidden sm:block" style={{ color: "var(--color-text-muted)" }}>~{MIN_PER_LESSON} min</span>
+                      {/* Status chip */}
+                      <span className="flex-shrink-0 text-[11px] font-semibold px-3 py-1 rounded-full"
+                        style={{
+                          background: isComp ? "rgba(34,197,94,0.12)" : isActive ? "var(--color-accent-gradient)" : "rgba(255,255,255,0.04)",
+                          color: isComp ? "#22c55e" : isActive ? "#fff" : "var(--color-text-muted)",
+                        }}>
+                        {isComp ? "Completed" : isActive ? "Current" : "Locked"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : lessons && lessons.length === 0 ? (
+            <div className="rounded-2xl p-8 text-center" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
+              <div className="text-4xl mb-3">📚</div>
+              <p className="text-sm font-medium mb-1" style={{ color: "var(--color-text)" }}>{viewLevel} lessons are coming soon</p>
+              <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>We're building this level — check back shortly.</p>
+            </div>
+          ) : null}
         </div>
-      ) : null}
 
-      {/* ── 6–7. Unit Roadmap (this level's units; future units previewed) ── */}
-      {units.length > 1 && (
-        <section aria-labelledby="roadmap-heading">
-          <h2 id="roadmap-heading" className="text-lg font-bold mb-3" style={{ color: "var(--color-text)" }}>{viewLevel} Roadmap</h2>
-          <ul className="space-y-2">
-            {units.map((u) => {
-              const isCurrent = u.unit === currentUnit?.unit;
-              const status = u.isComplete ? "Complete" : isCurrent ? "In progress" : "Up next";
-              return (
-                <li key={u.unit} className="rounded-2xl p-4 flex items-center gap-3"
-                  style={{ background: "var(--color-card-bg)", border: isCurrent ? "1px solid var(--color-accent)" : "1px solid var(--color-border)" }}>
-                  <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold"
-                    style={{
-                      background: u.isComplete ? "rgba(34,197,94,0.15)" : isCurrent ? "var(--color-hover-bg)" : "var(--color-page-bg)",
-                      color: u.isComplete ? "#22c55e" : isCurrent ? "var(--color-accent-light)" : "var(--color-text-muted)",
-                    }}>
-                    {u.isComplete ? "✓" : u.unit}
-                  </span>
-                  <span className="flex-1 min-w-0">
-                    <span className="block text-sm font-semibold" style={{ color: "var(--color-text)" }}>
-                      Unit {u.unit}{u.theme ? ` · ${u.theme}` : ""}
-                    </span>
-                    <span className="block text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
-                      {u.total} lesson{u.total === 1 ? "" : "s"} · ~{u.total * MIN_PER_LESSON} min · {status}
-                    </span>
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
-
-      {/* ── 8. Future CEFR Levels (no fake locks; Coming Soon if empty) ── */}
-      {levels && levels.length > 0 && (
-        <section aria-labelledby="journey-heading">
-          <h2 id="journey-heading" className="text-lg font-bold mb-3" style={{ color: "var(--color-text)" }}>Your CEFR Journey</h2>
-          <div className="rounded-2xl p-4 sm:p-6" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-            <LevelPath levels={levels} currentLevel={viewLevel} onSelect={setOverride} />
+        {/* RIGHT: Roadmap timeline — 30% */}
+        <div className="lg:w-72 flex-shrink-0">
+          <div className="rounded-2xl p-5" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
+            <h3 className="text-sm font-bold mb-4" style={{ color: "var(--color-text)" }}>Roadmap</h3>
+            <div className="space-y-0">
+              {units.map((u, i) => {
+                const isCurrent = u.unit === currentUnit?.unit;
+                const isComp = u.isComplete;
+                const isLast = i === units.length - 1;
+                return (
+                  <div key={u.unit} className="flex gap-3">
+                    {/* Timeline column */}
+                    <div className="flex flex-col items-center flex-shrink-0">
+                      <div className="w-3 h-3 rounded-full flex-shrink-0"
+                        style={{ background: isComp ? "#22c55e" : isCurrent ? "var(--color-accent)" : "var(--color-border)" }} />
+                      {!isLast && <div className="w-0.5 flex-1 min-h-[24px]" style={{ background: "var(--color-border)" }} />}
+                    </div>
+                    {/* Content */}
+                    <div className={`pb-4 ${isLast ? "" : ""}`}>
+                      <p className="text-sm font-semibold" style={{ color: isCurrent ? "var(--color-text)" : "var(--color-text-secondary)" }}>
+                        Unit {u.unit}{u.theme ? ` · ${u.theme}` : ""}
+                      </p>
+                      <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
+                        {u.total} lessons · {isComp ? "Complete" : isCurrent ? "In progress" : "Up next"}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </section>
-      )}
+
+          {/* CEFR Journey below the roadmap */}
+          {levels && levels.length > 0 && (
+            <div className="rounded-2xl p-5 mt-4" style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.05)" }}>
+              <h3 className="text-sm font-bold mb-3" style={{ color: "var(--color-text)" }}>CEFR Journey</h3>
+              <LevelPath levels={levels} currentLevel={viewLevel} onSelect={setOverride} />
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* ── 9. Additional Learning Tools ────────────────────────────── */}
       <section aria-labelledby="tools-heading">
-        <h2 id="tools-heading" className="text-lg font-bold mb-3" style={{ color: "var(--color-text)" }}>More ways to practice</h2>
+        <h2 id="tools-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "var(--color-text)" }}>More ways to practice</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: "Practice Words", icon: "🃏", href: "/review", desc: "Spaced repetition" },
