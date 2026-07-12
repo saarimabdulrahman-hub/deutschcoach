@@ -12,3 +12,7 @@ export { SpeedControl } from "./SpeedControl";
 export { Waveform } from "./Waveform";
 export { PronunciationFeedback } from "./PronunciationFeedback";
 export { SpeakingUI } from "./SpeakingUI";
+export { AudioEngine, preloadUrls } from "./AudioEngine";
+export { useRecorder, type RecorderPhase, type RecorderState } from "./useRecorder";
+export { RecordingWaveform } from "./RecordingWaveform";
+export { SpeakingStage } from "./SpeakingStage";
