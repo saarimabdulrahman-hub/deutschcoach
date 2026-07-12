@@ -94,15 +94,22 @@ export function TabBar({ onOpenCommand }: TabBarProps) {
           <button
             key={tab.key}
             onClick={() => router.push(tab.href)}
-            className="relative px-4 py-2 text-sm font-semibold rounded-xl transition-all whitespace-nowrap"
+            className="relative px-4 py-2 text-sm font-semibold transition-all whitespace-nowrap"
             style={{
               color: active === tab.key ? "#fff" : "rgba(255,255,255,0.5)",
               background: active === tab.key ? "linear-gradient(135deg, #7c3aed, #db2777)" : "transparent",
               boxShadow: active === tab.key ? "0 0 22px rgba(219,39,119,0.4), 0 1px 0 0 rgba(255,255,255,0.15) inset" : "none",
               border: active === tab.key ? "1px solid rgba(255,255,255,0.15)" : "1px solid transparent",
+              borderRadius: active === tab.key ? "16px 16px 16px 6px" : "12px",
             }}
           >
             {tab.label}
+            {/* Subtle bottom accent notch — "you are here" indicator */}
+            {active === tab.key && (
+              <span className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-2.5 h-1.5 rounded-b-sm"
+                style={{ background: "linear-gradient(135deg, #7c3aed, #db2777)" }}
+                aria-hidden />
+            )}
           </button>
         ))}
       </nav>
