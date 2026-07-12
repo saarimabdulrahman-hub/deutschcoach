@@ -223,33 +223,34 @@ export default function CurriculumPage() {
         </section>
       ) : null}
 
-      {/* ── 2. Today's Mission — full-width, 3 equal horizontal mini-cards ── */}
-      {nextLesson && (
-        <section aria-labelledby="mission-heading">
-          <h2 id="mission-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "var(--color-text)" }}>Today's Mission</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {[
-              { icon: "📖", title: `Complete Lesson ${nextLesson.order}`, subtitle: nextLesson.title, meta: `~${MIN_PER_LESSON} min`, onClick: () => goLesson(nextLesson!.id) },
-              { icon: "🃏", title: cardsDue > 0 ? `Review ${cardsDue} cards` : "Vocabulary — all caught up", subtitle: cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now", meta: cardsDue > 0 ? "~2 min" : "✓", onClick: () => router.push("/review") },
-              { icon: "🎤", title: "Practice speaking", subtitle: "Chat with Emma — your AI coach", meta: "~2 min", onClick: () => router.push("/chat") },
-            ].map((m, i) => (
-              <button key={i} onClick={m.onClick}
-                className="text-left rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5"
-                style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.06)" }}>
-                <span className="text-2xl block mb-3">{m.icon}</span>
-                <p className="text-[15px] font-bold mb-1" style={{ color: "var(--color-text)" }}>{m.title}</p>
-                <p className="text-[13px] mb-3" style={{ color: "var(--color-text-muted)" }}>{m.subtitle}</p>
-                <span className="text-[11px] font-semibold" style={{ color: "var(--color-accent-light)" }}>{m.meta}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── 3. 2-Column: Unit+Lessons (70%) | Roadmap (30%) ── */}
+      {/* ── 2. 2-Column: Today's Mission + Unit | Roadmap ── */}
       <div className="flex flex-col lg:flex-row gap-6">
         {/* LEFT: Main learning area — 70% */}
-        <div className="flex-1 min-w-0" style={{ flexBasis: "70%" }}>
+        <div className="flex-1 min-w-0 space-y-6" style={{ flexBasis: "70%" }}>
+          {/* Today's Mission — outer card wrapping 3 mini-cards */}
+          {nextLesson && (
+            <section aria-labelledby="mission-heading" className="rounded-2xl p-5"
+              style={{ background: "#121224", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <h2 id="mission-heading" className="text-[22px] font-extrabold mb-4" style={{ color: "var(--color-text)" }}>Today's Mission</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  { icon: "📖", title: `Complete Lesson ${nextLesson.order}`, subtitle: nextLesson.title, meta: `~${MIN_PER_LESSON} min`, onClick: () => goLesson(nextLesson!.id) },
+                  { icon: "🃏", title: cardsDue > 0 ? `Review ${cardsDue} cards` : "Vocabulary — all caught up", subtitle: cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now", meta: cardsDue > 0 ? "~2 min" : "✓", onClick: () => router.push("/review") },
+                  { icon: "🎤", title: "Practice speaking", subtitle: "Chat with Emma — your AI coach", meta: "~2 min", onClick: () => router.push("/chat") },
+                ].map((m, i) => (
+                  <button key={i} onClick={m.onClick}
+                    className="text-left rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5"
+                    style={{ background: "#17172C", border: "1px solid rgba(255,255,255,0.04)" }}>
+                    <span className="text-2xl block mb-3">{m.icon}</span>
+                    <p className="text-[15px] font-bold mb-1" style={{ color: "var(--color-text)" }}>{m.title}</p>
+                    <p className="text-[13px] mb-3" style={{ color: "var(--color-text-muted)" }}>{m.subtitle}</p>
+                    <span className="text-[11px] font-semibold" style={{ color: "var(--color-accent-light)" }}>{m.meta}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Current Unit */}
           {lessonsLoading ? (
             <div className="space-y-3">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}</div>
