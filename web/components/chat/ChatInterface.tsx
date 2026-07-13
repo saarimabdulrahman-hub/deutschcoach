@@ -276,7 +276,7 @@ export function ChatInterface() {
                 style={msg.role === "user"
                   ? { background: "var(--color-accent-gradient)", color: "#fff" }
                   : { background: "var(--color-card-bg)", color: "var(--color-text-secondary)", border: "1px solid var(--color-border)" }}>
-                {msg.role === "user" ? userName.charAt(0).toUpperCase() : "<img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover" />"}
+                {msg.role === "user" ? userName.charAt(0).toUpperCase() : <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover" />}
               </div>
               <div className={`max-w-[75%] ${msg.role === "user" ? "items-end" : "items-start"}`}>
                 <div className="px-4 py-3 rounded-2xl text-sm leading-relaxed"

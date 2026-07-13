@@ -20,7 +20,7 @@ export default function proxy(request: NextRequest) {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
-    pathname === "/favicon.ico"
+    /\.(webp|png|jpe?g|gif|svg|ico|woff2?|ttf|eot|pdf)$/.test(pathname)
   ) {
     return NextResponse.next();
   }
@@ -37,6 +37,6 @@ export default function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:webp|png|jpe?g|gif|svg|ico|woff2?|ttf|eot|pdf)$).*)",
   ],
 };
