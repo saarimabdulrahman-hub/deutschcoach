@@ -356,9 +356,9 @@ export default function CurriculumPage() {
                       {/* Status chip */}
                       <span className="flex-shrink-0 text-[11px] font-semibold px-3 py-1 rounded-full relative z-10"
                         style={{
-                          background: isComp ? "rgba(34,197,94,0.08)" : isActive ? "rgba(139,92,246,0.12)" : "rgba(255,255,255,0.02)",
-                          color: isComp ? "#22C55E" : isActive ? "#A78BFA" : "rgba(107,114,128,0.5)",
-                          border: isActive ? "1px solid rgba(139,92,246,0.25)" : "1px solid rgba(255,255,255,0.04)",
+                          background: isComp ? "rgba(34,197,94,0.1)" : isActive ? "#8B5CF6" : "rgba(255,255,255,0.02)",
+                          color: isComp ? "#22C55E" : isActive ? "#FFFFFF" : "rgba(107,114,128,0.5)",
+                          border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid rgba(255,255,255,0.04)",
                           boxShadow: isActive ? "0 0 12px rgba(217,70,239,0.2)" : "none",
                         }}>
                         {isComp ? "Completed" : isActive ? "Current" : "Locked"}
@@ -395,7 +395,7 @@ export default function CurriculumPage() {
             {/* Timeline — relative container for the continuous line */}
             <div className="relative mb-6">
               {/* Continuous vertical line behind all dots */}
-              <div className="absolute left-[7px] top-0 bottom-0 w-[2px] rounded-full"
+              <div className="absolute left-[9px] top-0 bottom-0 w-[2px] rounded-full"
                 style={{ background: "linear-gradient(180deg, #6D28D9 0%, rgba(109,40,217,0.2) 100%)" }} />
 
               {currentUnit?.lessons.map((l, i) => {
@@ -409,19 +409,19 @@ export default function CurriculumPage() {
                     <div className="relative flex-shrink-0 flex items-start pt-[5px]">
                       {/* Outer glow ring */}
                       {isActive && (
-                        <div className="absolute rounded-full" style={{ width: 22, height: 22, left: -4, top: 2, background: "radial-gradient(circle, rgba(139,92,246,0.25), transparent 65%)" }} />
+                        <div className="absolute rounded-full" style={{ width: 28, height: 28, left: -5, top: 1, background: "radial-gradient(circle, rgba(139,92,246,0.3), transparent 60%)" }} />
                       )}
-                      {/* Dot — glass-like transparent, larger */}
+                      {/* Dot — larger */}
                       <div className="relative rounded-full flex-shrink-0 z-10"
                         style={{
-                          width: 16, height: 16,
-                          background: isComp ? "rgba(34,197,94,0.45)" : isActive ? "rgba(139,92,246,0.45)" : "rgba(75,85,99,0.35)",
+                          width: 20, height: 20,
+                          background: isComp ? "rgba(34,197,94,0.5)" : isActive ? "rgba(139,92,246,0.5)" : "rgba(75,85,99,0.35)",
                           border: isActive ? "1px solid rgba(139,92,246,0.25)" : "none",
-                          boxShadow: isActive ? "0 0 12px rgba(139,92,246,0.2)" : "none",
+                          boxShadow: isActive ? "0 0 16px rgba(139,92,246,0.25)" : "none",
                         }}>
                         {isActive && (
                           <div className="absolute rounded-full"
-                            style={{ width: 8, height: 8, left: 4, top: 4, background: "rgba(255,255,255,0.4)", border: "none" }} />
+                            style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
                         )}
                       </div>
                     </div>
@@ -437,13 +437,13 @@ export default function CurriculumPage() {
                           {l.title}
                         </p>
                       </div>
-                      {/* Status badge — transparent capsule */}
+                      {/* Status badge — solid purple for Current */}
                       <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
                         style={{
                           width: 72,
-                          background: isComp ? "rgba(34,197,94,0.08)" : isActive ? "rgba(139,92,246,0.12)" : "rgba(75,85,99,0.1)",
-                          color: isComp ? "#22C55E" : isActive ? "#A78BFA" : "rgba(107,114,128,0.5)",
-                          border: isActive ? "1px solid rgba(139,92,246,0.25)" : "1px solid transparent",
+                          background: isComp ? "rgba(34,197,94,0.08)" : isActive ? "#8B5CF6" : "rgba(75,85,99,0.1)",
+                          color: isComp ? "#22C55E" : isActive ? "#FFFFFF" : "rgba(107,114,128,0.5)",
+                          border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
                         }}>
                         {isComp ? "Done" : isActive ? "Current" : "Locked"}
                       </span>
@@ -455,8 +455,8 @@ export default function CurriculumPage() {
               {/* Review node */}
               <div className="flex gap-4 relative" style={{ minHeight: 52 }}>
                 <div className="flex-shrink-0 flex items-start pt-[5px]">
-                  <div className="relative z-10 rounded-full" style={{ width: 16, height: 16, background: "rgba(245,158,11,0.5)", boxShadow: "0 0 10px rgba(245,158,11,0.25)" }}>
-                    <div className="absolute rounded-full" style={{ width: 8, height: 8, left: 4, top: 4, background: "rgba(255,255,255,0.4)", border: "none" }} />
+                  <div className="relative z-10 rounded-full" style={{ width: 20, height: 20, background: "rgba(245,158,11,0.5)", boxShadow: "0 0 14px rgba(245,158,11,0.3)" }}>
+                    <div className="absolute rounded-full" style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
                   </div>
                 </div>
                 <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
