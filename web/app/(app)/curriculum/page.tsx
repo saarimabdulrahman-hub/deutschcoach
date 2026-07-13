@@ -361,7 +361,7 @@ export default function CurriculumPage() {
                           border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid rgba(255,255,255,0.04)",
                           boxShadow: isActive ? "0 0 12px rgba(217,70,239,0.2)" : "none",
                         }}>
-                        {isComp ? "Completed" : isActive ? "Current" : "<svg xmlns="http://www.w3.org/2000/svg" className="inline-block" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1.2"/></svg>"}
+                        {isComp ? "Completed" : isActive ? "Current" : "<svg xmlns="http://www.w3.org/2000/svg" className="inline-block" width="22" height="22" viewBox="0 0 24 24" fill="rgba(139,92,246,0.12)" stroke="#A78BFA" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2.5" fill="rgba(139,92,246,0.1)"/><path d="M8 10V6a4 4 0 018 0v4"/></svg>"}
                       </span>
                     </div>
                   );
@@ -445,7 +445,7 @@ export default function CurriculumPage() {
                           color: isComp ? "#22C55E" : isActive ? "#FFFFFF" : "rgba(107,114,128,0.5)",
                           border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
                         }}>
-                        {isComp ? "Done" : isActive ? "Current" : "<svg xmlns="http://www.w3.org/2000/svg" className="inline-block" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1.2"/></svg>"}
+                        {isComp ? "Done" : isActive ? "Current" : "<svg xmlns="http://www.w3.org/2000/svg" className="inline-block" width="22" height="22" viewBox="0 0 24 24" fill="rgba(139,92,246,0.12)" stroke="#A78BFA" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2.5" fill="rgba(139,92,246,0.1)"/><path d="M8 10V6a4 4 0 018 0v4"/></svg>"}
                       </span>
                     </div>
                   </div>
@@ -466,7 +466,7 @@ export default function CurriculumPage() {
                   </div>
                   <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
                     style={{ width: 72, background: "rgba(75,85,99,0.1)", color: "rgba(107,114,128,0.5)" }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="inline-block" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1.2"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="inline-block" width="22" height="22" viewBox="0 0 24 24" fill="rgba(139,92,246,0.12)" stroke="#A78BFA" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2.5" fill="rgba(139,92,246,0.1)"/><path d="M8 10V6a4 4 0 018 0v4"/></svg>
                   </span>
                 </div>
               </div>
