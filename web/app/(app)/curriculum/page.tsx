@@ -361,7 +361,7 @@ export default function CurriculumPage() {
                           border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid rgba(255,255,255,0.04)",
                           boxShadow: isActive ? "0 0 12px rgba(217,70,239,0.2)" : "none",
                         }}>
-                        {isComp ? "Completed" : isActive ? "Current" : "Locked"}
+                        {isComp ? "Completed" : isActive ? "Current" : "🔒"}
                       </span>
                     </div>
                   );
@@ -445,7 +445,7 @@ export default function CurriculumPage() {
                           color: isComp ? "#22C55E" : isActive ? "#FFFFFF" : "rgba(107,114,128,0.5)",
                           border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
                         }}>
-                        {isComp ? "Done" : isActive ? "Current" : "Locked"}
+                        {isComp ? "Done" : isActive ? "Current" : "🔒"}
                       </span>
                     </div>
                   </div>
@@ -466,7 +466,7 @@ export default function CurriculumPage() {
                   </div>
                   <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
                     style={{ width: 72, background: "rgba(75,85,99,0.1)", color: "rgba(107,114,128,0.5)" }}>
-                    Locked
+                    🔒
                   </span>
                 </div>
               </div>
