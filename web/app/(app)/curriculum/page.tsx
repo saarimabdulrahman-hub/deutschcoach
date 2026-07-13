@@ -296,38 +296,39 @@ export default function CurriculumPage() {
                       className="flex items-center gap-5 rounded-2xl px-5 py-4 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer group relative overflow-hidden"
                       style={{
                         background: isActive
-                          ? "linear-gradient(180deg, rgba(217,70,239,0.08), rgba(109,59,255,0.04))"
+                          ? "linear-gradient(135deg, rgba(139,92,246,0.1), rgba(217,70,239,0.06), rgba(109,59,255,0.03))"
                           : "linear-gradient(180deg, rgba(255,255,255,0.02), transparent)",
-                        border: isActive ? "1px solid rgba(168,85,247,0.25)" : "1px solid rgba(255,255,255,0.04)",
-                        boxShadow: isActive ? "0 0 30px rgba(217,70,239,0.08), 0 0 0 1px rgba(168,85,247,0.15) inset" : "0 4px 12px rgba(0,0,0,0.15)",
+                        border: isActive ? "1px solid rgba(139,92,246,0.2)" : "1px solid rgba(255,255,255,0.04)",
+                        boxShadow: isActive ? "0 0 40px rgba(139,92,246,0.08), inset 0 1px 0 rgba(255,255,255,0.04)" : "0 4px 12px rgba(0,0,0,0.15)",
                       }}>
                       {isActive && (
                         <div className="absolute inset-0 pointer-events-none"
-                          style={{ background: "radial-gradient(ellipse at 5% 50%, rgba(109,59,255,0.06), transparent 60%)" }} />
+                          style={{ background: "linear-gradient(90deg, rgba(139,92,246,0.06) 0%, transparent 50%)" }} />
                       )}
-                      {/* Number circle */}
+                      {/* Number circle — translucent */}
                       <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold relative z-10"
                         style={{
-                          background: isComp ? "rgba(34,197,94,0.12)" : isActive ? "linear-gradient(180deg, #FFB547, #D97706)" : "transparent",
-                          color: isComp ? "#22C55E" : isActive ? "#fff" : "#6B7280",
-                          border: (!isComp && !isActive) ? "1px solid rgba(255,255,255,0.06)" : "none",
-                          boxShadow: isActive ? "0 0 14px rgba(255,180,60,0.18)" : "none",
+                          background: isComp ? "rgba(34,197,94,0.1)" : isActive ? "rgba(139,92,246,0.15)" : "rgba(255,255,255,0.03)",
+                          color: isComp ? "#22C55E" : isActive ? "#A78BFA" : "#6B7280",
+                          border: `1px solid ${isActive ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.06)"}`,
+                          boxShadow: isActive ? "0 0 16px rgba(139,92,246,0.15)" : "none",
                         }}>
                         {isComp ? "✓" : l.order}
                       </div>
-                      {/* Lesson info */}
+                      {/* Lesson info — "Lesson N · Title" format */}
                       <div className="flex-1 min-w-0 relative z-10">
-                        <p className="text-[15px] font-semibold truncate" style={{ color: isComp ? "#6B7280" : "#D1D5DB" }}>{l.title}</p>
-                        <p className="text-xs mt-0.5 truncate" style={{ color: "#6B7280" }}>{(l.topics || []).slice(0, 3).join(" · ")}</p>
+                        <p className="text-[15px] font-semibold truncate" style={{ color: isComp ? "#6B7280" : "#D1D5DB" }}>
+                          Lesson {l.order}{l.title ? ` · ${l.title}` : ""}
+                        </p>
                       </div>
                       {/* Duration */}
                       <span className="text-xs flex-shrink-0 hidden sm:block relative z-10" style={{ color: "#6B7280" }}>~{MIN_PER_LESSON} min</span>
                       {/* Status chip */}
                       <span className="flex-shrink-0 text-[11px] font-semibold px-3 py-1 rounded-full relative z-10"
                         style={{
-                          background: isComp ? "rgba(34,197,94,0.1)" : isActive ? "linear-gradient(90deg, #C026FF, #8B5CF6)" : "rgba(255,255,255,0.03)",
-                          color: isComp ? "#22C55E" : isActive ? "#fff" : "#6B7280",
-                          border: isActive ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.04)",
+                          background: isComp ? "rgba(34,197,94,0.08)" : isActive ? "rgba(139,92,246,0.12)" : "rgba(255,255,255,0.02)",
+                          color: isComp ? "#22C55E" : isActive ? "#A78BFA" : "rgba(107,114,128,0.5)",
+                          border: isActive ? "1px solid rgba(139,92,246,0.25)" : "1px solid rgba(255,255,255,0.04)",
                           boxShadow: isActive ? "0 0 12px rgba(217,70,239,0.2)" : "none",
                         }}>
                         {isComp ? "Completed" : isActive ? "Current" : "Locked"}
@@ -445,9 +446,9 @@ export default function CurriculumPage() {
             <button onClick={() => setOverride(units[0]?.unit ? viewLevel : viewLevel)}
               className="w-full py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-250 hover:-translate-y-0.5"
               style={{
-                background: "linear-gradient(180deg, #5B21B6, #6D28D9)",
-                color: "#F8FAFC",
-                boxShadow: "0 6px 18px rgba(91,33,182,0.3), inset 0 1px 0 rgba(255,255,255,0.08)",
+                background: "rgba(139,92,246,0.12)",
+                color: "#A78BFA",
+                border: "1px solid rgba(139,92,246,0.2)",
               }}>
               View Full Roadmap
             </button>
