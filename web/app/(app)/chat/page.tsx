@@ -7,7 +7,7 @@ export default function ChatPage() {
     <div className="space-y-2">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ background: "var(--color-hover-bg)" }}>
-          👩‍🏫
+          <img src="/emma-avatar.webp" alt="Emma" className="w-10 h-10 rounded-xl object-cover" />
         </div>
         <div>
           <h1 className="text-xl font-bold" style={{ color: "var(--color-text)" }}>Emma · Your German Tutor</h1>

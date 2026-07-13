@@ -50,7 +50,7 @@ function WelcomePanel({ userName, onPrompt }: { userName: string; onPrompt: (tex
     <div className="text-center py-6 sm:py-8 max-w-md mx-auto">
       <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center text-3xl"
         style={{ background: "var(--color-hover-bg)", border: "1px solid var(--color-border)" }}>
-        👩‍🏫
+        <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover" />
       </div>
       <h2 className="text-xl sm:text-2xl font-extrabold mb-1" style={{ color: "var(--color-text)" }}>
         Hi{userName ? ` ${userName}` : ""} 👋
@@ -276,7 +276,7 @@ export function ChatInterface() {
                 style={msg.role === "user"
                   ? { background: "var(--color-accent-gradient)", color: "#fff" }
                   : { background: "var(--color-card-bg)", color: "var(--color-text-secondary)", border: "1px solid var(--color-border)" }}>
-                {msg.role === "user" ? userName.charAt(0).toUpperCase() : "👩‍🏫"}
+                {msg.role === "user" ? userName.charAt(0).toUpperCase() : "<img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover" />"}
               </div>
               <div className={`max-w-[75%] ${msg.role === "user" ? "items-end" : "items-start"}`}>
                 <div className="px-4 py-3 rounded-2xl text-sm leading-relaxed"
@@ -298,7 +298,7 @@ export function ChatInterface() {
           {loading && (
             <div className="flex items-start gap-2.5">
               <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>👩‍🏫</div>
+                style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}><img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover" /></div>
               <div className="px-4 py-3 rounded-2xl" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
                 <span className="flex gap-1.5">
                   {[0, 120, 240].map((d) => (

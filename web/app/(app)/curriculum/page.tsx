@@ -158,7 +158,7 @@ export default function CurriculumPage() {
                     border: "2px solid rgba(255,255,255,0.18)",
                     boxShadow: "0 0 0 6px rgba(109,59,255,0.25), 0 0 36px rgba(109,59,255,0.25)",
                   }}>
-                  👩‍🏫
+                  <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover" />
                 </div>
                 {/* Lesson title stack beside avatar */}
                 <div className="min-w-0">
