@@ -385,10 +385,10 @@ export default function CurriculumPage() {
                     <div className={`flex-1 min-w-0 flex items-center justify-between ${isLast ? "" : "pb-5"}`}>
                       <div className="min-w-0 mr-2">
                         <p className="text-[13px] font-semibold truncate" style={{ color: isComp ? "#6B7280" : "#F8FAFC" }}>
-                          {l.title}
+                          Lesson {l.order}
                         </p>
                         <p className="text-[11px] truncate mt-0.5" style={{ color: "#6B7280" }}>
-                          {(l.topics || []).slice(0, 2).join(", ")}
+                          {l.title}
                         </p>
                       </div>
                       {/* Status badge */}
