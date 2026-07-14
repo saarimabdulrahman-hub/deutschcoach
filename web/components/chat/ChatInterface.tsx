@@ -177,6 +177,65 @@ function ContextBar() {
   );
 }
 
+// ── Emma greeting card (sidebar) ───────────────────────────────────────
+
+function EmmaCard({ dashboard, userName }: { dashboard?: DashboardData; userName: string }) {
+  const recentActivity = dashboard?.recent_activity?.[0];
+
+  return (
+    <div className="rounded-2xl p-4 relative overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%), #111127",
+        border: "1px solid rgba(186, 120, 255, 0.18)",
+        boxShadow: "0 0 35px rgba(168,85,247,.08)",
+      }}>
+      {/* Purple ambient glow */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at 50% 20%, rgba(139,70,255,0.10) 0%, transparent 60%)" }} />
+
+      <div className="relative z-10">
+        {/* Emma avatar + greeting */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center"
+            style={{
+              background: "linear-gradient(135deg, #6D3BFF, #FF3CA6)",
+              border: "2px solid rgba(255,255,255,0.18)",
+              boxShadow: "0 0 0 4px rgba(109,59,255,0.25), 0 0 20px rgba(109,59,255,0.25)",
+            }}>
+            <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-base font-bold" style={{ color: "#fff" }}>
+              Hi {userName}! <span className="inline-block animate-bounce">👋</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="border-t mb-3" style={{ borderColor: "rgba(255,255,255,0.06)" }} />
+
+        {/* Recent activity */}
+        {recentActivity ? (
+          <>
+            <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: "var(--color-text-muted)" }}>
+              {recentActivity.type === "lesson_completed" ? "Yesterday you learned" : "Recently you practiced"}
+            </p>
+            <p className="text-sm font-semibold leading-snug" style={{ color: "var(--color-active-text)" }}>
+              {recentActivity.description}
+            </p>
+          </>
+        ) : (
+          <div className="text-center py-1">
+            <p className="text-sm mb-1" style={{ color: "var(--color-text-secondary)" }}>
+              Start your first lesson today! 🌱
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────
 
 export function ChatInterface() {
