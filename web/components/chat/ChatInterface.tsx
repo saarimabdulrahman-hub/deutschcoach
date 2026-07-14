@@ -100,49 +100,60 @@ function WelcomePanel({ userName, onPrompt }: { userName: string; onPrompt: (tex
   );
 }
 
-// ── Session summary (right sidebar) ────────────────────────────────────
+// ── Session Summary KPI card (right sidebar) ───────────────────────────
 
 function SessionSummary({ summary }: { summary: SessionSummary }) {
   const hasContent = summary.wordsDiscussed.length > 0 || summary.grammarExplained.length > 0 || summary.correctionsCount > 0 || summary.usefulPhrases.length > 0;
-  if (!hasContent) return null;
-
-  const sections = [
-    { icon: "🗣️", label: "Words discussed", items: summary.wordsDiscussed, color: "rgba(34,197,94,0.15)", iconColor: "#22C55E" },
-    { icon: "📖", label: "Grammar explained", items: summary.grammarExplained, color: "rgba(168,85,247,0.15)", iconColor: "#A855F7" },
-    { icon: "✍️", label: "Corrections", items: summary.correctionsCount > 0 ? [`${summary.correctionsCount} correction${summary.correctionsCount > 1 ? "s" : ""} this session`] : [], color: "rgba(245,158,11,0.15)", iconColor: "#F59E0B" },
-    { icon: "💬", label: "Useful phrases", items: summary.usefulPhrases, color: "rgba(244,63,94,0.15)", iconColor: "#F43F5E" },
-  ].filter(s => s.items.length > 0);
 
   return (
-    <div className="rounded-2xl p-4 relative overflow-hidden"
-      style={{
-        background: "linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%), #111127",
-        border: "1px solid rgba(186, 120, 255, 0.18)",
-        boxShadow: "0 0 35px rgba(168,85,247,.06)",
-      }}>
-      <p className="text-[10px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--color-text-muted)" }}>
-        Session Summary
-      </p>
-      <div className="space-y-3">
-        {sections.map((s) => (
-          <div key={s.label} className="flex gap-2.5">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
-              style={{ background: s.color, color: s.iconColor }}>
-              {s.icon}
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>{s.label}</p>
+    <div className="rounded-xl p-4" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+      {/* Colorful icon chips header */}
+      <div className="flex items-center gap-1.5 mb-3">
+        <span className="w-6 h-6 rounded-md flex items-center justify-center text-[11px]" style={{ background: "rgba(34,197,94,0.2)" }}>🗣️</span>
+        <span className="w-6 h-6 rounded-md flex items-center justify-center text-[11px]" style={{ background: "rgba(168,85,247,0.2)" }}>📖</span>
+        <span className="w-6 h-6 rounded-md flex items-center justify-center text-[11px]" style={{ background: "rgba(245,158,11,0.2)" }}>✍️</span>
+        <span className="w-6 h-6 rounded-md flex items-center justify-center text-[11px]" style={{ background: "rgba(244,63,94,0.2)" }}>💬</span>
+        <span className="text-xs font-semibold ml-1" style={{ color: "var(--color-text)" }}>Session Summary</span>
+      </div>
+
+      {!hasContent ? (
+        <p className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>Start a conversation to see your summary</p>
+      ) : (
+        <div className="space-y-2">
+          {summary.wordsDiscussed.length > 0 && (
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Vocabulary</p>
               <div className="flex flex-wrap gap-1">
-                {s.items.map((item, i) => (
-                  <span key={i} className="text-[11px]" style={{ color: "var(--color-text-secondary)" }}>
-                    {item}{i < s.items.length - 1 ? "," : ""}
-                  </span>
+                {summary.wordsDiscussed.map((w) => (
+                  <span key={w} className="text-[11px] px-1.5 py-0.5 rounded" style={{ background: "rgba(34,197,94,0.1)", color: "#22C55E" }}>{w}</span>
                 ))}
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          )}
+          {summary.grammarExplained.length > 0 && (
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Grammar</p>
+              {summary.grammarExplained.map((g, i) => (
+                <p key={i} className="text-[11px]" style={{ color: "var(--color-text-secondary)" }}>✦ {g}</p>
+              ))}
+            </div>
+          )}
+          {summary.correctionsCount > 0 && (
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Corrections</p>
+              <p className="text-[11px]" style={{ color: "#F59E0B" }}>{summary.correctionsCount} correction{summary.correctionsCount > 1 ? "s" : ""} this session</p>
+            </div>
+          )}
+          {summary.usefulPhrases.length > 0 && (
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Phrases</p>
+              {summary.usefulPhrases.map((p, i) => (
+                <p key={i} className="text-[11px]" style={{ color: "var(--color-text-secondary)" }}>"{p}"</p>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -230,7 +241,7 @@ function EmmaCard({ dashboard, userName }: { dashboard?: DashboardData; userName
 
 // ── Try These section (replaces Modes) ──────────────────────────────────
 
-function TryThese({ mode, setMode }: { mode: TutorMode; setMode: (m: TutorMode) => void }) {
+function TryThese({ mode, setMode }: { mode: TutorMode | null; setMode: (m: TutorMode) => void }) {
   return (
     <div>
       <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--color-text-muted)" }}>
@@ -298,34 +309,31 @@ function EmmaDetails() {
   );
 }
 
-// ── Recent Topics card (right sidebar) ─────────────────────────────────
+// ── Recent Topics KPI card (right sidebar) ─────────────────────────────
 
 function RecentTopics({ dashboard }: { dashboard?: DashboardData }) {
-  const activities = dashboard?.recent_activity?.slice(0, 3) ?? [];
-  if (activities.length === 0) return null;
+  const activities = dashboard?.recent_activity?.slice(0, 4) ?? [];
 
   return (
-    <div className="rounded-2xl p-4"
-      style={{
-        background: "linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%), #111127",
-        border: "1px solid rgba(186, 120, 255, 0.18)",
-        boxShadow: "0 0 35px rgba(168,85,247,.06)",
-      }}>
-      <p className="text-[10px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--color-text-muted)" }}>
+    <div className="rounded-xl p-4" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+      <p className="text-xs font-semibold mb-3" style={{ color: "var(--color-text)" }}>
         Recent Topics
       </p>
-      <div className="space-y-3">
-        {activities.map((a, i) => (
-          <div key={i}>
-            <p className="text-[13px] font-semibold leading-snug" style={{ color: "var(--color-text)" }}>
-              {a.description}
-            </p>
-            <p className="text-[10px] mt-0.5" style={{ color: "var(--color-text-muted)" }}>
-              {a.type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-            </p>
-          </div>
-        ))}
-      </div>
+      {activities.length === 0 ? (
+        <p className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>
+          No recent activity yet
+        </p>
+      ) : (
+        <div className="space-y-2.5">
+          {activities.map((a, i) => (
+            <div key={i}>
+              <p className="text-[12px] leading-snug" style={{ color: "var(--color-text-secondary)" }}>
+                {a.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -341,7 +349,7 @@ export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<TutorMode>("roleplay");
+  const [mode, setMode] = useState<TutorMode | null>(null);
   const [summary, setSummary] = useState<SessionSummary>({ wordsDiscussed: [], grammarExplained: [], correctionsCount: 0, usefulPhrases: [] });
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -387,7 +395,7 @@ export function ChatInterface() {
     }
   }
 
-  const suggestions = MODE_SUGGESTIONS[mode] ?? MODE_SUGGESTIONS.roleplay;
+  const suggestions = mode ? (MODE_SUGGESTIONS[mode] ?? MODE_SUGGESTIONS.roleplay) : [];
   const isEmpty = messages.length === 0;
 
   return (
@@ -474,7 +482,7 @@ export function ChatInterface() {
         {isEmpty && (
           <div className="mb-3">
             <p className="text-[10px] font-semibold uppercase tracking-wider mb-2 text-center" style={{ color: "var(--color-text-muted)" }}>
-              Try in {TRY_THESE.find((m) => m.key === mode)?.label ?? mode} mode
+              Try in {mode ? (TRY_THESE.find((m) => m.key === mode)?.label ?? mode) : "any"} mode
             </p>
             <div className="flex flex-wrap gap-1.5 justify-center">
               {suggestions.slice(0, 4).map((s, i) => (
