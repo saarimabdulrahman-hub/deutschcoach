@@ -194,7 +194,7 @@ function EmmaCard({ dashboard, userName }: { dashboard?: DashboardData; userName
               border: "2px solid rgba(255,255,255,0.18)",
               boxShadow: "0 0 0 4px rgba(109,59,255,0.25), 0 0 20px rgba(109,59,255,0.25)",
             }}>
-            <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover scale-[1.35]" />
+            <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover scale-110" />
           </div>
           <div className="min-w-0">
             <p className="text-base font-bold" style={{ color: "#fff" }}>
@@ -243,10 +243,10 @@ function TryThese({ mode, setMode }: { mode: TutorMode; setMode: (m: TutorMode) 
             <button key={m.key} onClick={() => setMode(m.key)}
               className="flex items-center gap-3 w-full px-2 py-2 rounded-xl text-left transition-all duration-200 hover:-translate-y-0.5"
               style={{
-                background: active ? "var(--color-hover-bg)" : "transparent",
+                background: active ? "var(--color-hover-bg)" : "var(--color-card-bg)",
                 border: active
                   ? "1px solid var(--color-accent)"
-                  : "1px solid transparent",
+                  : "1px solid var(--color-border)",
                 boxShadow: active ? "0 0 16px var(--color-active-bg)" : "none",
               }}>
               {/* Emoji in translucent circle */}
@@ -283,7 +283,7 @@ function EmmaDetails() {
           background: "linear-gradient(135deg, #6D3BFF, #FF3CA6)",
           border: "1px solid rgba(255,255,255,0.15)",
         }}>
-        <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover scale-[1.35]" />
+        <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover scale-110" />
       </div>
       <div className="min-w-0">
         <p className="text-xs font-semibold truncate" style={{ color: "var(--color-text)" }}>
