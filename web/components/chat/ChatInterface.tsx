@@ -25,8 +25,7 @@ interface SessionSummary {
 
 // ── Mode definitions ──────────────────────────────────────────────────
 
-type TutorModeKeys = TutorMode;
-const TRY_THESE: { key: TutorModeKeys; emoji: string; label: string; color: string; bg: string }[] = [
+const TRY_THESE: { key: TutorMode; emoji: string; label: string; color: string; bg: string }[] = [
   { key: "roleplay", emoji: "🎭", label: "Act out a situation", color: "#D946EF", bg: "rgba(217,70,239,0.10)" },
   { key: "grammar", emoji: "📖", label: "Break down a rule", color: "#3B82F6", bg: "rgba(59,130,246,0.10)" },
   { key: "vocab", emoji: "🌿", label: "Grow my word bank", color: "#22C55E", bg: "rgba(34,197,94,0.10)" },
