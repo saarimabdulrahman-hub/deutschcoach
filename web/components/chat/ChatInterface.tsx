@@ -386,29 +386,23 @@ export function ChatInterface() {
   const isEmpty = messages.length === 0;
 
   return (
-    <div className="flex h-[calc(100vh-10rem)] gap-0">
-      {/* ── LEFT: Mode sidebar (desktop) ─────────────────────────── */}
-      <div className="hidden lg:flex flex-col w-48 flex-shrink-0 border-r mr-3 pr-2 overflow-y-auto" style={{ borderColor: "var(--color-border)" }}>
-        <p className="text-xs font-semibold uppercase tracking-wider mb-2 px-1" style={{ color: "var(--color-text-muted)" }}>Modes</p>
-        {MODES.map((m) => {
-          const active = mode === m.key;
-          return (
-            <button key={m.key} onClick={() => setMode(m.key)}
-              className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-left transition-all mb-0.5"
-              style={{
-                background: active ? "var(--color-hover-bg)" : "transparent",
-                border: active ? "1px solid var(--color-accent)" : "1px solid transparent",
-              }}>
-              <span className="text-base flex-shrink-0">{m.icon}</span>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold truncate" style={{ color: active ? "var(--color-active-text)" : "var(--color-text-secondary)" }}>{m.label}</p>
-              </div>
-            </button>
-          );
-        })}
+    <div className="flex h-full gap-0">
+      {/* ── LEFT SIDEBAR: Emma card + Try These + Emma details ── */}
+      <div className="hidden lg:flex flex-col w-56 flex-shrink-0 border-r mr-3 pr-2 overflow-y-auto gap-4" style={{ borderColor: "var(--color-border)" }}>
+        {/* Emma greeting card */}
+        <EmmaCard dashboard={dashboard} userName={userName} />
+
+        {/* Try These */}
+        <TryThese mode={mode} setMode={setMode} />
+
+        {/* Spacer pushes Emma details to bottom */}
+        <div className="flex-1" />
+
+        {/* Emma details at bottom */}
+        <EmmaDetails />
       </div>
 
-      {/* ── CENTER: Chat area ────────────────────────────────────── */}
+      {/* ── CENTER: Chat area ── */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile mode pills */}
         <div className="lg:hidden flex gap-1.5 mb-2 overflow-x-auto pb-1">
@@ -491,7 +485,6 @@ export function ChatInterface() {
 
         {/* Input bar */}
         <div className="flex items-center gap-2 pt-3" style={{ borderTop: "1px solid var(--color-border)" }}>
-          {/* File attach button */}
           <>
             <input
               ref={fileInputRef}
@@ -525,7 +518,6 @@ export function ChatInterface() {
             </button>
           </>
 
-          {/* Input field */}
           <input ref={inputRef}
             value={input} onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
@@ -537,7 +529,6 @@ export function ChatInterface() {
             onBlur={(e) => { e.target.style.borderColor = "var(--color-border)"; }}
           />
 
-          {/* Send button — round gradient circle */}
           <button onClick={() => send()} disabled={loading || !input.trim()}
             className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-40 hover:-translate-y-0.5"
             style={{
@@ -553,8 +544,11 @@ export function ChatInterface() {
         </div>
       </div>
 
-      {/* ── RIGHT: Session summary (desktop) ──────────────────────── */}
-      <SessionSummary summary={summary} />
+      {/* ── RIGHT SIDEBAR: Session summary + Recent topics ── */}
+      <div className="hidden xl:flex flex-col w-64 flex-shrink-0 border-l ml-4 pl-4 overflow-y-auto gap-4" style={{ borderColor: "var(--color-border)" }}>
+        <SessionSummary summary={summary} />
+        <RecentTopics dashboard={dashboard} />
+      </div>
     </div>
   );
 }
