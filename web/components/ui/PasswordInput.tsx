@@ -16,6 +16,7 @@ interface PasswordInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
   matchValue?: string;
   error?: string;
   success?: boolean;
+  label?: string;
   containerClassName?: string;
 }
 
@@ -35,7 +36,7 @@ function getPasswordStrength(password: string): { score: number; label: string; 
 }
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ showStrength, matchValue, error, success, containerClassName, style, onChange, onFocus, onBlur, ...inputProps }, ref) => {
+  ({ showStrength, matchValue, error, success, label, containerClassName, style, onChange, onFocus, onBlur, ...inputProps }, ref) => {
     const disabled = inputProps.disabled;
     const [visible, setVisible] = useState(false);
     const [password, setPassword] = useState("");
@@ -57,6 +58,11 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
 
     return (
       <div className={containerClassName} style={{ display: "flex", flexDirection: "column", gap: "6px", ...style }}>
+        {label && (
+          <label style={{ fontSize: "var(--type-label-md)", fontWeight: 600, color: disabled ? "var(--color-text-muted)" : "var(--color-text-primary)" }}>
+            {label}
+          </label>
+        )}
         <div
           style={{
             display: "flex",
