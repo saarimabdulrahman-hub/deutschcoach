@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
@@ -9,6 +9,8 @@ import type { CurriculumLevel, LessonListItem, DashboardData } from "@/types";
 import { LevelPath } from "@/components/curriculum/LevelPath";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 // ── Constants / derivations ──────────────────────────────────────────
 const LEVEL_ORDER = ["A1", "A2", "B1", "B2", "C1"];
@@ -89,12 +91,32 @@ export default function CurriculumPage() {
     enabled: !!levels,
   });
 
+  // Catalog enhancements: search, filter, sort
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"order" | "topics" | "duration">("order");
+
+  const filteredLessons = useMemo(() => {
+    if (!lessons) return [];
+    let result = [...lessons];
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter((l) =>
+        l.title?.toLowerCase().includes(q) ||
+        l.topics?.some((t: string) => t.toLowerCase().includes(q))
+      );
+    }
+    // Sort
+    if (sortBy === "order") result.sort((a, b) => a.order - b.order);
+    else if (sortBy === "duration") result.sort((a, b) => (a.topics?.length || 1) - (b.topics?.length || 1));
+    return result;
+  }, [lessons, searchQuery, sortBy]);
+
   if (isLoading) return <CurriculumSkeleton />;
   if (error)
     return <ErrorState message={error instanceof Error ? error.message : "Failed to load curriculum."}
       onRetry={() => queryClient.invalidateQueries({ queryKey: ["curriculum"] })} />;
 
-  const units = lessons ? groupUnits(lessons) : [];
+  const units = (searchQuery ? filteredLessons : lessons) ? groupUnits(searchQuery ? filteredLessons : lessons!) : [];
   const totalCompleted = levels?.reduce((s, l) => s + l.completed_count, 0) || 0;
   const isFreshStart = totalCompleted === 0;
 
@@ -115,6 +137,35 @@ export default function CurriculumPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-8">
+      {/* ── Search & Filters ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }} className="sm:flex-row">
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search lessons, topics..."
+          variant="inline"
+        />
+        <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
+          {["order", "topics", "duration"].map((s) => (
+            <button key={s} onClick={() => setSortBy(s as any)}
+              style={{
+                padding: "6px 12px", borderRadius: "var(--radius-sm)", border: "1px solid var(--color-border-subtle)",
+                background: sortBy === s ? "var(--color-accent)" : "transparent",
+                color: sortBy === s ? "#fff" : "var(--color-text-muted)",
+                fontSize: "var(--type-label-sm)", fontWeight: 600, cursor: "pointer",
+                transition: "all var(--duration-fast) ease",
+              }}>
+              {s === "order" ? "Default" : s === "topics" ? "Topic" : "Duration"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Remove empty state if search has no results */}
+      {searchQuery && filteredLessons.length === 0 && (
+        <EmptyState variant="no-results" icon="🔍" title="No lessons found" description={`No results for "${searchQuery}". Try a different search term.`} />
+      )}
+
       {/* ── 1. Continue Learning Hero (3-column: info · castle · progress) ── */}
       {nextLesson ? (
         <section aria-labelledby="continue-heading"
