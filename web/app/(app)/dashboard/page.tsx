@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import type { DashboardData } from "@/types";
-import { ErrorState } from "@/components/ui/ErrorState";
+import { ErrorState, Skeleton, Badge, Button, Card } from "@/components/ui";
 
 const GREETINGS = [
   { hi: "Guten Morgen", en: "Good morning" },
@@ -181,8 +181,8 @@ function ProgressRing({ pct }: { pct: number }) {
   );
 }
 
-function Skeleton() {
-  return (<div className="space-y-5"><div className="flex gap-4"><div className="flex-1 space-y-2"><div className="h-4 w-32 rounded shimmer"/><div className="h-8 w-64 rounded shimmer"/></div><div className="flex gap-3">{[...Array(2)].map((_,i)=><div key={i} className="h-20 w-36 rounded-2xl shimmer"/>)}</div></div><div className="h-[290px] rounded-[20px] shimmer"/><div className="grid grid-cols-3 gap-4">{[...Array(3)].map((_,i)=><div key={i} className="h-32 rounded-2xl shimmer"/>)}</div><div className="h-72 rounded-2xl shimmer"/><div className="grid grid-cols-2 gap-4">{[...Array(2)].map((_,i)=><div key={i} className="h-48 rounded-2xl shimmer"/>)}</div></div>);
+function DashboardSkeleton() {
+  return (<div className="space-y-5"><Skeleton variant="dashboard" /></div>);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -193,7 +193,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data, isLoading, error } = useQuery<DashboardData>({ queryKey: ["dashboard"], queryFn: () => api.get("/dashboard") });
-  if (isLoading) return <Skeleton />;
+  if (isLoading) return <DashboardSkeleton />;
   if (error || !data) return <ErrorState message={error instanceof Error ? error.message : "Failed to load dashboard data."} onRetry={() => queryClient.invalidateQueries({ queryKey: ["dashboard"] })} />;
   const firstName = (user?.name || "Student").split(" ")[0];
   const greeting = getGreeting();
