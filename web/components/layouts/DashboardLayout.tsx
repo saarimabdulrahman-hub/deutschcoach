@@ -16,7 +16,6 @@ import { useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { TabBar } from "@/components/ui/TabBar";
 import { CommandBar } from "@/components/ui/CommandBar";
-import { SidebarNav } from "@/components/navigation/SidebarNav";
 import { MobileNav } from "@/components/navigation/MobileNav";
 
 interface DashboardLayoutProps {
@@ -31,7 +30,6 @@ export function DashboardLayout({ children, hideSidebar }: DashboardLayoutProps)
   const router = useRouter();
   const [commandOpen, setCommandOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Ctrl+K for command bar
@@ -76,18 +74,6 @@ export function DashboardLayout({ children, hideSidebar }: DashboardLayoutProps)
         style={{ background: "var(--color-surface-1)", borderBottom: "1px solid var(--color-border-subtle)" }}
       >
         <div className="flex items-center gap-3 flex-shrink-0">
-          {/* Mobile hamburger */}
-          <button
-            className="sm:hidden flex items-center justify-center w-9 h-9 rounded-lg"
-            style={{ color: "var(--color-text-muted)" }}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Toggle navigation"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d={sidebarOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-            </svg>
-          </button>
-
           <Logo size={32} />
           <div className="flex items-baseline gap-0.5">
             <span className="text-xl font-light tracking-[1px]" style={{ color: "var(--color-text-primary)" }}>Deutsch</span>
@@ -163,32 +149,12 @@ export function DashboardLayout({ children, hideSidebar }: DashboardLayoutProps)
         </div>
       </header>
 
-      {/* Body: sidebar + content */}
-      <div className="flex flex-1" style={{ overflow: "hidden" }}>
-        {/* Desktop sidebar */}
-        {!hideSidebar && (
-          <aside className="hidden sm:flex flex-col w-56 flex-shrink-0 overflow-y-auto" style={{ borderRight: "1px solid var(--color-border-subtle)" }}>
-            <SidebarNav />
-          </aside>
-        )}
-
-        {/* Main content area */}
-        <main id="main-content" className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto w-full p-4 sm:p-6">
-            {children}
-          </div>
-        </main>
-      </div>
-
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && !hideSidebar && (
-        <div className="sm:hidden fixed inset-0 z-40" style={{ background: "rgba(0,0,0,0.5)" }} onClick={() => setSidebarOpen(false)}>
-          <aside className="w-64 h-full overflow-y-auto" style={{ background: "var(--color-background-primary)", borderRight: "1px solid var(--color-border-subtle)", animation: "slideInLeft 0.2s ease-out" }}
-            onClick={(e) => e.stopPropagation()}>
-            <SidebarNav />
-          </aside>
+      {/* Main content */}
+      <main id="main-content" className="flex-1 overflow-y-auto">
+        <div className="max-w-7xl mx-auto w-full p-4 sm:p-6">
+          {children}
         </div>
-      )}
+      </main>
 
       {/* Mobile bottom nav */}
       <div className="sm:hidden">
