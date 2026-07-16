@@ -1,5 +1,5 @@
 /**
- * DropdownSelect — 5 variants with keyboard navigation, ARIA combobox/listbox
+ * DropdownSelect — With keyboard navigation, ARIA combobox/listbox
  * Variants: Single, Multi, Searchable, Async, Grouped
  *
  * Reference: DeutschFlow Design Bible 02_COMPONENTS/011_Dropdown_Select.md
@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect, useCallback, type ReactNode } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 
 interface DropdownOption {
   value: string;
@@ -54,9 +54,21 @@ export function DropdownSelect({
     ? options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()))
     : options;
 
+  const renderedOptions = useMemo(() => {
+    const items: ({ type: "option"; opt: DropdownOption; index: number } | { type: "header"; label: string })[] = [];
+    let lastGroup: string | undefined;
+    filteredOptions.forEach((opt, i) => {
+      if (opt.group && opt.group !== lastGroup) {
+        items.push({ type: "header" as const, label: opt.group });
+        lastGroup = opt.group;
+      }
+      items.push({ type: "option" as const, opt, index: i });
+    });
+    return items;
+  }, [filteredOptions]);
+
   const selectedLabel = options.find((o) => o.value === singleValue)?.label || "";
 
-  // Close on click outside
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
@@ -65,12 +77,10 @@ export function DropdownSelect({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
-  // Focus search when opened
   useEffect(() => {
     if (open && searchable) searchRef.current?.focus();
   }, [open, searchable]);
 
-  // Reset highlight when filtered options change
   useEffect(() => setHighlightIndex(0), [filteredOptions.length]);
 
   const selectOption = useCallback((opt: DropdownOption) => {
@@ -110,7 +120,6 @@ export function DropdownSelect({
     <div ref={containerRef} style={{ position: "relative", display: "flex", flexDirection: "column", gap: "6px" }}>
       {label && <label style={{ fontSize: "var(--type-label-md)", fontWeight: 600, color: "var(--color-text-primary)" }}>{label}</label>}
 
-      {/* Trigger */}
       <button
         type="button"
         onClick={() => !disabled && setOpen(!open)}
@@ -118,20 +127,14 @@ export function DropdownSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          minHeight: "40px",
-          padding: "0 12px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          width: "100%", minHeight: "40px", padding: "0 12px",
           borderRadius: "var(--radius-md)",
           border: `1px solid ${error ? "var(--color-error-border)" : "var(--color-border-subtle)"}`,
           background: disabled ? "var(--color-surface-1)" : "var(--color-surface-1)",
           color: disabled || (!singleValue && multiValue.length === 0) ? "var(--color-text-muted)" : "var(--color-text-primary)",
-          fontSize: "var(--type-body-md)",
-          cursor: disabled ? "not-allowed" : "pointer",
-          textAlign: "left",
-          transition: "border-color var(--duration-fast) ease",
+          fontSize: "var(--type-body-md)", cursor: disabled ? "not-allowed" : "pointer",
+          textAlign: "left", transition: "border-color var(--duration-fast) ease",
         }}
       >
         <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -139,14 +142,14 @@ export function DropdownSelect({
             ? multiValue.length ? `${multiValue.length} selected` : placeholder
             : selectedLabel || placeholder}
         </span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ transform: open ? "rotate(180deg)" : "", transition: "transform var(--duration-fast) ease", flexShrink: 0 }}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+          style={{ transform: open ? "rotate(180deg)" : "", transition: "transform var(--duration-fast) ease", flexShrink: 0 }}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
       {error && <p style={{ margin: 0, fontSize: "var(--type-label-sm)", color: "var(--color-error-text)" }}>{error}</p>}
 
-      {/* Dropdown */}
       {open && (
         <div
           role="listbox"
@@ -154,37 +157,20 @@ export function DropdownSelect({
           tabIndex={-1}
           onKeyDown={handleKeyDown}
           style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            right: 0,
-            marginTop: "4px",
-            borderRadius: "var(--radius-md)",
-            border: "1px solid var(--color-border-subtle)",
-            background: "var(--color-surface-1)",
-            boxShadow: "var(--elevation-3)",
-            zIndex: "var(--z-dropdown)",
-            maxHeight: "280px",
-            overflowY: "auto",
+            position: "absolute", top: "100%", left: 0, right: 0, marginTop: "4px",
+            borderRadius: "var(--radius-md)", border: "1px solid var(--color-border-subtle)",
+            background: "var(--color-surface-1)", boxShadow: "var(--elevation-3)",
+            zIndex: "var(--z-dropdown)", maxHeight: "280px", overflowY: "auto",
           }}
         >
           {searchable && (
             <div style={{ padding: "var(--space-2)", borderBottom: "1px solid var(--color-border-subtle)" }}>
-              <input
-                ref={searchRef}
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+              <input ref={searchRef} type="text" value={search} onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
                 style={{
-                  width: "100%",
-                  padding: "6px 8px",
-                  borderRadius: "var(--radius-xs)",
-                  border: "1px solid var(--color-border-subtle)",
-                  background: "transparent",
-                  color: "var(--color-text-primary)",
-                  fontSize: "var(--type-body-md)",
-                  outline: "none",
+                  width: "100%", padding: "6px 8px", borderRadius: "var(--radius-xs)",
+                  border: "1px solid var(--color-border-subtle)", background: "transparent",
+                  color: "var(--color-text-primary)", fontSize: "var(--type-body-md)", outline: "none",
                 }}
               />
             </div>
@@ -195,9 +181,22 @@ export function DropdownSelect({
           ) : filteredOptions.length === 0 ? (
             <div style={{ padding: "var(--space-4)", textAlign: "center", color: "var(--color-text-muted)", fontSize: "var(--type-body-sm)" }}>No options found</div>
           ) : (
-            filteredOptions.map((opt, i) => {
+            renderedOptions.map((item, i) => {
+              if (item.type === "header") {
+                return (
+                  <div key={`h-${item.label}`} style={{
+                    padding: "6px 12px 4px", fontSize: "var(--type-label-sm)", fontWeight: 600,
+                    color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em",
+                    borderTop: i > 0 ? "1px solid var(--color-border-subtle)" : "none",
+                    marginTop: i > 0 ? "4px" : 0,
+                  }}>
+                    {item.label}
+                  </div>
+                );
+              }
+              const opt = item.opt;
               const active = isSelected(opt);
-              const highlighted = i === highlightIndex;
+              const highlighted = item.index === highlightIndex;
               return (
                 <button
                   key={opt.value}
@@ -205,20 +204,14 @@ export function DropdownSelect({
                   aria-selected={active}
                   disabled={opt.disabled}
                   onClick={() => selectOption(opt)}
-                  onMouseEnter={() => setHighlightIndex(i)}
+                  onMouseEnter={() => setHighlightIndex(item.index)}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "var(--space-3)",
-                    width: "100%",
-                    padding: "10px 12px",
-                    border: "none",
-                    background: highlighted ? "var(--color-hover-bg)" : "transparent",
+                    display: "flex", alignItems: "center", gap: "var(--space-3)",
+                    width: "100%", padding: "10px 12px",
+                    border: "none", background: highlighted ? "var(--color-hover-bg)" : "transparent",
                     color: opt.disabled ? "var(--color-text-muted)" : "var(--color-text-primary)",
-                    fontSize: "var(--type-body-md)",
-                    cursor: opt.disabled ? "not-allowed" : "pointer",
-                    textAlign: "left",
-                    transition: "background var(--duration-fast) ease",
+                    fontSize: "var(--type-body-md)", cursor: opt.disabled ? "not-allowed" : "pointer",
+                    textAlign: "left", transition: "background var(--duration-fast) ease",
                   }}
                 >
                   {multi && (
