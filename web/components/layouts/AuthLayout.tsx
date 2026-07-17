@@ -21,12 +21,8 @@ export function AuthLayout({ visualPanel, formPanel }: AuthLayoutProps) {
     <div className="min-h-screen flex" style={{ background: "var(--color-background-primary)" }}>
       {/* Left: Visual panel — hidden on mobile, shown on tablet+ */}
       <div className="auth-visual" style={{
-        display: "none",
-        flex: 1,
+        flex: "0.5 1 0%",
         flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "var(--space-8)",
         position: "relative",
         overflow: "hidden",
       }}>
@@ -35,31 +31,23 @@ export function AuthLayout({ visualPanel, formPanel }: AuthLayoutProps) {
 
       {/* Right: Form panel — always visible, full-width on mobile */}
       <div className="auth-form" style={{
-        flex: 1,
+        flex: "0.5 1 0%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: "var(--space-6)",
+        padding: "var(--space-4)",
         minHeight: "100vh",
       }}>
-        <div style={{ width: "100%", maxWidth: "420px" }}>
+        <div style={{ width: "100%" }}>
           {formPanel}
         </div>
       </div>
 
       <style>{`
-        @media (min-width: 640px) {
-          .auth-visual { display: flex; }
-        }
-        @media (min-width: 640px) and (max-width: 1023px) {
-          .auth-visual { flex: 0.4; }
-          .auth-form { flex: 0.6; }
-        }
-        @media (min-width: 1024px) {
-          .auth-visual { flex: 0.5; }
-          .auth-form { flex: 0.5; }
-        }
+        .auth-visual { display: none; }
+        @media (min-width: 640px) and (max-width: 1023px) { .auth-visual { display: flex; flex: 0.4 1 0%; } .auth-form { flex: 0.6 1 0%; } }
+        @media (min-width: 1024px) { .auth-visual { display: flex; flex: 0.5 1 0%; } .auth-form { flex: 0.5 1 0%; } }
       `}</style>
     </div>
   );
