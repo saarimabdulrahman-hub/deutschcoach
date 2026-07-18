@@ -344,7 +344,7 @@ export default function QuizPage() {
               </div>
               <p style={{ fontSize: "11px", color: "rgba(255,255,255,.75)", marginTop: "4px", letterSpacing: "1.5px", position: "relative", paddingLeft: "20px" }}>{questionCount}Q &nbsp;<span style={{ color: "#FBBF24" }}>•</span>&nbsp; ~{Math.round(questionCount * 0.5)}m &nbsp;<span style={{ color: "#FBBF24" }}>•</span>&nbsp; +{questionCount * 5}XP</p>
             </div>
-          </div>
+          </button>
 
           {/* Right: Estimated Time (30%) */}
           <div className="flex items-center gap-3 px-4 relative overflow-hidden" style={{ flex: "0.3 1 0%", borderRadius: "14px", background: "radial-gradient(ellipse at 80% 30%, rgba(126,107,255,.06), #141827 70%)", border: "1px solid rgba(160,140,200,.07)", boxShadow: "0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.02)" }}>
