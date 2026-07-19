@@ -128,7 +128,7 @@ export default function ReviewSlugPage() {
                     </div>
                   </div>
                   <div className="px-5 py-2 flex items-center gap-3 text-xs font-medium uppercase tracking-wider" style={{ color: "rgba(255,255,255,.25)", borderTop: "1px solid rgba(255,255,255,.05)" }}>
-                    <span style={{ width: "24px" }} /><span style={{ width: "24px" }}>🔊</span>
+                    <span style={{ width: "24px" }} /><span className="flex-shrink-0" style={{ width: "24px", height: "24px", borderRadius: "4px", border: "1px solid rgba(168,85,247,.15)", background: "rgba(168,85,247,.04)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "12px" }}>🔊</span>
                     <span style={{ flex: 1 }}>German Word</span>
                     <span style={{ flex: 1 }}>Translation</span>
                     <span style={{ width: "80px" }}>Next Review</span>
@@ -144,8 +144,8 @@ export default function ReviewSlugPage() {
                     { word: "Veränderung", trans: "change", review: "Tomorrow", interval: "2 days", ease: "Easy", easeColor: "#22C55E" },
                   ].map((row, i) => (
                     <div key={i} className="px-5 flex items-center gap-3 text-sm" style={{ height: "68px", borderTop: "1px solid rgba(255,255,255,.04)" }}>
-                      <input type="checkbox" style={{ accentColor: "#A855F7" }} />
-                      <span style={{ color: "rgba(255,255,255,.3)" }}>🔊</span>
+                      <span className="flex-shrink-0" style={{ width: "18px", height: "18px", borderRadius: "4px", border: "1.5px solid rgba(168,85,247,.25)", background: "rgba(168,85,247,.05)", cursor: "pointer", display: "inline-block" }} />
+                      <span className="flex-shrink-0" style={{ width: "24px", height: "24px", borderRadius: "4px", border: "1px solid rgba(168,85,247,.15)", background: "rgba(168,85,247,.04)", display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "12px" }}>🔊</span>
                       <span style={{ flex: 1, color: "#FFF", fontWeight: 500 }}>{row.word}</span>
                       <span style={{ flex: 1, color: "#A8A4BC" }}>{row.trans}</span>
                       <span style={{ width: "80px", color: row.review === "Due now" ? "#EF4444" : "#A8A4BC", fontSize: "12px" }}>{row.review}</span>
@@ -209,11 +209,93 @@ export default function ReviewSlugPage() {
           )}
 
           {slug === "flashcards" && (
-            <div className="rounded-2xl p-5 text-center" style={{ background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
-              <p style={{ fontSize: "36px", marginBottom: "12px" }}>📋</p>
-              <p style={{ fontSize: "14px", color: "#FFF", fontWeight: 600, margin: 0 }}>Flashcard Review</p>
-              <p style={{ fontSize: "12px", color: "#A8A4BC", margin: "4px 0 0" }}>Head to the Overview page to review your due cards.</p>
-            </div>
+            <>
+              {/* ── Hero Banner ── */}
+              <div className="relative flex items-center overflow-hidden rounded-[20px]" style={{ minHeight: "220px", background: "linear-gradient(135deg, #171228, #1B1730)", border: "1px solid rgba(168,85,247,.08)" }}>
+                <div className="px-8 py-6" style={{ flex: "0.35 1 0%", position: "relative", zIndex: 2 }}>
+                  <div className="flex items-center justify-center" style={{ width: "52px", height: "52px", borderRadius: "50%", background: "#221635", boxShadow: "0 0 20px rgba(139,92,246,.2)", marginBottom: "12px" }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2" stroke="#8B5CF6" strokeWidth="1.8" fill="none"/><line x1="8" y1="7" x2="16" y2="7" stroke="#8B5CF6" strokeWidth="1.8"/><line x1="8" y1="12" x2="14" y2="12" stroke="#8B5CF6" strokeWidth="1.8"/></svg>
+                  </div>
+                  <h1 style={{ fontSize: "46px", fontWeight: 700, color: "#FFF", margin: 0, lineHeight: 1 }}>Flashcard Review</h1>
+                  <p style={{ fontSize: "16px", color: "#A8A4BC", margin: "8px 0 0", lineHeight: 1.5 }}>Head to the Overview page to review your due cards.</p>
+                </div>
+                {/* Right: floating flashcards illustration */}
+                <div className="flex-1 relative flex items-center justify-center" style={{ minHeight: "220px" }}>
+                  <div style={{ position: "relative", width: "180px", height: "160px" }}>
+                    {/* Orbit ring */}
+                    <div className="absolute inset-4 rounded-full" style={{ border: "1.5px solid rgba(139,92,246,.12)" }} />
+                    <div className="absolute inset-8 rounded-full" style={{ border: "1.5px solid rgba(236,73,153,.08)" }} />
+                    {/* Floating cards */}
+                    <div className="absolute" style={{ width: "80px", height: "56px", borderRadius: "8px", background: "linear-gradient(135deg, rgba(139,92,246,.2), rgba(139,92,246,.06))", border: "1px solid rgba(139,92,246,.2)", transform: "rotate(-12deg)", left: "15%", top: "25%", backdropFilter: "blur(4px)" }}>
+                      <span style={{ position: "absolute", top: "12px", left: "10px", fontSize: "8px", color: "rgba(139,92,246,.6)", fontWeight: 700 }}>A</span>
+                    </div>
+                    <div className="absolute" style={{ width: "80px", height: "56px", borderRadius: "8px", background: "linear-gradient(135deg, rgba(236,73,153,.15), rgba(236,73,153,.04))", border: "1px solid rgba(236,73,153,.2)", transform: "rotate(8deg)", right: "15%", top: "30%", backdropFilter: "blur(4px)" }}>
+                      <span style={{ position: "absolute", top: "12px", left: "10px", fontSize: "8px", color: "rgba(236,73,153,.6)", fontWeight: 700 }}>B</span>
+                    </div>
+                    {/* Ground glow */}
+                    <div className="absolute" style={{ bottom: "-10%", left: "10%", right: "10%", height: "30px", background: "radial-gradient(ellipse, rgba(139,92,246,.12), transparent)", borderRadius: "50%" }} />
+                    {/* Particles */}
+                    <span className="absolute" style={{ top: "10%", right: "5%", width: "3px", height: "3px", borderRadius: "50%", background: "#C084FC", boxShadow: "0 0 6px rgba(192,132,252,.5)" }} />
+                    <span className="absolute" style={{ bottom: "20%", left: "5%", width: "3px", height: "3px", borderRadius: "50%", background: "#EC4899", boxShadow: "0 0 4px rgba(236,73,153,.4)" }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Quick Start ── */}
+              <div className="grid grid-cols-3 gap-5">
+                {[
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#FFF" strokeWidth="1.8" fill="none"/><path d="M10 8l6 4-6 4V8z" fill="#FFF"/></svg>, title: "Review Due Cards", desc: "Continue where you left off", color: "#8B5CF6" },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2" stroke="#FFF" strokeWidth="1.8" fill="none"/><rect x="7" y="5" width="10" height="2" rx="0.5" fill="#FFF"/></svg>, title: "Browse Decks", desc: "Explore all your decks", color: "#EC4899" },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#FFF" strokeWidth="1.8" strokeLinecap="round"/><circle cx="12" cy="12" r="9" stroke="#FFF" strokeWidth="1.8" fill="none"/></svg>, title: "Create New Deck", desc: "Add your own flashcards", color: "#C026D3" },
+                ].map((card) => (
+                  <button key={card.title} className="flex items-center gap-4 p-5 rounded-[18px] border-none cursor-pointer transition-all hover:-translate-y-0.5" style={{ background: "#161322", border: "1px solid rgba(255,255,255,.04)" }}>
+                    <div className="flex items-center justify-center flex-shrink-0" style={{ width: "48px", height: "48px", borderRadius: "50%", background: `${card.color}15` }}>
+                      {card.icon}
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p style={{ fontSize: "15px", fontWeight: 500, color: "#FFF", margin: 0 }}>{card.title}</p>
+                      <p style={{ fontSize: "13px", color: "#A8A4BC", margin: "2px 0 0" }}>{card.desc}</p>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M10 5l3 3-3 3" stroke="rgba(255,255,255,.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                ))}
+              </div>
+
+              {/* ── Recently Studied ── */}
+              <div className="rounded-[20px] overflow-hidden" style={{ background: "#161322", border: "1px solid rgba(255,255,255,.05)" }}>
+                <div className="flex items-center justify-between px-6 py-4">
+                  <h2 style={{ fontSize: "18px", fontWeight: 600, color: "#FFF", margin: 0 }}>Recently Studied</h2>
+                  <button className="text-xs border-none cursor-pointer" style={{ color: "#8B5CF6", background: "none" }}>View all decks →</button>
+                </div>
+                {/* Table */}
+                <div className="px-6 py-2 flex items-center gap-4 text-xs font-medium uppercase tracking-wider" style={{ color: "rgba(255,255,255,.2)", borderTop: "1px solid rgba(255,255,255,.04)" }}>
+                  <span style={{ width: "24px" }} />
+                  <span style={{ flex: 1 }}>Deck Info</span>
+                  <span style={{ width: "60px", textAlign: "center" }}>Cards</span>
+                  <span style={{ width: "60px", textAlign: "center" }}>Mastery</span>
+                  <span style={{ width: "80px", textAlign: "center" }}>Last Studied</span>
+                  <span style={{ width: "20px" }} />
+                </div>
+                {[
+                  { badge: "A1", badgeColor: "#22C55E", title: "A1 Beginner Essentials", sub: "Basic words and phrases", cards: "128", mastery: "92%", masteryColor: "#22C55E", last: "Today" },
+                  { badge: "A2", badgeColor: "#60A5FA", title: "A2 Everyday German", sub: "Common expressions", cards: "96", mastery: "87%", masteryColor: "#22C55E", last: "Yesterday" },
+                  { badge: "B1", badgeColor: "#8B5CF6", title: "B1 Intermediate", sub: "Complex conversations", cards: "72", mastery: "79%", masteryColor: "#FACC15", last: "2 days ago" },
+                  { badge: "★", badgeColor: "#FACC15", title: "Favorites", sub: "Bookmarked flashcards", cards: "34", mastery: "94%", masteryColor: "#22C55E", last: "Today" },
+                ].map((row, i) => (
+                  <div key={i} className="px-6 flex items-center gap-4 text-sm" style={{ height: "72px", borderTop: "1px solid rgba(255,255,255,.04)", cursor: "pointer" }}>
+                    <div className="flex items-center justify-center flex-shrink-0" style={{ width: "28px", height: "28px", borderRadius: "50%", background: `${row.badgeColor}15`, color: row.badgeColor, fontSize: "10px", fontWeight: 700 }}>{row.badge}</div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: 0 }}>{row.title}</p>
+                      <p style={{ fontSize: "12px", color: "#A8A4BC", margin: "2px 0 0" }}>{row.sub}</p>
+                    </div>
+                    <span style={{ width: "60px", textAlign: "center", fontSize: "14px", color: "#FFF", fontWeight: 500 }}>{row.cards}</span>
+                    <span style={{ width: "60px", textAlign: "center", fontSize: "14px", fontWeight: 600, color: row.masteryColor }}>{row.mastery}</span>
+                    <span style={{ width: "80px", textAlign: "center", fontSize: "12px", color: "rgba(255,255,255,.4)" }}>{row.last}</span>
+                    <span style={{ width: "20px", color: "rgba(255,255,255,.2)", cursor: "pointer", fontSize: "18px", lineHeight: 1 }}>⋮</span>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
           {slug === "mistakes" && (
