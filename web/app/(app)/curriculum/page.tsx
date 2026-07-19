@@ -191,6 +191,8 @@ export default function CurriculumPage() {
           {/* Dark overlay for text legibility */}
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: "linear-gradient(90deg, rgba(16,10,36,0.55) 0%, rgba(16,10,36,0.15) 45%, transparent 65%, rgba(16,10,36,0.2) 85%, rgba(16,10,36,0.45) 100%)" }} />
+          {/* Purple glow boost */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(168,85,247,.08), transparent 60%)" }} />
 
           {/* ── Content row ───────────────────────────────────── */}
           <div className="relative z-10 flex flex-col sm:flex-row gap-6 h-full">

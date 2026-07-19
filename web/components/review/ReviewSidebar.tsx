@@ -52,35 +52,6 @@ const ICONS = {
       <path d="M4 2V16L9 12.5L14 16V2H4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none"/>
     </svg>
   ),
-  "my-progress": (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-      <rect x="2" y="10" width="2.5" height="6" rx="1" fill="currentColor"/>
-      <rect x="6.5" y="6.5" width="2.5" height="9.5" rx="1" fill="currentColor"/>
-      <rect x="11" y="4" width="2.5" height="12" rx="1" fill="currentColor"/>
-      <rect x="15.5" y="7" width="2.5" height="9" rx="1" fill="currentColor"/>
-    </svg>
-  ),
-  achievements: (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-      <circle cx="9" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-      <path d="M5.5 14L7.5 11H10.5L12.5 14" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none"/>
-      <path d="M6 3L4.5 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M12 3L13.5 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  ),
-  streaks: (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-      <path d="M9 16C12 16 14.5 13 14.5 9.5C14.5 6 12 3.5 9 1C6 3.5 3.5 6 3.5 9.5C3.5 13 6 16 9 16Z" fill="url(#fireGrad)" stroke="url(#fireGrad)" strokeWidth="0.5"/>
-      <defs><linearGradient id="fireGrad" x1="3.5" y1="1" x2="14.5" y2="16"><stop offset="0%" stopColor="#F97316"/><stop offset="100%" stopColor="#EAB308"/></linearGradient></defs>
-    </svg>
-  ),
-  goals: (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-      <circle cx="9" cy="9" r="5.5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-      <circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-      <circle cx="9" cy="9" r="1" fill="currentColor"/>
-    </svg>
-  ),
 };
 
 const REVIEW_ITEMS = [
@@ -90,13 +61,6 @@ const REVIEW_ITEMS = [
   { id: "mistakes", label: "Mistakes" },
   { id: "weak-words", label: "Weak Words" },
   { id: "bookmarks", label: "Bookmarks" },
-];
-
-const PROGRESS_ITEMS = [
-  { id: "my-progress", label: "My Progress" },
-  { id: "achievements", label: "Achievements" },
-  { id: "streaks", label: "Streaks" },
-  { id: "goals", label: "Goals" },
 ];
 
 // Mini weekly chart bars
@@ -118,7 +82,6 @@ export function ReviewSidebar({ activeItem = "overview", streak = 0 }: ReviewSid
     >
       {/* ── REVIEW TOOLS ── */}
       <div className="px-5 mb-6">
-        <p className="text-[10px] font-medium uppercase tracking-[1.5px] mb-2 px-3" style={{ color: "#8B5CF6" }}>Review Tools</p>
         <nav className="flex flex-col gap-0.5">
           {REVIEW_ITEMS.map((item) => {
             const isActive = item.id === activeItem;
@@ -149,37 +112,43 @@ export function ReviewSidebar({ activeItem = "overview", streak = 0 }: ReviewSid
         </nav>
       </div>
 
-      {/* ── PROGRESS ── */}
-      <div className="px-5 mb-6">
-        <p className="text-[10px] font-medium uppercase tracking-[1.5px] mb-2 px-3" style={{ color: "#8B5CF6" }}>Progress</p>
-        <nav className="flex flex-col gap-0.5">
-          {PROGRESS_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => router.push(`/review/${item.id}`)}
-              className="flex items-center gap-3 w-full text-left px-3 transition-all"
-              style={{
-                height: "44px",
-                borderRadius: "10px",
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                borderLeft: "3px solid transparent",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,.03"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-            >
-              <span style={{ width: "20px", height: "20px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "#A8A4BC" }}>
-                {ICONS[item.id as keyof typeof ICONS]}
-              </span>
-              <span style={{ fontSize: "13px", fontWeight: 400, color: "#A8A4BC" }}>{item.label}</span>
-            </button>
-          ))}
-        </nav>
+      {/* ── Emma AI Tutor Card ── */}
+      <div className="px-5 mb-4">
+        <div
+          className="rounded-2xl p-5 flex flex-col items-center"
+          style={{
+            background: "rgba(16,18,32,.6)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            border: "1px solid rgba(255,255,255,.04)",
+          }}
+        >
+          {/* Avatar — large and centered */}
+          <div className="rounded-full flex-shrink-0 flex items-center justify-center" style={{ width: "156px", height: "156px", boxShadow: "0 0 40px rgba(168,85,247,.3), 0 0 80px rgba(168,85,247,.1)", background: "rgba(168,85,247,.08)" }}>
+            <div className="rounded-full overflow-hidden" style={{ width: "140px", height: "140px", border: "2px solid rgba(168,85,247,.3)" }}>
+              <img src="/emma-avatar.webp" alt="Emma" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            </div>
+          </div>
+          {/* Name + title below avatar */}
+          <p className="text-base font-semibold m-0 mt-4" style={{ color: "#FFF" }}>Emma</p>
+          <p className="text-xs font-medium m-0 mt-0.5 mb-4" style={{ color: "rgba(168,85,247,.6)" }}>Your AI German Tutor</p>
+          {/* CTA button */}
+          <button
+            onClick={() => router.push("/chat")}
+            className="w-full py-2.5 rounded-xl text-sm font-semibold border-none cursor-pointer"
+            style={{
+              background: "linear-gradient(90deg, #6D3BFF, #FF3CA6)",
+              color: "#FFF",
+              boxShadow: "0 4px 20px rgba(168,85,247,.2)",
+            }}
+          >
+            Chat with Emma
+          </button>
+        </div>
       </div>
 
       {/* ── Current Streak Card ── */}
-      <div className="px-5 mb-4">
+      <div className="px-5 mb-6">
         <div
           className="rounded-2xl p-5 text-center"
           style={{
@@ -219,49 +188,6 @@ export function ReviewSidebar({ activeItem = "overview", streak = 0 }: ReviewSid
               <span key={i} className="text-[8px]" style={{ color: "rgba(255,255,255,.2)" }}>{d}</span>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* ── Emma AI Tutor Card ── */}
-      <div className="px-5 mb-6">
-        <div
-          className="rounded-2xl p-5"
-          style={{
-            background: "rgba(16,18,32,.6)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid rgba(255,255,255,.04)",
-          }}
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <div
-              className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden"
-              style={{
-                border: "2px solid rgba(168,85,247,.3)",
-                boxShadow: "0 0 20px rgba(168,85,247,.12)",
-              }}
-            >
-              <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover scale-110" />
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-semibold m-0" style={{ color: "#FFF" }}>Emma</p>
-              <p className="text-[11px] font-medium m-0" style={{ color: "rgba(168,85,247,.6)" }}>AI Tutor</p>
-            </div>
-          </div>
-          <p className="text-xs mb-4 text-left" style={{ color: "rgba(255,255,255,.35)", lineHeight: 1.5 }}>
-            Need help with your German journey?
-          </p>
-          <button
-            onClick={() => router.push("/chat")}
-            className="w-full py-2.5 rounded-xl text-sm font-medium border-none cursor-pointer"
-            style={{
-              background: "linear-gradient(90deg, #6D3BFF, #FF3CA6)",
-              color: "#FFF",
-              boxShadow: "0 4px 20px rgba(168,85,247,.2)",
-            }}
-          >
-            Chat with Emma
-          </button>
         </div>
       </div>
     </aside>

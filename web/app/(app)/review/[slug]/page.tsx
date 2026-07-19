@@ -46,20 +46,20 @@ export default function ReviewSlugPage() {
             <>
               {/* Header with icon, title + due badge */}
               <div className="flex items-start justify-between mb-2">
-                <div className="flex items-start gap-3">
+                <div className="flex items-center gap-3 h-full">
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style={{ flexShrink: 0, marginTop: "4px" }}>
                     <path d="M5 6L14 9V22L5 19V6Z" fill="#A855F7" opacity="0.85"/>
                     <path d="M14 9L23 6V19L14 22V9Z" fill="#A855F7" opacity="0.65"/>
                     <path d="M14 9V22" stroke="rgba(255,255,255,.2)" strokeWidth="0.8"/>
                   </svg>
                   <div>
-                    <h1 style={{ fontSize: "28px", fontWeight: 600, color: "#FFF", margin: 0, lineHeight: 1.1 }}>Spaced Repetition</h1>
+                    <h1 style={{ fontSize: "28px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.1 }}>Spaced Repetition</h1>
                     <p style={{ fontSize: "13px", color: "#B3B4C8", margin: "2px 0 0" }}>Smart review system that helps you remember better, for longer.</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 rounded-full px-4 py-2 flex-shrink-0" style={{ background: "rgba(168,85,247,.12)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "none", boxShadow: "0 0 20px rgba(168,85,247,.1)" }}>
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#C084FC" strokeWidth="1.2" fill="none"/><path d="M7 4.5V7l2 2" stroke="#C084FC" strokeWidth="1.2" strokeLinecap="round"/></svg>
-                  <span style={{ fontSize: "12px", fontWeight: 600, color: "#C084FC" }}>0 due today</span>
+                  <span style={{ fontSize: "12px", fontWeight: 500, color: "#C084FC" }}>0 due today</span>
                 </div>
               </div>
 
@@ -67,7 +67,7 @@ export default function ReviewSlugPage() {
               <div className="relative flex items-center overflow-hidden" style={{ borderRadius: "24px", minHeight: "220px", background: `url('/sr-hero-bg.png') center / cover no-repeat`, border: "1px solid rgba(255,255,255,.04)" }}>
                 {/* Left text */}
                 <div className="px-8 py-6" style={{ flex: "0.45 1 0%", position: "relative", zIndex: 2 }}>
-                  <h2 style={{ fontSize: "36px", fontWeight: 600, color: "#FFF", margin: 0, lineHeight: 1.1 }}>You&apos;re all set!</h2>
+                  <h2 style={{ fontSize: "36px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.1 }}>You&apos;re all set!</h2>
                   <p style={{ fontSize: "14px", color: "#B3B4C8", marginTop: "8px", lineHeight: 1.5, maxWidth: "280px" }}>Great job keeping up with your reviews.</p>
                   <p style={{ fontSize: "13px", color: "rgba(255,255,255,.3)", marginTop: "4px" }}>Consistency is the key to fluency.</p>
                 </div>
@@ -83,13 +83,13 @@ export default function ReviewSlugPage() {
                     value: `${dash?.streak ?? 0}`, label: "DAY STREAK", desc: "Keep it going!", valueColor: "#FFF",
                   },
                   {
-                    icon: <div className="flex items-center justify-center" style={{ width: "60px", height: "60px", borderRadius: "50%", background: "#221635", boxShadow: "0 0 16px rgba(157,77,255,.15)" }}>
+                    icon: <div className="flex items-center justify-center" style={{ width: "60px", height: "60px", borderRadius: "50%", background: "#221635", boxShadow: "0 0 24px #A855F7, 0 0 50px rgba(168,85,247,.3)" }}>
                       <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="9" stroke="#9D4DFF" strokeWidth="2" fill="none"/><path d="M14 8v6l4 3" stroke="#9D4DFF" strokeWidth="2" strokeLinecap="round"/></svg>
                     </div>,
                     value: `${stats?.mastered ?? 0}`, label: "CARDS MASTERED", desc: "Words you know", valueColor: "#F6F6FA",
                   },
                   {
-                    icon: <div className="flex items-center justify-center" style={{ width: "60px", height: "60px", borderRadius: "50%", background: "#221635" }}>
+                    icon: <div className="flex items-center justify-center" style={{ width: "60px", height: "60px", borderRadius: "50%", boxShadow: "0 0 24px #A855F7, 0 0 50px rgba(168,85,247,.3)", background: "#221635" }}>
                       <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
                         <circle cx="16" cy="16" r="13" stroke="rgba(255,255,255,.04)" strokeWidth="3" fill="none"/>
                         <circle cx="16" cy="16" r="13" stroke="url(#ringG)" strokeWidth="3" fill="none" strokeDasharray={`${0.92 * 82} 82`} strokeLinecap="round" transform="rotate(-90 16 16)"/>
@@ -99,7 +99,7 @@ export default function ReviewSlugPage() {
                     value: `${retention}%`, label: "RETENTION RATE", desc: "Excellent!", valueColor: "#F6F6FA",
                   },
                   {
-                    icon: <div className="flex items-center justify-center" style={{ width: "60px", height: "60px", borderRadius: "50%", background: "#221635", boxShadow: "0 0 16px rgba(164,107,255,.12)" }}>
+                    icon: <div className="flex items-center justify-center" style={{ width: "60px", height: "60px", borderRadius: "50%", background: "#221635", boxShadow: "0 0 24px #A855F7, 0 0 50px rgba(168,85,247,.3)" }}>
                       <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="4" width="22" height="20" rx="2" stroke="#A46BFF" strokeWidth="1.8" fill="none"/><line x1="3" y1="9" x2="25" y2="9" stroke="#A46BFF" strokeWidth="1.8"/></svg>
                     </div>,
                     value: "12", label: "LONGEST STREAK", desc: "days", valueColor: "#F6F6FA",
@@ -108,7 +108,7 @@ export default function ReviewSlugPage() {
                   <div key={stat.label} className="flex items-start gap-4 p-5" style={{ borderRadius: "20px", background: "#151220", border: "1px solid rgba(168,85,247,.12)" }}>
                     <span style={{ filter: `drop-shadow(0 0 6px rgba(157,77,255,.2))` }}>{stat.icon}</span>
                     <div>
-                      <p style={{ fontSize: "34px", fontWeight: 700, color: stat.valueColor, margin: 0, lineHeight: 1.1 }}>{stat.value}</p>
+                      <p style={{ fontSize: "34px", fontWeight: 500, color: stat.valueColor, margin: 0, lineHeight: 1.1 }}>{stat.value}</p>
                       <p style={{ fontSize: "11px", fontWeight: 500, color: "#B14BFF", margin: "2px 0 0", letterSpacing: "0.5px" }}>{stat.label}</p>
                       <p style={{ fontSize: "12px", color: "#A0A0B5", margin: "4px 0 0" }}>{stat.desc}</p>
                     </div>
@@ -160,7 +160,7 @@ export default function ReviewSlugPage() {
                 <div className="rounded-[20px] p-5 flex flex-col" style={{ width: "260px", background: "#1B1730", border: "1px solid rgba(255,255,255,.05)" }}>
                   <div className="flex items-center gap-2 mb-4">
                     <span style={{ fontSize: "16px" }}>🎓</span>
-                    <h2 style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: 0 }}>How It Works</h2>
+                    <h2 style={{ fontSize: "14px", fontWeight: 400, color: "#FFF", margin: 0 }}>How It Works</h2>
                   </div>
                   <div className="flex flex-col gap-4 flex-1">
                     <svg style={{ position: "absolute", width: 0, height: 0 }}>
@@ -184,12 +184,12 @@ export default function ReviewSlugPage() {
                             <circle cx="19" cy="19" r="18" fill="none" stroke="url(#numShine)" strokeWidth="1.5" style={{ filter: "drop-shadow(0 0 4px rgba(217,70,239,0.35))" }} />
                             <circle cx="19" cy="19" r="15" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="2" />
                           </svg>
-                          <div className="absolute inset-0 flex items-center justify-center" style={{ color: "#A855F7", fontSize: "13px", fontWeight: 700 }}>
+                          <div className="absolute inset-0 flex items-center justify-center" style={{ color: "#A855F7", fontSize: "13px", fontWeight: 500 }}>
                             {step.num}
                           </div>
                         </div>
                         <div>
-                          <p style={{ fontSize: "13px", fontWeight: 600, color: "#FFF", margin: 0 }}>{step.title}</p>
+                          <p style={{ fontSize: "13px", fontWeight: 500, color: "#FFF", margin: 0 }}>{step.title}</p>
                           <p style={{ fontSize: "11px", color: "#A8A4BC", margin: "2px 0 0", lineHeight: 1.3 }}>{step.desc}</p>
                         </div>
                       </div>
@@ -199,7 +199,7 @@ export default function ReviewSlugPage() {
                   <div className="mt-4 p-3 rounded-xl" style={{ background: "rgba(168,85,247,.06)", border: "1px solid rgba(168,85,247,.1)" }}>
                     <div className="flex items-center gap-1.5 mb-1">
                       <span style={{ fontSize: "12px" }}>💡</span>
-                      <span style={{ fontSize: "11px", fontWeight: 600, color: "#FFF" }}>Pro Tip</span>
+                      <span style={{ fontSize: "11px", fontWeight: 500, color: "#FFF" }}>Pro Tip</span>
                     </div>
                     <p style={{ fontSize: "11px", color: "#A8A4BC", margin: 0, lineHeight: 1.3, paddingLeft: "20px" }}>Review daily — even 5 minutes helps.</p>
                   </div>
@@ -211,49 +211,30 @@ export default function ReviewSlugPage() {
           {slug === "flashcards" && (
             <>
               {/* ── Hero Banner ── */}
-              <div className="relative flex items-center overflow-hidden rounded-[20px]" style={{ minHeight: "220px", background: "linear-gradient(135deg, #171228, #1B1730)", border: "1px solid rgba(168,85,247,.08)" }}>
+              <div className="relative flex items-center overflow-hidden rounded-[20px]" style={{ minHeight: "220px", background: `url('/flashcards-hero-bg.png') center / cover no-repeat`, border: "1px solid rgba(255,255,255,.04)" }}>
                 <div className="px-8 py-6" style={{ flex: "0.35 1 0%", position: "relative", zIndex: 2 }}>
                   <div className="flex items-center justify-center" style={{ width: "52px", height: "52px", borderRadius: "50%", background: "#221635", boxShadow: "0 0 20px rgba(139,92,246,.2)", marginBottom: "12px" }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2" stroke="#8B5CF6" strokeWidth="1.8" fill="none"/><line x1="8" y1="7" x2="16" y2="7" stroke="#8B5CF6" strokeWidth="1.8"/><line x1="8" y1="12" x2="14" y2="12" stroke="#8B5CF6" strokeWidth="1.8"/></svg>
                   </div>
-                  <h1 style={{ fontSize: "46px", fontWeight: 700, color: "#FFF", margin: 0, lineHeight: 1 }}>Flashcard Review</h1>
+                  <h1 style={{ fontSize: "46px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1 }}>Flashcard Review</h1>
                   <p style={{ fontSize: "16px", color: "#A8A4BC", margin: "8px 0 0", lineHeight: 1.5 }}>Head to the Overview page to review your due cards.</p>
                 </div>
-                {/* Right: floating flashcards illustration */}
-                <div className="flex-1 relative flex items-center justify-center" style={{ minHeight: "220px" }}>
-                  <div style={{ position: "relative", width: "180px", height: "160px" }}>
-                    {/* Orbit ring */}
-                    <div className="absolute inset-4 rounded-full" style={{ border: "1.5px solid rgba(139,92,246,.12)" }} />
-                    <div className="absolute inset-8 rounded-full" style={{ border: "1.5px solid rgba(236,73,153,.08)" }} />
-                    {/* Floating cards */}
-                    <div className="absolute" style={{ width: "80px", height: "56px", borderRadius: "8px", background: "linear-gradient(135deg, rgba(139,92,246,.2), rgba(139,92,246,.06))", border: "1px solid rgba(139,92,246,.2)", transform: "rotate(-12deg)", left: "15%", top: "25%", backdropFilter: "blur(4px)" }}>
-                      <span style={{ position: "absolute", top: "12px", left: "10px", fontSize: "8px", color: "rgba(139,92,246,.6)", fontWeight: 700 }}>A</span>
-                    </div>
-                    <div className="absolute" style={{ width: "80px", height: "56px", borderRadius: "8px", background: "linear-gradient(135deg, rgba(236,73,153,.15), rgba(236,73,153,.04))", border: "1px solid rgba(236,73,153,.2)", transform: "rotate(8deg)", right: "15%", top: "30%", backdropFilter: "blur(4px)" }}>
-                      <span style={{ position: "absolute", top: "12px", left: "10px", fontSize: "8px", color: "rgba(236,73,153,.6)", fontWeight: 700 }}>B</span>
-                    </div>
-                    {/* Ground glow */}
-                    <div className="absolute" style={{ bottom: "-10%", left: "10%", right: "10%", height: "30px", background: "radial-gradient(ellipse, rgba(139,92,246,.12), transparent)", borderRadius: "50%" }} />
-                    {/* Particles */}
-                    <span className="absolute" style={{ top: "10%", right: "5%", width: "3px", height: "3px", borderRadius: "50%", background: "#C084FC", boxShadow: "0 0 6px rgba(192,132,252,.5)" }} />
-                    <span className="absolute" style={{ bottom: "20%", left: "5%", width: "3px", height: "3px", borderRadius: "50%", background: "#EC4899", boxShadow: "0 0 4px rgba(236,73,153,.4)" }} />
-                  </div>
-                </div>
+                <div className="flex-1 relative" style={{ minHeight: "220px" }} />
               </div>
 
               {/* ── Quick Start ── */}
               <div className="grid grid-cols-3 gap-5">
                 {[
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#FFF" strokeWidth="1.8" fill="none"/><path d="M10 8l6 4-6 4V8z" fill="#FFF"/></svg>, title: "Review Due Cards", desc: "Continue where you left off", color: "#8B5CF6" },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2" stroke="#FFF" strokeWidth="1.8" fill="none"/><rect x="7" y="5" width="10" height="2" rx="0.5" fill="#FFF"/></svg>, title: "Browse Decks", desc: "Explore all your decks", color: "#EC4899" },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#FFF" strokeWidth="1.8" strokeLinecap="round"/><circle cx="12" cy="12" r="9" stroke="#FFF" strokeWidth="1.8" fill="none"/></svg>, title: "Create New Deck", desc: "Add your own flashcards", color: "#C026D3" },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="#8B5CF6"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z" fill="#FFF"/></svg>, title: "Review Due Cards", desc: "Continue where you left off", color: "#8B5CF6" },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="#EC4899"><rect x="4" y="2" width="16" height="14" rx="2"/><rect x="7" y="5" width="10" height="2" rx="0.5" fill="#FFF"/><rect x="6" y="16" width="12" height="4" rx="1" fill="#FFF" opacity="0.6"/></svg>, title: "Browse Decks", desc: "Explore all your decks", color: "#EC4899" },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#C026D3"/><rect x="11" y="7" width="2" height="10" rx="1" fill="#FFF"/><rect x="7" y="11" width="10" height="2" rx="1" fill="#FFF"/></svg>, title: "Create New Deck", desc: "Add your own flashcards", color: "#C026D3" },
                 ].map((card) => (
                   <button key={card.title} className="flex items-center gap-4 p-5 rounded-[18px] border-none cursor-pointer transition-all hover:-translate-y-0.5" style={{ background: "#161322", border: "1px solid rgba(255,255,255,.04)" }}>
-                    <div className="flex items-center justify-center flex-shrink-0" style={{ width: "48px", height: "48px", borderRadius: "50%", background: `${card.color}15` }}>
+                    <div className="flex items-center justify-center flex-shrink-0" style={{ width: "48px", height: "48px", borderRadius: "50%", background: `${card.color}08`, backdropFilter: "blur(8px)", border: `1px solid ${card.color}20` }}>
                       {card.icon}
                     </div>
                     <div className="flex-1 text-left">
-                      <p style={{ fontSize: "15px", fontWeight: 500, color: "#FFF", margin: 0 }}>{card.title}</p>
+                      <p style={{ fontSize: "15px", fontWeight: 400, color: "#FFF", margin: 0 }}>{card.title}</p>
                       <p style={{ fontSize: "13px", color: "#A8A4BC", margin: "2px 0 0" }}>{card.desc}</p>
                     </div>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M10 5l3 3-3 3" stroke="rgba(255,255,255,.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -262,20 +243,12 @@ export default function ReviewSlugPage() {
               </div>
 
               {/* ── Recently Studied ── */}
+              <div className="flex items-center justify-between mb-3">
+                <h2 style={{ fontSize: "18px", fontWeight: 500, color: "#FFF", margin: 0 }}>Recently Studied</h2>
+                <button className="text-xs border-none cursor-pointer" style={{ color: "#8B5CF6", background: "none" }}>View all decks →</button>
+              </div>
               <div className="rounded-[20px] overflow-hidden" style={{ background: "#161322", border: "1px solid rgba(255,255,255,.05)" }}>
-                <div className="flex items-center justify-between px-6 py-4">
-                  <h2 style={{ fontSize: "18px", fontWeight: 600, color: "#FFF", margin: 0 }}>Recently Studied</h2>
-                  <button className="text-xs border-none cursor-pointer" style={{ color: "#8B5CF6", background: "none" }}>View all decks →</button>
-                </div>
-                {/* Table */}
-                <div className="px-6 py-2 flex items-center gap-4 text-xs font-medium uppercase tracking-wider" style={{ color: "rgba(255,255,255,.2)", borderTop: "1px solid rgba(255,255,255,.04)" }}>
-                  <span style={{ width: "24px" }} />
-                  <span style={{ flex: 1 }}>Deck Info</span>
-                  <span style={{ width: "60px", textAlign: "center" }}>Cards</span>
-                  <span style={{ width: "60px", textAlign: "center" }}>Mastery</span>
-                  <span style={{ width: "80px", textAlign: "center" }}>Last Studied</span>
-                  <span style={{ width: "20px" }} />
-                </div>
+
                 {[
                   { badge: "A1", badgeColor: "#22C55E", title: "A1 Beginner Essentials", sub: "Basic words and phrases", cards: "128", mastery: "92%", masteryColor: "#22C55E", last: "Today" },
                   { badge: "A2", badgeColor: "#60A5FA", title: "A2 Everyday German", sub: "Common expressions", cards: "96", mastery: "87%", masteryColor: "#22C55E", last: "Yesterday" },
@@ -283,13 +256,13 @@ export default function ReviewSlugPage() {
                   { badge: "★", badgeColor: "#FACC15", title: "Favorites", sub: "Bookmarked flashcards", cards: "34", mastery: "94%", masteryColor: "#22C55E", last: "Today" },
                 ].map((row, i) => (
                   <div key={i} className="px-6 flex items-center gap-4 text-sm" style={{ height: "72px", borderTop: "1px solid rgba(255,255,255,.04)", cursor: "pointer" }}>
-                    <div className="flex items-center justify-center flex-shrink-0" style={{ width: "28px", height: "28px", borderRadius: "50%", background: `${row.badgeColor}15`, color: row.badgeColor, fontSize: "10px", fontWeight: 700 }}>{row.badge}</div>
+                    <div className="flex items-center justify-center flex-shrink-0" style={{ width: "48px", height: "48px", borderRadius: "50%", background: `${row.badgeColor}15`, border: `1.5px solid ${row.badgeColor}30`, color: row.badgeColor, fontSize: "12px", fontWeight: 500 }}>{row.badge}</div>
                     <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: 0 }}>{row.title}</p>
+                      <p style={{ fontSize: "14px", fontWeight: 400, color: "#FFF", margin: 0 }}>{row.title}</p>
                       <p style={{ fontSize: "12px", color: "#A8A4BC", margin: "2px 0 0" }}>{row.sub}</p>
                     </div>
-                    <span style={{ width: "60px", textAlign: "center", fontSize: "14px", color: "#FFF", fontWeight: 500 }}>{row.cards}</span>
-                    <span style={{ width: "60px", textAlign: "center", fontSize: "14px", fontWeight: 600, color: row.masteryColor }}>{row.mastery}</span>
+                    <span style={{ width: "60px", textAlign: "center", fontSize: "14px", color: "#FFF", fontWeight: 400 }}>{row.cards}</span>
+                    <span style={{ width: "60px", textAlign: "center", fontSize: "14px", fontWeight: 500, color: row.masteryColor }}>{row.mastery}</span>
                     <span style={{ width: "80px", textAlign: "center", fontSize: "12px", color: "rgba(255,255,255,.4)" }}>{row.last}</span>
                     <span style={{ width: "20px", color: "rgba(255,255,255,.2)", cursor: "pointer", fontSize: "18px", lineHeight: 1 }}>⋮</span>
                   </div>
@@ -299,37 +272,479 @@ export default function ReviewSlugPage() {
           )}
 
           {slug === "mistakes" && (
-            <div className="rounded-2xl p-5 text-center" style={{ background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
-              <p style={{ fontSize: "36px", marginBottom: "12px" }}>✖</p>
-              <p style={{ fontSize: "14px", color: "#FFF", fontWeight: 600, margin: 0 }}>Mistakes Review</p>
-              <p style={{ fontSize: "12px", color: "#A8A4BC", margin: "4px 0 0" }}>Review words you've previously missed to improve retention.</p>
-            </div>
+            <>
+              {/* ── Hero Banner ── */}
+              <div className="relative flex items-center overflow-hidden rounded-[20px]" style={{ minHeight: "220px", background: `url('/mistakes-hero-bg.png') center / cover no-repeat`, border: "1px solid rgba(255,255,255,.04)" }}>
+                <div className="px-8 py-6" style={{ flex: "0.55 1 0%", position: "relative", zIndex: 2 }}>
+                  <div className="flex items-center justify-center" style={{ width: "52px", height: "52px", borderRadius: "50%", background: "#221635", boxShadow: "0 0 20px rgba(139,92,246,.2)", marginBottom: "12px" }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#EC4899" strokeWidth="1.5" fill="none"/><path d="M9 9l6 6M15 9l-6 6" stroke="#EC4899" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                  </div>
+                  <h1 style={{ fontSize: "42px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1 }}>Mistakes Review</h1>
+                  <p style={{ fontSize: "15px", color: "#A8A4BC", margin: "8px 0 0", lineHeight: 1.5 }}>Review words you've previously missed to improve retention.</p>
+                </div>
+                <div className="flex-1 relative" style={{ minHeight: "220px" }} />
+              </div>
+
+              {/* ── Statistics Cards ── */}
+              <div className="grid grid-cols-4 gap-5">
+                {[
+                  { icon: <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="4" width="16" height="14" rx="2" stroke="#8B5CF6" strokeWidth="1.5" fill="none"/><line x1="6" y1="8" x2="16" y2="8" stroke="#8B5CF6" strokeWidth="1.5"/></svg>, value: "48", label: "Total Mistakes", desc: "All time mistakes", color: "#8B5CF6" },
+                  { icon: <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="7" stroke="#EC4899" strokeWidth="1.5" fill="none"/><path d="M11 7v4l3 2" stroke="#EC4899" strokeWidth="1.5" strokeLinecap="round"/></svg>, value: "16", label: "Needs Review", desc: "High priority words", color: "#EC4899" },
+                  { icon: <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="4" y="12" width="3" height="6" rx="1" fill="#8B5CF6"/><rect x="9" y="8" width="3" height="10" rx="1" fill="#8B5CF6"/><rect x="14" y="4" width="3" height="14" rx="1" fill="#8B5CF6"/></svg>, value: "87%", label: "Retention Impact", desc: "Mistakes affecting retention", color: "#8B5CF6" },
+                  { icon: <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="3" width="18" height="16" rx="2" stroke="#EC4899" strokeWidth="1.5" fill="none"/><line x1="2" y1="8" x2="20" y2="8" stroke="#EC4899" strokeWidth="1.5"/></svg>, value: "5", label: "Day Streak", desc: "Review streak", color: "#EC4899" },
+                ].map((stat) => (
+                  <div key={stat.label} className="rounded-[18px] p-4 relative overflow-hidden" style={{ background: "#16162A", border: "1px solid rgba(255,255,255,.04)" }}>
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center justify-center" style={{ width: "40px", height: "40px", borderRadius: "50%", background: `${stat.color}12` }}>
+                        <span style={{ color: stat.color }}>{stat.icon}</span>
+                      </div>
+                      <span style={{ fontSize: "24px", fontWeight: 500, color: "#FFF", lineHeight: 1 }}>{stat.value}</span>
+                    </div>
+                    <p style={{ fontSize: "11px", fontWeight: 500, color: "#FFF", margin: "4px 0 0" }}>{stat.label}</p>
+                    <p style={{ fontSize: "10px", color: "#A8A4BC", margin: "2px 0 0" }}>{stat.desc}</p>
+                    {/* Progress bar */}
+                    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "2px", background: "rgba(255,255,255,.04)" }}>
+                      <div style={{ width: `${Math.random() * 60 + 30}%`, height: "100%", background: `linear-gradient(90deg, ${stat.color}, transparent)` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* ── Filter Row ── */}
+              <div className="flex items-center justify-between">
+                <div className="flex gap-1.5">
+                  {["All", "High Priority", "Medium", "Low"].map((f) => (
+                    <button key={f} className="px-3 py-1.5 rounded-full text-xs font-medium border-none cursor-pointer" style={{ background: f === "All" ? "linear-gradient(135deg, #8B5CF6, #EC4899)" : "rgba(255,255,255,.04)", color: f === "All" ? "#FFF" : "rgba(255,255,255,.4)" }}>{f}</button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs" style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.06)", color: "rgba(255,255,255,.4)", cursor: "pointer" }}>
+                  Sort by: Recent <span style={{ marginLeft: "4px" }}>▾</span>
+                </div>
+              </div>
+
+              {/* ── Mistake Table ── */}
+              <div className="rounded-[20px] overflow-hidden" style={{ background: "#16162A", border: "1px solid rgba(255,255,255,.05)" }}>
+                {[
+                  { word: "abholen", trans: "to pick up", wrong: "abholen", correct: "abholen", time: "2 days ago", priority: "#EC4899" },
+                  { word: "die Gelegenheit", trans: "opportunity", wrong: "Gelegenheit", correct: "die Gelegenheit", time: "3 days ago", priority: "#F59E0B" },
+                  { word: "entwickeln", trans: "to develop", wrong: "entwikeln", correct: "entwickeln", time: "5 days ago", priority: "#EC4899" },
+                  { word: "die Herausforderung", trans: "challenge", wrong: "Herrausforderung", correct: "Herausforderung", time: "1 week ago", priority: "#22C55E" },
+                  { word: "die Veränderung", trans: "change", wrong: "Veränderung", correct: "Veränderung", time: "1 week ago", priority: "#F59E0B" },
+                ].map((row, i) => (
+                  <div key={i} className="flex items-center gap-4 px-5" style={{ height: "80px", borderTop: i > 0 ? "1px solid rgba(255,255,255,.04)" : "none" }}>
+                    {/* Priority dot + Word */}
+                    <div style={{ flex: 1.5, display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: row.priority, boxShadow: `0 0 6px ${row.priority}50`, flexShrink: 0 }} />
+                      <div>
+                        <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: 0 }}>{row.word}</p>
+                        <p style={{ fontSize: "12px", color: "#A8A4BC", margin: "2px 0 0" }}>{row.trans}</p>
+                      </div>
+                    </div>
+                    {/* You wrote */}
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: "10px", color: "rgba(255,255,255,.3)", margin: "0 0 2px" }}>You wrote:</p>
+                      <p style={{ fontSize: "13px", color: "#EC4899", textDecoration: "line-through", margin: 0 }}>{row.wrong}</p>
+                    </div>
+                    {/* Correct */}
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: "10px", color: "rgba(255,255,255,.3)", margin: "0 0 2px" }}>Correct:</p>
+                      <p style={{ fontSize: "13px", color: "#22C55E", margin: 0 }}>{row.correct}</p>
+                    </div>
+                    {/* Time */}
+                    <span style={{ width: "80px", fontSize: "12px", color: "rgba(255,255,255,.3)" }}>{row.time}</span>
+                    {/* Review button */}
+                    <button className="px-4 py-1.5 rounded-lg text-xs font-medium border-none cursor-pointer" style={{ background: "linear-gradient(90deg, #8B5CF6, #EC4899)", color: "#FFF", boxShadow: "0 0 12px rgba(139,92,246,.2)" }}>Review</button>
+                    {/* Menu */}
+                    <span style={{ color: "rgba(255,255,255,.2)", cursor: "pointer", fontSize: "18px" }}>⋮</span>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
           {slug === "weak-words" && (
-            <div className="rounded-2xl p-5" style={{ background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
-              <p style={{ fontSize: "14px", fontWeight: 600, color: "#FFF", margin: "0 0 12px" }}>Your Weak Words</p>
-              {dash?.weakest_words?.length ? (
-                <div className="space-y-2">
-                  {dash.weakest_words.map((w) => (
-                    <div key={w.id} className="flex items-center justify-between p-3 rounded-xl" style={{ background: "rgba(16,18,32,.5)", border: "1px solid rgba(255,255,255,.04)" }}>
-                      <span style={{ fontSize: "14px", fontWeight: 500, color: "#FFF" }}>{w.german}</span>
-                      <span style={{ fontSize: "12px", color: "#A8A4BC" }}>{w.english} · {w.lapses}× missed</span>
-                    </div>
-                  ))}
+            <>
+              {/* ── Page Header ── */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3 h-full">
+                  <div className="flex items-center justify-center" style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(168,85,247,.1)", border: "1px solid rgba(168,85,247,.15)", boxShadow: "0 0 10px rgba(168,85,247,.08)" }}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l6 4-6 4V3z" fill="#A855F7"/></svg>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: "18px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.2 }}>Weak Words</p>
+                    <p style={{ fontSize: "12px", color: "#A1A1AA", margin: "1px 0 0" }}>Smart analysis of vocabulary that needs reinforcement.</p>
+                  </div>
                 </div>
-              ) : (
-                <p style={{ fontSize: "12px", color: "#A8A4BC", margin: 0, textAlign: "center", padding: "20px" }}>No weak words — great work!</p>
-              )}
-            </div>
+                <div className="flex items-center gap-1.5 rounded-full px-3 py-1.5" style={{ background: "rgba(16,18,32,.7)", border: "1px solid rgba(74,222,128,.2)", height: "28px" }}>
+                  <span style={{ fontSize: "10px", color: "#22C55E" }}>●</span>
+                  <span style={{ fontSize: "11px", fontWeight: 400, color: "#FFF" }}>0 weak words</span>
+                </div>
+              </div>
+
+              {/* ── Hero Banner (bg image + text overlay) ── */}
+              <div className="relative overflow-hidden" style={{ borderRadius: "20px", border: "1px solid rgba(255,255,255,.04)", height: "210px" }}>
+                <img src="/weakwords-hero.png" alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                <div className="absolute inset-0 flex items-end pb-7 px-8" style={{ zIndex: 2 }}>
+                  <div style={{ width: "35%" }}>
+                    <h2 style={{ fontSize: "34px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.1 }}>Great job!</h2>
+                    <p style={{ fontSize: "24px", fontWeight: 500, color: "#A855F7", margin: "8px 0 0" }}>No weak words found</p>
+                    <p style={{ fontSize: "15px", color: "#B7B8C4", margin: "10px 0 0", lineHeight: 1.4, maxWidth: "280px" }}>Your memory is performing exceptionally well.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── KPI STATISTICS ROW ── */}
+              <div className="grid grid-cols-4 gap-3">
+                {/* Card 1 — Memory Accuracy */}
+                <div className="rounded-[16px] p-4" style={{ height: "110px", background: "linear-gradient(180deg, #18162E, #121426)", border: "1px solid rgba(255,255,255,.05)", boxShadow: "0 8px 24px rgba(0,0,0,.35)" }}>
+                  <div className="flex items-center gap-3 h-full">
+                    <div className="relative flex items-center justify-center flex-shrink-0" style={{ width: "60px", height: "60px", borderRadius: "50%", boxShadow: "0 0 24px #A855F7, 0 0 50px rgba(168,85,247,.3)" }}>
+                      <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+                        <circle cx="30" cy="30" r="23" stroke="#2A2840" strokeWidth="5" fill="none"/>
+                        <circle cx="30" cy="30" r="23" stroke="url(#memG)" strokeWidth="5" fill="none" strokeDasharray="115 145" strokeLinecap="round" transform="rotate(-90 30 30)" filter="url(#memGlow)"/>
+                        <defs><linearGradient id="memG" x1="0" y1="0" x2="60" y2="60"><stop offset="0%" stopColor="#D946EF"/><stop offset="50%" stopColor="#A855F7"/><stop offset="100%" stopColor="#7C3AED"/></linearGradient></defs>
+                      </svg>
+                      <span style={{ position: "absolute", fontSize: "11px", fontWeight: 600, color: "#FFF" }}>96%</span>
+                    </div>
+                    <div>
+                      <p style={{ fontSize: "22px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.2 }}>96%</p>
+                      <p style={{ fontSize: "13px", fontWeight: 500, color: "#FFF", margin: "2px 0 0" }}>Memory Accuracy</p>
+                      <p style={{ fontSize: "11px", color: "#9CA3AF", margin: "1px 0 0" }}>Last 30 days</p>
+                    </div>
+                  </div>
+                </div>
+                {/* Card 2 — Mastered Words */}
+                <div className="rounded-[16px] p-4" style={{ height: "110px", background: "linear-gradient(180deg, #18162E, #121426)", border: "1px solid rgba(255,255,255,.05)", boxShadow: "0 8px 24px rgba(0,0,0,.35)" }}>
+                  <div className="flex items-center gap-3 h-full">
+                    <div className="flex items-center justify-center flex-shrink-0" style={{ width: "60px", height: "60px", borderRadius: "50%", background: "linear-gradient(135deg, #5B2E16, #7A431D)", boxShadow: "0 0 24px #A855F7, 0 0 50px rgba(168,85,247,.3)" }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="starGrad" x1="0" y1="0" x2="24" y2="24"><stop offset="0%" stopColor="#FFD35C"/><stop offset="100%" stopColor="#F59E0B"/></linearGradient></defs><path d="M12 2l2.5 6.5H21l-5.5 4.5 2 7L12 15l-5.5 5 2-7L3 8.5h6.5L12 2z" fill="url(#starGrad)" filter="url(#sG)"/><defs><filter id="sG"><feGaussianBlur stdDeviation="0.5"/></filter></defs></svg>
+                    </div>
+                    <div>
+                      <p style={{ fontSize: "22px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.2 }}>243</p>
+                      <p style={{ fontSize: "13px", fontWeight: 500, color: "#FFF", margin: "2px 0 0" }}>Mastered Words</p>
+                      <p style={{ fontSize: "11px", color: "#9CA3AF", margin: "1px 0 0" }}>Vocabulary retained</p>
+                    </div>
+                  </div>
+                </div>
+                {/* Card 3 — Strong Words */}
+                <div className="rounded-[16px] p-4" style={{ height: "110px", background: "linear-gradient(180deg, #18162E, #121426)", border: "1px solid rgba(255,255,255,.05)", boxShadow: "0 8px 24px rgba(0,0,0,.35)" }}>
+                  <div className="flex items-center gap-3 h-full">
+                    <div className="flex items-center justify-center flex-shrink-0" style={{ width: "60px", height: "60px", borderRadius: "50%", background: "#31124B", boxShadow: "0 0 24px #A855F7, 0 0 50px rgba(168,85,247,.3)" }}>
+                      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3l7 4.5v5.5l-7 5-7-5V7.5l7-4.5z" stroke="#B86EFF" strokeWidth="1.5" fill="none"/><path d="M8 11.5l2 2 4-4" stroke="#B86EFF" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </div>
+                    <div>
+                      <p style={{ fontSize: "22px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.2 }}>18</p>
+                      <p style={{ fontSize: "13px", fontWeight: 500, color: "#FFF", margin: "2px 0 0" }}>Strong Words</p>
+                      <p style={{ fontSize: "11px", color: "#9CA3AF", margin: "1px 0 0" }}>Never forgotten</p>
+                    </div>
+                  </div>
+                </div>
+                {/* Card 4 — Learning Confidence */}
+                <div className="rounded-[16px] p-4" style={{ height: "110px", background: "linear-gradient(180deg, #18162E, #121426)", border: "1px solid rgba(255,255,255,.05)", boxShadow: "0 8px 24px rgba(0,0,0,.35)" }}>
+                  <div className="flex items-center gap-3 h-full">
+                    <div className="flex items-center justify-center flex-shrink-0" style={{ width: "60px", height: "60px", borderRadius: "50%", background: "linear-gradient(135deg, #4D1D88, #7C3AED)", boxShadow: "0 0 24px #A855F7, 0 0 50px rgba(168,85,247,.3)" }}>
+                      <svg width="22" height="24" viewBox="0 0 22 24" fill="none"><defs><linearGradient id="lGrad" x1="0" y1="0" x2="22" y2="24"><stop offset="0%" stopColor="#F4C8FF"/><stop offset="100%" stopColor="#D946EF"/></linearGradient></defs><path d="M12 2L4 13h6l-1 9 9-12h-6l1-8z" fill="url(#lGrad)" filter="url(#lG)"/><defs><filter id="lG"><feGaussianBlur stdDeviation="0.5"/></filter></defs></svg>
+                    </div>
+                    <div>
+                      <p style={{ fontSize: "20px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.2 }}>Excellent</p>
+                      <p style={{ fontSize: "13px", fontWeight: 500, color: "#FFF", margin: "2px 0 0" }}>Learning Confidence</p>
+                      <p style={{ fontSize: "11px", color: "#9CA3AF", margin: "1px 0 0" }}>Based on retention</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── ANALYTICS ROW (40/60) ── */}
+              <div className="flex gap-3">
+                {/* Memory Distribution (40%) */}
+                <div className="rounded-[16px] p-6" style={{ width: "40%", background: "linear-gradient(180deg, #16142B, #111322)", border: "1px solid rgba(255,255,255,.05)", boxShadow: "0 10px 30px rgba(0,0,0,.45)" }}>
+                  <p style={{ fontSize: "15px", fontWeight: 500, color: "#FFF", margin: "0 0 18px" }}>Memory Distribution</p>
+                  <div className="flex items-center gap-6">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                      <circle cx="60" cy="60" r="45" stroke="#22C55E" strokeWidth="24" fill="none" strokeDasharray="205 283" strokeLinecap="round" transform="rotate(-90 60 60)" />
+                      <circle cx="60" cy="60" r="45" stroke="#8B5CF6" strokeWidth="24" fill="none" strokeDasharray="70 283" strokeLinecap="round" transform="rotate(55 60 60)" />
+                      <circle cx="60" cy="60" r="45" stroke="#F59E0B" strokeWidth="24" fill="none" strokeDasharray="8 283" strokeLinecap="round" transform="rotate(105 60 60)" />
+                    </svg>
+                    <div className="space-y-3">
+                      {[
+                        { color: "#22C55E", label: "Strong Memory", pct: "82%" },
+                        { color: "#8B5CF6", label: "Normal", pct: "14%" },
+                        { color: "#F59E0B", label: "Needs Review", pct: "4%" },
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-center gap-3 h-full">
+                          <span style={{ width: "12px", height: "12px", borderRadius: "3px", background: item.color }} />
+                          <span style={{ fontSize: "13px", color: "#A1A1AA", flex: 1 }}>{item.label}</span>
+                          <span style={{ fontSize: "13px", fontWeight: 500, color: "#FFF" }}>{item.pct}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Emma's Insight (60%) */}
+                <div className="rounded-[16px] p-6 relative overflow-hidden flex-1" style={{ minHeight: "200px", background: `url('/emma-insight-bg.png') right center / cover no-repeat`, border: "1px solid rgba(255,255,255,.05)", boxShadow: "0 10px 30px rgba(0,0,0,.45)" }}>
+                  <p style={{ fontSize: "13px", fontWeight: 500, color: "#FFF", margin: "0 0 12px", position: "relative", zIndex: 1 }}>Emma&apos;s Insight</p>
+                  <div className="flex items-center gap-3 h-full" style={{ position: "relative", zIndex: 1 }}>
+                    <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0" style={{ border: "2px solid rgba(168,85,247,.3)", boxShadow: "0 0 20px rgba(168,85,247,.15)" }}>
+                      <img src="/emma-avatar.webp" alt="Emma" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    </div>
+                    <div style={{ flex: 1, paddingRight: "160px" }}>
+                      <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
+                        <span style={{ color: "#22C55E", fontSize: "10px", marginTop: "4px" }}>●</span>
+                        <div>
+                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>Excellent recall over the</p>
+                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>past week</p>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
+                        <span style={{ color: "#22C55E", fontSize: "10px", marginTop: "4px" }}>●</span>
+                        <div>
+                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>Pronunciation improved by</p>
+                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}><span style={{ color: "#22C55E", fontWeight: 500 }}>17%</span> this week</p>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <span style={{ color: "#22C55E", fontSize: "10px", marginTop: "4px" }}>●</span>
+                        <div>
+                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>Review daily for long</p>
+                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>term retention</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Weak Word List Header (outside card) ── */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span style={{ fontSize: "15px", fontWeight: 500, color: "#FFF" }}>Weak Word List</span>
+                  <span className="flex items-center justify-center" style={{ width: "16px", height: "16px", borderRadius: "50%", background: "rgba(168,85,247,.12)", border: "1px solid rgba(168,85,247,.15)", color: "rgba(255,255,255,.4)", fontSize: "9px", fontWeight: 500, cursor: "pointer" }}>i</span>
+                </div>
+                {/* Toolbar */}
+                <div className="flex items-center gap-3 h-full">
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", width: "210px", height: "34px", borderRadius: "10px", background: "#111322", border: "1px solid rgba(255,255,255,.05)", padding: "0 10px" }}>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="4" stroke="#8B5CF6" strokeWidth="1" fill="none" opacity="0.7"/><path d="M8.5 8.5L11 11" stroke="#8B5CF6" strokeWidth="1" strokeLinecap="round" opacity="0.7"/></svg>
+                    <input placeholder="Search weak words..." style={{ border: "none", background: "transparent", outline: "none", color: "#FFF", fontSize: "11px", width: "100%" }} />
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", height: "34px", borderRadius: "10px", background: "#111322", border: "1px solid rgba(255,255,255,.05)", padding: "0 10px", cursor: "pointer" }}>
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 2h8l-3 3.5V8L4 9V5.5L1 2z" stroke="#8B5CF6" strokeWidth="1" fill="none"/></svg>
+                    <span style={{ fontSize: "11px", color: "#8F93A7" }}>All Difficulties</span>
+                    <span style={{ fontSize: "8px", color: "rgba(255,255,255,.2)", marginLeft: "2px" }}>▾</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "4px", height: "34px", borderRadius: "10px", background: "#111322", border: "1px solid rgba(255,255,255,.05)", padding: "0 10px", cursor: "pointer" }}>
+                    <span style={{ fontSize: "11px", color: "#8F93A7" }}>Newest</span>
+                    <span style={{ fontSize: "8px", color: "rgba(255,255,255,.2)" }}>▾</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── CTA Card ── */}
+              <div className="rounded-[16px] overflow-hidden" style={{ background: "linear-gradient(135deg, #111322, #15142A)", border: "1px solid rgba(255,255,255,.04)", boxShadow: "0 10px 25px rgba(0,0,0,.45)" }}>
+                <div className="relative flex items-center overflow-hidden" style={{ height: "150px", background: `url('/weakwords-cta-bg.png') center / cover no-repeat` }}>
+                  {/* Left illustration (40%) */}
+                  <div style={{ width: "40%", height: "100%", position: "relative" }} />
+                  {/* Right content + buttons (60%) */}
+                  <div className="flex items-center gap-5" style={{ width: "60%", zIndex: 1, paddingRight: "24px" }}>
+                    <div>
+                      <p style={{ fontSize: "18px", fontWeight: 500, color: "#FFF", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span style={{ background: "linear-gradient(135deg, #FFD35C, #FBBF24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", filter: "drop-shadow(0 0 4px rgba(255,211,92,.3))" }}>✦</span>
+                        Excellent Memory
+                      </p>
+                      <p style={{ fontSize: "11px", color: "#A1A1AA", margin: "4px 0 0", lineHeight: 1.4 }}>Your review system hasn&apos;t detected any weak vocabulary.</p>
+                      <p style={{ fontSize: "11px", color: "#A1A1AA", margin: 0, lineHeight: 1.4 }}>Keep studying consistently for long-term retention.</p>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", flexShrink: 0, paddingLeft: "32px" }}>
+                      <button className="flex items-center justify-center gap-1.5 border-none cursor-pointer" style={{ width: "140px", height: "32px", borderRadius: "8px", background: "linear-gradient(90deg, #7C3AED, #D946EF)", color: "#FFF", fontSize: "12px", fontWeight: 500, boxShadow: "0 0 18px rgba(168,85,247,.2)", whiteSpace: "nowrap" }}>
+                        ← Continue →
+                      </button>
+                      <button className="flex items-center justify-center gap-1.5 border-none cursor-pointer" style={{ width: "140px", height: "32px", borderRadius: "8px", background: "#18182E", border: "1px solid rgba(255,255,255,.05)", color: "#FFF", fontSize: "12px", fontWeight: 500, whiteSpace: "nowrap" }}>
+                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 3.5l4-2 4 2v4l-4 2-4-2V3.5z" stroke="#A855F7" strokeWidth="1" fill="none"/><path d="M5.5 5l3-1.5M5.5 5v4" stroke="#A855F7" strokeWidth="1" fill="none"/></svg>
+                        Practice
+                      </button>
+                      <button className="flex items-center justify-center gap-1.5 border-none cursor-pointer" style={{ width: "140px", height: "32px", borderRadius: "8px", background: "#18182E", border: "1px solid rgba(255,255,255,.05)", color: "#FFF", fontSize: "12px", fontWeight: 500, whiteSpace: "nowrap" }}>
+                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1.5" y="1.5" width="8" height="9" rx="1.5" stroke="#A855F7" strokeWidth="1" fill="none"/></svg>
+                        Browse
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
 
           {slug === "bookmarks" && (
-            <div className="rounded-2xl p-5 text-center" style={{ background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
-              <p style={{ fontSize: "36px", marginBottom: "12px" }}>🔖</p>
-              <p style={{ fontSize: "14px", color: "#FFF", fontWeight: 600, margin: 0 }}>Bookmarks</p>
-              <p style={{ fontSize: "12px", color: "#A8A4BC", margin: "4px 0 0" }}>Your saved words and exercises will appear here.</p>
-            </div>
+            <>
+              {/* Page Header */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center justify-center flex-shrink-0" style={{ width: "40px", height: "40px", borderRadius: "50%", background: "rgba(168,85,247,.1)", border: "1px solid rgba(168,85,247,.15)", boxShadow: "0 0 12px rgba(168,85,247,.08)" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 3v18l6-4 6 4V3H6z" stroke="#A855F7" strokeWidth="1.5" strokeLinejoin="round" fill="none"/></svg>
+                </div>
+                <div>
+                  <h1 style={{ fontSize: "24px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.2 }}>Bookmarks</h1>
+                  <p style={{ fontSize: "13px", color: "#9CA3AF", margin: "2px 0 0" }}>Your saved words and exercises will appear here.</p>
+                </div>
+              </div>
+
+              {/* Hero Banner */}
+              <div className="relative flex items-center overflow-hidden" style={{ borderRadius: "22px", minHeight: "190px", background: `url('/bookmarks-hero-bg.png') center / cover no-repeat`, border: "1px solid rgba(255,255,255,.06)", boxShadow: "0 8px 40px rgba(0,0,0,.3)" }}>
+                {/* Left section (40%) */}
+                <div className="px-8 py-6" style={{ width: "50%", zIndex: 2 }}>
+                  <h2 style={{ fontSize: "44px", fontWeight: 700, color: "#F8FAFC", margin: 0, lineHeight: 1.1 }}>Save what matters</h2>
+                  <p style={{ fontSize: "16px", color: "#A6A8B6", margin: "10px 0 20px", lineHeight: 1.5, maxWidth: "340px" }}>Bookmark important words, phrases, and exercises to revisit them anytime.</p>
+                  {/* 3 Stat Cards */}
+                  <div className="flex gap-3">
+                    {[
+                      { icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2v12l4-3 4 3V2H4z" stroke="#A855F7" strokeWidth="1.5" fill="none"/></svg>, value: "24", label: "Total saved items" },
+                      { icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5" stroke="#A855F7" strokeWidth="1.5" fill="none"/></svg>, value: "3", label: "Organized lists" },
+                      { icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="3" width="11" height="10" rx="1.5" stroke="#A855F7" strokeWidth="1.5" fill="none"/><line x1="2.5" y1="7" x2="13.5" y2="7" stroke="#A855F7" strokeWidth="1.5"/></svg>, value: "Today", label: "Keep learning!" },
+                    ].map((stat) => (
+                      <div key={stat.label} className="flex-1 rounded-xl px-3 py-2.5 text-center" style={{ background: "rgba(16,18,32,.65)", border: "1px solid rgba(255,255,255,.06)" }}>
+                        <span style={{ color: "#A855F7", display: "block", marginBottom: "4px" }}>{stat.icon}</span>
+                        <p style={{ fontSize: "18px", fontWeight: 700, color: "#FFF", margin: 0, lineHeight: 1.2 }}>{stat.value}</p>
+                        <p style={{ fontSize: "9px", color: "rgba(255,255,255,.35)", margin: "2px 0 0" }}>{stat.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Right illustration (60%) — bg image */}
+                <div className="flex-1 relative" style={{ minHeight: "190px" }} />
+              </div>
+
+              {/* Search & Filter */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-2 flex-1 max-w-md px-3" style={{ height: "34px", borderRadius: "10px", background: "#101223", border: "1px solid rgba(255,255,255,.05)" }}>
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="4" stroke="#A855F7" strokeWidth="1" fill="none" opacity="0.6"/><path d="M8.5 8.5L11 11" stroke="#A855F7" strokeWidth="1" strokeLinecap="round" opacity="0.6"/></svg>
+                  <input placeholder="Search bookmarks..." style={{ border: "none", background: "transparent", outline: "none", color: "#FFF", fontSize: "11px", width: "100%" }} />
+                </div>
+                <div className="flex items-center gap-1.5 px-3" style={{ height: "34px", borderRadius: "10px", background: "#101223", border: "1px solid rgba(255,255,255,.05)", cursor: "pointer" }}>
+                  <span style={{ fontSize: "11px", color: "#9CA3AF" }}>All Types</span>
+                  <span style={{ fontSize: "8px", color: "rgba(255,255,255,.2)" }}>▾</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3" style={{ height: "34px", borderRadius: "10px", background: "#101223", border: "1px solid rgba(255,255,255,.05)", cursor: "pointer" }}>
+                  <span style={{ fontSize: "11px", color: "#9CA3AF" }}>Newest First</span>
+                  <span style={{ fontSize: "8px", color: "rgba(255,255,255,.2)" }}>▾</span>
+                </div>
+              </div>
+
+              {/* Bookmarked Items — horizontal scroll */}
+              <div className="flex gap-4 overflow-x-auto pb-2 mb-5" style={{ scrollbarWidth: "thin" }}>
+                {[
+                  { type: "WORD", color: "#7C5CFF", title: "abholen", sub: "to pick up, to collect", content: { type: "example", german: "Ich hole dich morgen ab.", english: "I'll pick you up tomorrow." }, level: "A2", time: "2 days ago" },
+                  { type: "PHRASE", color: "#EC4899", title: "Ganz deiner Meinung.", sub: "Fully agree with you.", content: { type: "example", german: "Da stimme ich dir voll zu.", english: "I totally agree with you." }, level: "B1", time: "3 days ago" },
+                  { type: "EXERCISE", color: "#3B82F6", title: "Hörverstehen Übung 4", sub: "Audio comprehension", content: { type: "progress", score: 8, total: 10 }, level: "A1", time: "5 days ago" },
+                  { type: "GRAMMAR", color: "#F97316", title: "Dativ vs. Akkusativ", sub: "Case usage rules", content: { type: "notes", text: "Dativ answers 'to whom', Akkusativ answers 'whom/what'." }, level: "A2", time: "1 week ago" },
+                  { type: "WORD", color: "#7C5CFF", title: "vielleicht", sub: "perhaps, maybe", content: { type: "example", german: "Vielleicht komme ich morgen.", english: "Maybe I'll come tomorrow." }, level: "B1", time: "1 week ago" },
+                ].map((item, i) => (
+                  <div key={i} className="flex-shrink-0 rounded-[18px] p-4 transition-all hover:-translate-y-1" style={{ width: "220px", background: "linear-gradient(180deg, #171A2A, #111322)", border: "1px solid rgba(255,255,255,.06)", boxShadow: "0 4px 20px rgba(0,0,0,.15)" }}>
+                    {/* Header: Category + Bookmark */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span style={{ fontSize: "9px", fontWeight: 700, color: "#FFF", padding: "2px 8px", borderRadius: "999px", background: `${item.color}20`, border: `1px solid ${item.color}30`, textTransform: "uppercase", letterSpacing: "0.3px" }}>{item.type}</span>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 3v18l6-4 6 4V3H6z" fill={item.color} opacity="0.9"/></svg>
+                    </div>
+                    {/* Title + Subtitle */}
+                    <p style={{ fontSize: "15px", fontWeight: 600, color: "#F8FAFC", margin: 0, lineHeight: 1.2 }}>{item.title}</p>
+                    <p style={{ fontSize: "11px", color: "#A8ABB8", margin: "3px 0 8px" }}>{item.sub}</p>
+                    {/* Content area — varies by type */}
+                    {item.content.type === "example" && (
+                      <div className="mb-3 px-2.5 py-2 rounded-lg" style={{ background: "rgba(255,255,255,.03)" }}>
+                        <p style={{ fontSize: "10px", color: "rgba(255,255,255,.25)", margin: "0 0 2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Example</p>
+                        <p style={{ fontSize: "11px", color: "#D1D5DB", margin: 0, fontStyle: "italic" }}>{item.content.german}</p>
+                        <p style={{ fontSize: "10px", color: "rgba(255,255,255,.25)", margin: "1px 0 0" }}>{item.content.english}</p>
+                      </div>
+                    )}
+                    {item.content.type === "progress" && (
+                      <div className="mb-3">
+                        <p style={{ fontSize: "10px", color: "rgba(255,255,255,.25)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Score</p>
+                        <p style={{ fontSize: "20px", fontWeight: 700, color: "#FFF", margin: 0 }}>{item.content.score}<span style={{ fontSize: "13px", color: "rgba(255,255,255,.3)" }}>/{item.content.total}</span></p>
+                        <div style={{ width: "100%", height: "4px", borderRadius: "999px", background: "rgba(255,255,255,.06)", marginTop: "6px", overflow: "hidden" }}>
+                          <div style={{ width: `${(item.content.score / item.content.total) * 100}%`, height: "100%", borderRadius: "999px", background: "linear-gradient(90deg, #3B82F6, #60A5FA)" }} />
+                        </div>
+                      </div>
+                    )}
+                    {item.content.type === "notes" && (
+                      <div className="mb-3 px-2.5 py-2 rounded-lg" style={{ background: "rgba(255,255,255,.03)" }}>
+                        <p style={{ fontSize: "10px", color: "rgba(255,255,255,.25)", margin: "0 0 2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Notes</p>
+                        <p style={{ fontSize: "11px", color: "#D1D5DB", margin: 0, lineHeight: 1.4 }}>{item.content.text}</p>
+                      </div>
+                    )}
+                    {/* Footer */}
+                    <div className="flex items-center justify-between mt-auto pt-2" style={{ borderTop: "1px solid rgba(255,255,255,.04)" }}>
+                      <span style={{ fontSize: "9px", fontWeight: 600, padding: "1px 6px", borderRadius: "999px", background: "rgba(168,85,247,.08)", color: "#A855F7" }}>{item.level}</span>
+                      <span style={{ fontSize: "9px", color: "#7F8495" }}>{item.time}</span>
+                      <span style={{ fontSize: "14px", color: "rgba(255,255,255,.12)", cursor: "pointer", lineHeight: 1 }}>⋮</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom Grid: Collections + Bookmark Types + Recent Activity */}
+              <div className="flex gap-4">
+                {/* Collections */}
+                <div className="flex-1 rounded-[16px] p-4" style={{ background: "#151827", border: "1px solid rgba(255,255,255,.04)" }}>
+                  <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: "0 0 12px" }}>Collections</p>
+                  {["Important Words", "Essential Phrases", "Grammar Rules"].map((col) => (
+                    <div key={col} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid rgba(255,255,255,.04)" }}>
+                      <div className="flex items-center gap-2">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="9" rx="1.5" stroke="#A855F7" strokeWidth="1" fill="none"/></svg>
+                        <span style={{ fontSize: "12px", color: "#FFF" }}>{col}</span>
+                      </div>
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="rgba(255,255,255,.2)" strokeWidth="1" strokeLinecap="round"/></svg>
+                    </div>
+                  ))}
+                  <button className="w-full mt-3 py-2 rounded-lg text-xs font-medium border-none cursor-pointer" style={{ border: "1px dashed rgba(168,85,247,.2)", color: "#A855F7", background: "transparent" }}>+ Create New Collection</button>
+                </div>
+
+                {/* Bookmark Types (Donut) */}
+                <div className="flex-1 rounded-[16px] p-5 flex flex-col" style={{ background: "#151827", border: "1px solid rgba(255,255,255,.04)" }}>
+                  <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: "0 0 16px" }}>Bookmark Types</p>
+                  <div className="flex items-center gap-6 flex-1">
+                    <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                      <circle cx="50" cy="50" r="36" stroke="#A855F7" strokeWidth="22" fill="none" strokeDasharray="165 226" strokeLinecap="round" transform="rotate(-90 50 50)" />
+                      <circle cx="50" cy="50" r="36" stroke="#EC4899" strokeWidth="22" fill="none" strokeDasharray="36 226" strokeLinecap="round" transform="rotate(20 50 50)" />
+                      <circle cx="50" cy="50" r="36" stroke="#3B82F6" strokeWidth="22" fill="none" strokeDasharray="14 226" strokeLinecap="round" transform="rotate(56 50 50)" />
+                      <circle cx="50" cy="50" r="36" stroke="#F97316" strokeWidth="22" fill="none" strokeDasharray="8 226" strokeLinecap="round" transform="rotate(75 50 50)" />
+                    </svg>
+                    <div className="space-y-3">
+                      {[
+                        { color: "#A855F7", label: "Words", count: "12", pct: "50%" },
+                        { color: "#EC4899", label: "Phrases", count: "6", pct: "25%" },
+                        { color: "#3B82F6", label: "Exercises", count: "4", pct: "17%" },
+                        { color: "#F97316", label: "Grammar", count: "2", pct: "8%" },
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-center gap-3">
+                          <span style={{ width: "10px", height: "10px", borderRadius: "3px", background: item.color }} />
+                          <span style={{ fontSize: "12px", color: "#9CA3AF", minWidth: "55px" }}>{item.label}</span>
+                          <span style={{ fontSize: "12px", fontWeight: 600, color: "#FFF", minWidth: "24px", textAlign: "right" }}>{item.count}</span>
+                          <span style={{ fontSize: "11px", color: "rgba(255,255,255,.2)", minWidth: "30px", textAlign: "right" }}>{item.pct}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div className="flex-1 rounded-[16px] p-4" style={{ background: "#151827", border: "1px solid rgba(255,255,255,.04)" }}>
+                  <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: "0 0 12px" }}>Recent Activity</p>
+                  <div className="space-y-3">
+                    {[
+                      { icon: <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2v10l4-3 4 3V2H3z" stroke="#A855F7" strokeWidth="1" fill="none"/></svg>, title: "Bookmark added", desc: "der Fortschritt", time: "2h ago" },
+                      { icon: <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="11" rx="1.5" stroke="#EC4899" strokeWidth="1" fill="none"/><path d="M5 6l2 2 3-3" stroke="#EC4899" strokeWidth="1" strokeLinecap="round"/></svg>, title: "Exercise saved", desc: "Present Tense Quiz", time: "1d ago" },
+                      { icon: <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 2l3 1.5L10 2v4.5c0 2.5-2 4-3 4.5-1-.5-3-2-3-4.5V2z" stroke="#F97316" strokeWidth="1" fill="none"/></svg>, title: "Grammar saved", desc: "Wechselpräpositionen", time: "3d ago" },
+                    ].map((act, i) => (
+                      <div key={i} className="flex items-center gap-2.5">
+                        <span style={{ color: act.icon.props.stroke || "#A855F7" }}>{act.icon}</span>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontSize: "11px", fontWeight: 500, color: "#FFF", margin: 0 }}>{act.title}</p>
+                          <p style={{ fontSize: "10px", color: "rgba(255,255,255,.3)", margin: 0 }}>{act.desc} · {act.time}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button className="mt-3 text-xs border-none cursor-pointer" style={{ color: "#A855F7", background: "none" }}>View All Activity →</button>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>

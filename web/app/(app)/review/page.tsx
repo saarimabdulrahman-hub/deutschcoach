@@ -91,7 +91,7 @@ export default function ReviewPage() {
   };
 
   return (
-    <div className="flex" style={{ gap: 0, margin: "-24px", minHeight: "calc(100vh - 72px)" }}>
+    <div className="flex" style={{ gap: 0, margin: "0 -24px", minHeight: "calc(100vh - 72px)" }}>
       {/* ── Sidebar ── */}
       <ReviewSidebar activeItem="overview" streak={streak} />
 
