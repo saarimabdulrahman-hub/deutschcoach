@@ -502,7 +502,7 @@ export default function ReviewSlugPage() {
                     <div className="relative flex items-center justify-center flex-shrink-0" style={{ width: "60px", height: "60px", borderRadius: "50%", boxShadow: "0 0 24px #A855F7, 0 0 50px rgba(168,85,247,.3)" }}>
                       <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
                         <circle cx="30" cy="30" r="23" stroke="#2A2840" strokeWidth="5" fill="none"/>
-                        <circle cx="30" cy="30" r="23" stroke="url(#memG)" strokeWidth="5" fill="none" strokeDasharray="115 145" strokeLinecap="round" transform="rotate(-90 30 30)" filter="url(#memGlow)"/>
+                        <circle cx="30" cy="30" r="23" stroke="url(#memG)" strokeWidth="5" fill="none" strokeDasharray={`${((dash?.avg_quiz_score ?? 0) / 100) * 144.5} 144.5`} strokeLinecap="round" transform="rotate(-90 30 30)" filter="url(#memGlow)"/>
                         <defs><linearGradient id="memG" x1="0" y1="0" x2="60" y2="60"><stop offset="0%" stopColor="#D946EF"/><stop offset="50%" stopColor="#A855F7"/><stop offset="100%" stopColor="#7C3AED"/></linearGradient></defs>
                       </svg>
                       <span style={{ position: "absolute", fontSize: "11px", fontWeight: 600, color: "#FFF" }}>{dash?.avg_quiz_score ?? 0}%</span>
