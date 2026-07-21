@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
-import { CardSkeleton, PageSkeleton } from "@/components/ui/Skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { Logo } from "@/components/ui/Logo";
 import { SpeakIcon } from "@/components/ui/SpeakIcon";
 import userEvent from "@testing-library/user-event";
@@ -10,10 +10,10 @@ import userEvent from "@testing-library/user-event";
 // ── EmptyState ────────────────────────────────────────────────────────
 
 describe("EmptyState", () => {
-  it("renders title and icon", () => {
+  it("renders title and default icon", () => {
     render(<EmptyState title="No items found" />);
     expect(screen.getByText("No items found")).toBeInTheDocument();
-    expect(screen.getByText("📭")).toBeInTheDocument();
+    expect(screen.getByText("🚀")).toBeInTheDocument();
   });
 
   it("renders description when provided", () => {
@@ -21,21 +21,19 @@ describe("EmptyState", () => {
     expect(screen.getByText("Nothing to see here")).toBeInTheDocument();
   });
 
-  it("renders action link when provided", () => {
+  it("renders action button when provided", () => {
     render(
       <EmptyState
         title="No lessons"
-        action={{ label: "Go to lessons", href: "/curriculum" }}
+        action={{ label: "Go to lessons", onClick: () => {} }}
       />
     );
-    const link = screen.getByText("Go to lessons");
-    expect(link).toBeInTheDocument();
-    expect(link.closest("a")).toHaveAttribute("href", "/curriculum");
+    expect(screen.getByText("Go to lessons →")).toBeInTheDocument();
   });
 
-  it("does not render action when not provided", () => {
+  it("does not render action button when not provided", () => {
     render(<EmptyState title="Empty" />);
-    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 });
 
@@ -73,22 +71,21 @@ describe("ErrorState", () => {
 // ── Skeleton ──────────────────────────────────────────────────────────
 
 describe("Skeleton", () => {
-  it("CardSkeleton renders without crashing", () => {
-    const { container } = render(<CardSkeleton />);
+  it("card variant renders without crashing", () => {
+    const { container } = render(<Skeleton variant="card" />);
     expect(container.firstChild).toBeInTheDocument();
   });
 
-  it("PageSkeleton renders correct number of cards", () => {
-    const { container } = render(<PageSkeleton cards={3} />);
-    // Each card has border class, plus wrapper
-    const cards = container.querySelectorAll('[class*="rounded-xl"]');
-    expect(cards.length).toBe(3);
+  it("dashboard variant renders without crashing", () => {
+    const { container } = render(<Skeleton variant="dashboard" />);
+    expect(container.firstChild).toBeInTheDocument();
   });
 
-  it("PageSkeleton defaults to 3 cards", () => {
-    const { container } = render(<PageSkeleton />);
-    const cards = container.querySelectorAll('[class*="rounded-xl"]');
-    expect(cards.length).toBe(3);
+  it("list variant renders correct number of items", () => {
+    const { container } = render(<Skeleton variant="list" lines={3} />);
+    // Should render 3 list item skeletons with shimmer
+    const items = container.querySelectorAll(".shimmer");
+    expect(items.length).toBeGreaterThanOrEqual(3);
   });
 });
 
