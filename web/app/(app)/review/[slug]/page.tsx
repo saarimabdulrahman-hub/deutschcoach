@@ -10,7 +10,6 @@ import {
   HOW_IT_WORKS_STEPS,
   FLASHCARD_QUICK_START,
   WEAK_WORD_STATS,
-  BOOKMARK_ITEMS, BOOKMARK_COLLECTIONS, BOOKMARK_TYPES, BOOKMARK_ACTIVITY,
 } from "@/lib/mockData/review";
 
 function easeLabel(ef: number): { label: string; color: string } {
@@ -828,51 +827,37 @@ export default function ReviewSlugPage() {
 
               {/* Bookmarked Items — horizontal scroll */}
               <div className="flex gap-4 overflow-x-auto pb-2 mb-5" style={{ scrollbarWidth: "thin" }}>
-                {(bookmarks?.length ? bookmarks.map((b) => ({
-                  type: "WORD" as const, color: "#7C5CFF", title: b.german, sub: b.english,
+                {!bookmarks?.length ? (
+                  <div className="flex-1 text-center py-10">
+                    <p style={{ fontSize: "14px", color: "#FFF", margin: "0 0 4px" }}>No bookmarks yet</p>
+                    <p style={{ fontSize: "12px", color: "#A8A4BC", margin: 0 }}>Save words and phrases from lessons to see them here.</p>
+                  </div>
+                ) : (
+                bookmarks.map((b) => ({
+                  type: "SAVED" as const, color: "#7C5CFF", title: b.german, sub: b.english,
                   content: { type: "notes" as const, text: b.notes || "No notes" },
-                  level: "—", time: new Date(b.updated_at).toLocaleDateString(),
-                })) : BOOKMARK_ITEMS).map((item, i) => (
+                  level: "—", time: new Date(b.updated_at || b.created_at).toLocaleDateString(),
+                })).map((item, i) => (
                   <div key={i} className="flex-shrink-0 rounded-[18px] p-4 transition-all hover:-translate-y-1" style={{ width: "220px", background: "linear-gradient(180deg, #171A2A, #111322)", border: "1px solid rgba(255,255,255,.06)", boxShadow: "0 4px 20px rgba(0,0,0,.15)" }}>
-                    {/* Header: Category + Bookmark */}
                     <div className="flex items-center justify-between mb-3">
                       <span style={{ fontSize: "9px", fontWeight: 700, color: "#FFF", padding: "2px 8px", borderRadius: "999px", background: `${item.color}20`, border: `1px solid ${item.color}30`, textTransform: "uppercase", letterSpacing: "0.3px" }}>{item.type}</span>
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 3v18l6-4 6 4V3H6z" fill={item.color} opacity="0.9"/></svg>
                     </div>
-                    {/* Title + Subtitle */}
                     <p style={{ fontSize: "15px", fontWeight: 600, color: "#F8FAFC", margin: 0, lineHeight: 1.2 }}>{item.title}</p>
                     <p style={{ fontSize: "11px", color: "#A8ABB8", margin: "3px 0 8px" }}>{item.sub}</p>
-                    {/* Content area — varies by type */}
-                    {item.content.type === "example" && (
-                      <div className="mb-3 px-2.5 py-2 rounded-lg" style={{ background: "rgba(255,255,255,.03)" }}>
-                        <p style={{ fontSize: "10px", color: "rgba(255,255,255,.25)", margin: "0 0 2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Example</p>
-                        <p style={{ fontSize: "11px", color: "#D1D5DB", margin: 0, fontStyle: "italic" }}>{item.content.german}</p>
-                        <p style={{ fontSize: "10px", color: "rgba(255,255,255,.25)", margin: "1px 0 0" }}>{item.content.english}</p>
-                      </div>
-                    )}
-                    {item.content.type === "progress" && (
-                      <div className="mb-3">
-                        <p style={{ fontSize: "10px", color: "rgba(255,255,255,.25)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Score</p>
-                        <p style={{ fontSize: "20px", fontWeight: 700, color: "#FFF", margin: 0 }}>{item.content.score}<span style={{ fontSize: "13px", color: "rgba(255,255,255,.3)" }}>/{item.content.total}</span></p>
-                        <div style={{ width: "100%", height: "4px", borderRadius: "999px", background: "rgba(255,255,255,.06)", marginTop: "6px", overflow: "hidden" }}>
-                          <div style={{ width: `${((item.content.score ?? 0) / (item.content.total ?? 1)) * 100}%`, height: "100%", borderRadius: "999px", background: "linear-gradient(90deg, #3B82F6, #60A5FA)" }} />
-                        </div>
-                      </div>
-                    )}
                     {item.content.type === "notes" && (
                       <div className="mb-3 px-2.5 py-2 rounded-lg" style={{ background: "rgba(255,255,255,.03)" }}>
                         <p style={{ fontSize: "10px", color: "rgba(255,255,255,.25)", margin: "0 0 2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Notes</p>
                         <p style={{ fontSize: "11px", color: "#D1D5DB", margin: 0, lineHeight: 1.4 }}>{item.content.text}</p>
                       </div>
                     )}
-                    {/* Footer */}
                     <div className="flex items-center justify-between mt-auto pt-2" style={{ borderTop: "1px solid rgba(255,255,255,.04)" }}>
                       <span style={{ fontSize: "9px", fontWeight: 600, padding: "1px 6px", borderRadius: "999px", background: "rgba(168,85,247,.08)", color: "#A855F7" }}>{item.level}</span>
                       <span style={{ fontSize: "9px", color: "#7F8495" }}>{item.time}</span>
-                      <span style={{ fontSize: "14px", color: "rgba(255,255,255,.12)", cursor: "pointer", lineHeight: 1 }}>⋮</span>
                     </div>
                   </div>
-                ))}
+                ))
+                )}
               </div>
 
               {/* Bottom Grid: Collections + Bookmark Types + Recent Activity */}
@@ -880,54 +865,57 @@ export default function ReviewSlugPage() {
                 {/* Collections */}
                 <div className="flex-1 rounded-[16px] p-4" style={{ background: "#151827", border: "1px solid rgba(255,255,255,.04)" }}>
                   <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: "0 0 12px" }}>Collections</p>
-                  {BOOKMARK_COLLECTIONS.map((col) => (
-                    <div key={col} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid rgba(255,255,255,.04)" }}>
+                  {bookmarks?.length ? (
+                    <div className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid rgba(255,255,255,.04)" }}>
                       <div className="flex items-center gap-2">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="9" rx="1.5" stroke="#A855F7" strokeWidth="1" fill="none"/></svg>
-                        <span style={{ fontSize: "12px", color: "#FFF" }}>{col}</span>
+                        <span style={{ fontSize: "12px", color: "#FFF" }}>My Saved Words</span>
                       </div>
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="rgba(255,255,255,.2)" strokeWidth="1" strokeLinecap="round"/></svg>
+                      <span style={{ fontSize: "12px", color: "#A8A4BC" }}>{bookmarks.length}</span>
                     </div>
-                  ))}
+                  ) : (
+                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,.3)", textAlign: "center", padding: "12px 0" }}>No collections</p>
+                  )}
                   <button onClick={() => router.push("/chat")} className="w-full mt-3 py-2 rounded-lg text-xs font-medium border-none cursor-pointer" style={{ border: "1px dashed rgba(168,85,247,.2)", color: "#A855F7", background: "transparent" }}>+ Create New Collection</button>
                 </div>
 
-                {/* Bookmark Types (Donut) */}
+                {/* Bookmark Types */}
                 <div className="flex-1 rounded-[16px] p-5 flex flex-col" style={{ background: "#151827", border: "1px solid rgba(255,255,255,.04)" }}>
                   <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: "0 0 16px" }}>Bookmark Types</p>
-                  <div className="flex items-center gap-6 flex-1">
-                    <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                      <circle cx="50" cy="50" r="36" stroke="#A855F7" strokeWidth="22" fill="none" strokeDasharray="165 226" strokeLinecap="round" transform="rotate(-90 50 50)" />
-                      <circle cx="50" cy="50" r="36" stroke="#EC4899" strokeWidth="22" fill="none" strokeDasharray="36 226" strokeLinecap="round" transform="rotate(20 50 50)" />
-                      <circle cx="50" cy="50" r="36" stroke="#3B82F6" strokeWidth="22" fill="none" strokeDasharray="14 226" strokeLinecap="round" transform="rotate(56 50 50)" />
-                      <circle cx="50" cy="50" r="36" stroke="#F97316" strokeWidth="22" fill="none" strokeDasharray="8 226" strokeLinecap="round" transform="rotate(75 50 50)" />
-                    </svg>
-                    <div className="space-y-3">
-                      {BOOKMARK_TYPES.map((item) => (
-                        <div key={item.label} className="flex items-center gap-3">
-                          <span style={{ width: "10px", height: "10px", borderRadius: "3px", background: item.color }} />
-                          <span style={{ fontSize: "12px", color: "#9CA3AF", minWidth: "55px" }}>{item.label}</span>
-                          <span style={{ fontSize: "12px", fontWeight: 600, color: "#FFF", minWidth: "24px", textAlign: "right" }}>{item.count}</span>
-                          <span style={{ fontSize: "11px", color: "rgba(255,255,255,.2)", minWidth: "30px", textAlign: "right" }}>{item.pct}</span>
+                  {bookmarks?.length ? (
+                    <div className="flex items-center gap-6 flex-1">
+                      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="50" r="36" stroke="rgba(255,255,255,0.06)" strokeWidth="22" fill="none" />
+                        <circle cx="50" cy="50" r="36" stroke="#A855F7" strokeWidth="22" fill="none" strokeDasharray={`${Math.min(bookmarks.length * 20, 226)} 226`} strokeLinecap="round" transform="rotate(-90 50 50)" />
+                      </svg>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <span style={{ width: "10px", height: "10px", borderRadius: "3px", background: "#A855F7" }} />
+                          <span style={{ fontSize: "12px", color: "#9CA3AF" }}>Saved words</span>
+                          <span style={{ fontSize: "12px", fontWeight: 600, color: "#FFF" }}>{bookmarks.length}</span>
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,.3)", textAlign: "center", padding: "20px 0" }}>Add bookmarks to see types</p>
+                  )}
                 </div>
 
                 {/* Recent Activity */}
                 <div className="flex-1 rounded-[16px] p-4" style={{ background: "#151827", border: "1px solid rgba(255,255,255,.04)" }}>
                   <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: "0 0 12px" }}>Recent Activity</p>
                   <div className="space-y-3">
-                    {BOOKMARK_ACTIVITY.map((act, i) => (
+                    {bookmarks?.length ? bookmarks.slice(0, 3).map((b, i) => (
                       <div key={i} className="flex items-center gap-2.5">
                         <span style={{ color: "#A855F7", fontSize: "14px" }}>●</span>
                         <div style={{ flex: 1 }}>
-                          <p style={{ fontSize: "11px", fontWeight: 500, color: "#FFF", margin: 0 }}>{act.title}</p>
-                          <p style={{ fontSize: "10px", color: "rgba(255,255,255,.3)", margin: 0 }}>{act.desc} · {act.time}</p>
+                          <p style={{ fontSize: "11px", fontWeight: 500, color: "#FFF", margin: 0 }}>Saved: {b.german}</p>
+                          <p style={{ fontSize: "10px", color: "rgba(255,255,255,.3)", margin: 0 }}>{b.english}</p>
                         </div>
                       </div>
-                    ))}
+                    )) : (
+                      <p style={{ fontSize: "12px", color: "rgba(255,255,255,.3)", textAlign: "center", padding: "20px 0" }}>No recent activity</p>
+                    )}
                   </div>
                   <button onClick={() => router.push("/review")} className="mt-3 text-xs border-none cursor-pointer" style={{ color: "#A855F7", background: "none" }}>View All Activity →</button>
                 </div>

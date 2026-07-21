@@ -96,29 +96,4 @@ export const MEMORY_DISTRIBUTION = [
   { color: "#F59E0B", label: "Needs Review", pct: "4%" },
 ] as const;
 
-// ── Bookmarks ─────────────────────────────────────────────────────────
-
-export const BOOKMARK_ITEMS = [
-  { type: "WORD", color: "#7C5CFF", title: "abholen", sub: "to pick up, to collect", content: { type: "example" as const, german: "Ich hole dich morgen ab.", english: "I'll pick you up tomorrow." }, level: "A2", time: "2 days ago" },
-  { type: "PHRASE", color: "#EC4899", title: "Ganz deiner Meinung.", sub: "Fully agree with you.", content: { type: "example" as const, german: "Da stimme ich dir voll zu.", english: "I totally agree with you." }, level: "B1", time: "3 days ago" },
-  { type: "EXERCISE", color: "#3B82F6", title: "Hörverstehen Übung 4", sub: "Audio comprehension", content: { type: "progress" as const, score: 8, total: 10 }, level: "A1", time: "5 days ago" },
-  { type: "GRAMMAR", color: "#F97316", title: "Dativ vs. Akkusativ", sub: "Case usage rules", content: { type: "notes" as const, text: "Dativ answers 'to whom', Akkusativ answers 'whom/what'." }, level: "A2", time: "1 week ago" },
-  { type: "WORD", color: "#7C5CFF", title: "vielleicht", sub: "perhaps, maybe", content: { type: "example" as const, german: "Vielleicht komme ich morgen.", english: "Maybe I'll come tomorrow." }, level: "B1", time: "1 week ago" },
-] as const;
-
-export const BOOKMARK_COLLECTIONS = [
-  "Important Words", "Essential Phrases", "Grammar Rules",
-] as const;
-
-export const BOOKMARK_TYPES = [
-  { color: "#A855F7", label: "Words", count: "12", pct: "50%" },
-  { color: "#EC4899", label: "Phrases", count: "6", pct: "25%" },
-  { color: "#3B82F6", label: "Exercises", count: "4", pct: "17%" },
-  { color: "#F97316", label: "Grammar", count: "2", pct: "8%" },
-] as const;
-
-export const BOOKMARK_ACTIVITY = [
-  { title: "Bookmark added", desc: "der Fortschritt", time: "2h ago" },
-  { title: "Exercise saved", desc: "Present Tense Quiz", time: "1d ago" },
-  { title: "Grammar saved", desc: "Wechselpräpositionen", time: "3d ago" },
-] as const;
+// ── Bookmarks ── (wired to GET /user/bookmarks, mock removed)
