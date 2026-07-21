@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { ReviewSidebar } from "@/components/review/ReviewSidebar";
@@ -61,6 +61,25 @@ export default function ReviewSlugPage() {
 
   const [filterOpen, setFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>("All");
+
+  const PRO_TIPS = [
+    "Review daily — even 5 minutes helps.",
+    "The SM-2 algorithm spaces reviews optimally: harder cards appear more often, easier ones less.",
+    "Sleep after reviewing — your brain consolidates memories during deep sleep.",
+    "Say words out loud during review — multi-sensory learning improves retention by 40%.",
+    "Review your weakest words first thing in the morning when your mind is fresh.",
+    "Don't skip days — consistency beats cramming for long-term memory.",
+    "Use example sentences to remember words in context, not just translations.",
+  ];
+
+  const [tipIndex, setTipIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTipIndex((i) => (i + 1) % PRO_TIPS.length);
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [PRO_TIPS.length]);
 
   const streak = dash?.streak ?? 0;
   const total = stats ? stats.new + stats.learning + stats.reviewing + stats.mastered : 0;
@@ -244,7 +263,7 @@ export default function ReviewSlugPage() {
                       <span style={{ fontSize: "12px" }}>💡</span>
                       <span style={{ fontSize: "11px", fontWeight: 500, color: "#FFF" }}>Pro Tip</span>
                     </div>
-                    <p style={{ fontSize: "11px", color: "#A8A4BC", margin: 0, lineHeight: 1.3, paddingLeft: "20px" }}>Review daily — even 5 minutes helps.</p>
+                    <p style={{ fontSize: "11px", color: "#A8A4BC", margin: 0, lineHeight: 1.3, paddingLeft: "20px", transition: "opacity 0.5s ease" }}>{PRO_TIPS[tipIndex]}</p>
                   </div>
                 </div>
               </div>
