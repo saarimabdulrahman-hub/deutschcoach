@@ -99,7 +99,7 @@ export function ReviewSidebar({ activeItem = "overview", streak = 0 }: ReviewSid
                   borderLeft: isActive ? "3px solid #EC4899" : "3px solid transparent",
                   boxShadow: isActive ? "0 0 16px rgba(168,85,247,.08)" : "none",
                 }}
-                onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = "rgba(255,255,255,.03"; }}
+                onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = "rgba(255,255,255,.03)"; }}
                 onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = "transparent"; }}
               >
                 <span style={{ width: "20px", height: "20px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: isActive ? "#FFF" : "#A8A4BC" }}>
