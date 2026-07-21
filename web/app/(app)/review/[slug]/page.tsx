@@ -686,12 +686,44 @@ export default function ReviewSlugPage() {
                   {/* Right content + buttons (60%) */}
                   <div className="flex items-center gap-5" style={{ width: "60%", zIndex: 1, paddingRight: "24px" }}>
                     <div>
+                      {(() => {
+                        const score = dash?.avg_quiz_score ?? 0;
+                        const weakCount = dash?.weakest_words?.length ?? 0;
+                        const mastered = stats?.mastered ?? 0;
+                        let title = "Start Learning";
+                        let line1 = "Begin your first lesson to build your vocabulary.";
+                        let line2 = "Every word you learn brings you closer to fluency.";
+                        let starColor = "#A855F7";
+
+                        if (mastered > 0 || score > 0) {
+                          if (score >= 85 && weakCount === 0) {
+                            title = "Excellent Memory"; starColor = "#FFD35C";
+                            line1 = "Your review system hasn't detected any weak vocabulary.";
+                            line2 = "Keep studying consistently for long-term retention.";
+                          } else if (score >= 70) {
+                            title = "Good Progress"; starColor = "#A855F7";
+                            line1 = `You have ${weakCount} weak word${weakCount !== 1 ? "s" : ""} to focus on.`;
+                            line2 = "Regular review will help strengthen your memory.";
+                          } else if (score >= 50) {
+                            title = "Steady Growth"; starColor = "#8B5CF6";
+                            line1 = `${weakCount} weak word${weakCount !== 1 ? "s" : ""} need${weakCount === 1 ? "s" : ""} attention.`;
+                            line2 = "Try reviewing daily to boost your retention rate.";
+                          } else {
+                            title = "Room to Grow"; starColor = "#EC4899";
+                            line1 = `You have ${weakCount} word${weakCount !== 1 ? "s" : ""} flagged as weak.`;
+                            line2 = "Focus on your weakest words to see rapid improvement.";
+                          }
+                        }
+
+                        return (<>
                       <p style={{ fontSize: "18px", fontWeight: 500, color: "#FFF", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span style={{ background: "linear-gradient(135deg, #FFD35C, #FBBF24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", filter: "drop-shadow(0 0 4px rgba(255,211,92,.3))" }}>✦</span>
-                        Excellent Memory
+                        <span style={{ background: `linear-gradient(135deg, ${starColor}, #FBBF24)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", filter: `drop-shadow(0 0 4px ${starColor}40)` }}>✦</span>
+                        {title}
                       </p>
-                      <p style={{ fontSize: "11px", color: "#A1A1AA", margin: "4px 0 0", lineHeight: 1.4 }}>Your review system hasn&apos;t detected any weak vocabulary.</p>
-                      <p style={{ fontSize: "11px", color: "#A1A1AA", margin: 0, lineHeight: 1.4 }}>Keep studying consistently for long-term retention.</p>
+                      <p style={{ fontSize: "11px", color: "#A1A1AA", margin: "4px 0 0", lineHeight: 1.4 }}>{line1}</p>
+                      <p style={{ fontSize: "11px", color: "#A1A1AA", margin: 0, lineHeight: 1.4 }}>{line2}</p>
+                        </>);
+                      })()}
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px", flexShrink: 0, paddingLeft: "32px" }}>
                       <button onClick={() => router.push("/review")} className="flex items-center justify-center gap-1.5 border-none cursor-pointer" style={{ width: "140px", height: "32px", borderRadius: "8px", background: "linear-gradient(90deg, #7C3AED, #D946EF)", color: "#FFF", fontSize: "12px", fontWeight: 500, boxShadow: "0 0 18px rgba(168,85,247,.2)", whiteSpace: "nowrap" }}>
