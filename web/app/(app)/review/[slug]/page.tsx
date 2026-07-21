@@ -179,7 +179,7 @@ export default function ReviewSlugPage() {
                         </button>
                         {filterOpen && (
                           <div className="absolute right-0 mt-1 rounded-xl py-1 z-50" style={{ minWidth: "140px", background: "#1B1730", border: "1px solid rgba(168,85,247,.2)", boxShadow: "0 8px 32px rgba(0,0,0,.5)" }}>
-                            {["All", "Due Now", "Hard", "Medium", "Easy"].map((f) => (
+                            {["All", "New", "Learning", "Reviewing", "Hard", "Medium", "Easy"].map((f) => (
                               <button key={f} onClick={() => { setActiveFilter(f); setFilterOpen(false); }}
                                 className="w-full text-left px-4 py-2 text-xs border-none cursor-pointer hover:bg-white/5 transition-colors"
                                 style={{ background: activeFilter === f ? "rgba(168,85,247,.1)" : "transparent", color: activeFilter === f ? "#C084FC" : "rgba(255,255,255,.6)" }}>
@@ -202,8 +202,10 @@ export default function ReviewSlugPage() {
                   </div>
                   {(dueCards?.length ? dueCards.filter((card) => {
                     if (activeFilter === "All") return true;
-                    if (activeFilter === "Due Now") return card.interval_days <= 0;
-                    return easeLabel(card.easiness_factor).label === activeFilter;
+                    if (activeFilter === "Hard" || activeFilter === "Medium" || activeFilter === "Easy") {
+                      return easeLabel(card.easiness_factor).label === activeFilter;
+                    }
+                    return card.status.toLowerCase() === activeFilter.toLowerCase();
                   }) : []).map((card, i) => {
                     const ease = easeLabel(card.easiness_factor);
                     const isDue = card.interval_days <= 0 ? "Due now" : "Later";
