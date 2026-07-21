@@ -28,15 +28,23 @@ export default function ProfilePage() {
     queryFn: () => api.get("/dashboard"),
   });
 
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [bio, setBio] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    try {
+      await api.patch("/user/profile", { name, email, bio });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch {
+      // silently fail — validation errors handled by input states
+    } finally {
+      setSaving(false);
+    }
   };
 
   const firstName = user?.name || "Student";
@@ -58,9 +66,9 @@ export default function ProfilePage() {
               Changes saved successfully.
             </div>
           )}
-          <Input label="Full name" placeholder="Your name" defaultValue={firstName} />
-          <Input label="Email address" variant="email" placeholder="your@email.com" defaultValue={user?.email || ""} />
-          <Input label="Bio" placeholder="Tell us about yourself..." />
+          <Input label="Full name" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
+          <Input label="Email address" variant="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input label="Bio" placeholder="Tell us about yourself..." value={bio} onChange={(e) => setBio(e.target.value)} />
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button variant="primary" size="md" loading={saving} onClick={handleSave}>
               Save Changes

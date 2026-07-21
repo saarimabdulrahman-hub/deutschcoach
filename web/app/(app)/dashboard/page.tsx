@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import type { DashboardData } from "@/types";
-import { ErrorState, Skeleton, Badge, Button, Card } from "@/components/ui";
+import { ErrorState, Skeleton } from "@/components/ui";
+import { DashboardHero, PlanCard, KpiCard, ProgressRing } from "@/components/dashboard";
 
 const GREETINGS = [
   { hi: "Guten Morgen", en: "Good morning" },
@@ -38,126 +39,6 @@ const reviewItem: React.CSSProperties = {
   border: "1px solid rgba(186,120,255,0.12)",
   borderRadius: 14,
 };
-
-// ═══════════════════════════════════════════════════════════════════
-// HERO — Cinematic centerpiece with Brandenburg Gate at center
-// ═══════════════════════════════════════════════════════════════════
-function Hero() {
-  return (
-    <div className="relative overflow-hidden rounded-[20px] h-[250px] sm:h-[290px] lg:h-[310px]"
-      style={{
-        border: "1px solid rgba(217,70,239,0.25)",
-        boxShadow: "0 0 40px rgba(217,70,239,0.20), 0 0 80px rgba(123,63,251,0.12), 0 4px 24px rgba(0,0,0,0.55)",
-        background: "linear-gradient(170deg, #050420 0%, #0c062d 25%, #110940 55%, #0c062d 75%, #050420 100%)",
-      }}>
-      {/* 1. Stronger ambient purple — luminous, not black */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 58% 25%, rgba(139,70,255,0.22) 0%, transparent 45%), radial-gradient(ellipse at 60% 40%, rgba(162,75,255,0.14) 0%, transparent 40%), radial-gradient(ellipse at 75% 50%, rgba(123,63,251,0.1) 0%, transparent 35%), radial-gradient(ellipse at 35% 50%, rgba(139,70,255,0.08) 0%, transparent 35%), radial-gradient(ellipse at 55% 55%, rgba(213,108,255,0.06) 0%, transparent 30%)" }} />
-
-      {/* Hero background image (vector CastleScene kept as backup) */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: "url('/hero.webp')", backgroundSize: "cover", backgroundPosition: "center right" }} />
-
-      {/* Light purple tint — barely tints, lets image dominate */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "linear-gradient(135deg, rgba(50,15,100,0.25) 0%, rgba(30,8,60,0.15) 35%, rgba(20,5,50,0.1) 60%, rgba(50,15,100,0.2) 100%)" }} />
-      {/* Edge darkening — left for text readability, right soft */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "linear-gradient(90deg, rgba(4,4,20,0.6) 0%, rgba(4,4,20,0.15) 30%, transparent 55%, transparent 75%, rgba(4,4,20,0.15) 90%, rgba(4,4,20,0.5) 100%)" }} />
-      {/* Bottom gradient */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "linear-gradient(to top, rgba(4,4,20,0.55) 0%, transparent 45%)" }} />
-      {/* Soft vignette */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ boxShadow: "inset 0 0 50px 15px rgba(0,0,0,0.35)" }} />
-
-      {/* Content */}
-      <div className="relative z-10 flex items-center h-full w-full px-6 sm:px-8 lg:px-10">
-        {/* 3. Left text — blends with purple atmosphere */}
-        <div className="flex-1 max-w-[460px]">
-          <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] mb-2"
-            style={{ color: "rgba(226,232,240,0.82)", textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>Welcome to DeutschFlow</p>
-          <h2 className="text-[1.5rem] sm:text-[1.9rem] lg:text-[2.35rem] font-extrabold leading-[1.03] tracking-[-0.02em] mb-2.5"
-            style={{ color: "#fff", textShadow: "0 2px 14px rgba(120,40,180,0.55)" }}>
-            Your German learning
-            <br />
-            <span style={{ background: "linear-gradient(90deg, #ffffff 0%, #fbcfe8 30%, #f0abfc 56%, #e879f9 78%, #f472b6 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", textShadow: "none" }}>journey starts here</span>
-          </h2>
-          <p className="text-[11px] sm:text-xs leading-relaxed max-w-sm"
-            style={{ color: "rgba(214,200,244,0.68)", textShadow: "0 1px 3px rgba(0,0,0,0.35)" }}>
-            Structured lessons, smart flashcards, and an AI tutor—everything you need to go from zero to fluent.
-          </p>
-          <div className="flex flex-wrap items-center gap-2 mt-3.5 text-[10px] sm:text-[11px]">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium" style={{ background: "rgba(139,70,255,0.12)", border: "1px solid rgba(168,85,247,0.28)", color: "rgba(224,208,255,0.85)" }}>✓ Beginner-friendly</span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium" style={{ background: "rgba(139,70,255,0.12)", border: "1px solid rgba(168,85,247,0.28)", color: "rgba(224,208,255,0.85)" }}>⏱ 10 min lessons</span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium" style={{ background: "rgba(139,70,255,0.12)", border: "1px solid rgba(168,85,247,0.28)", color: "rgba(224,208,255,0.85)" }}>📚 80+ lessons</span>
-          </div>
-        </div>
-
-        <div className="flex-1 hidden sm:block" />
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// SMALL COMPONENTS
-// ═══════════════════════════════════════════════════════════════════
-
-function PlanCard({ icon, iconBg, iconColor, title, subtitle, footer, href }: {
-  icon: string; iconBg: string; iconColor: string; title: string; subtitle: string; footer: string; href: string;
-}) {
-  const router = useRouter();
-  return (
-    <button onClick={() => router.push(href)}
-      className="text-left rounded-xl p-5 transition-all duration-200 hover:-translate-y-0.5 w-full" style={cardStyle}>
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-[10px] flex items-center justify-center text-lg flex-shrink-0"
-          style={{ background: iconBg, color: iconColor }}>{icon}</div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[15px] font-semibold truncate" style={{ color: "#fff" }}>{title}</p>
-          <p className="text-[13px] truncate" style={{ color: "var(--color-text-muted)" }}>{subtitle}</p>
-          <p className="text-[11px] font-medium truncate mt-0.5" style={{ color: iconColor }}>{footer}</p>
-        </div>
-        <span className="text-lg flex-shrink-0" style={{ color: "var(--color-text-muted)" }}>›</span>
-      </div>
-    </button>
-  );
-}
-
-function KpiCard({ icon, iconBg, iconColor, value, unit, label }: {
-  icon: string; iconBg: string; iconColor: string; value: string | number; unit: string; label: string;
-}) {
-  return (
-    <div className="rounded-xl p-2.5 flex flex-col justify-center transition-all duration-200 hover:-translate-y-0.5"
-      style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.025), transparent 50%), #111127", border: "1px solid rgba(186,120,255,0.18)", borderRadius: 14, boxShadow: "0 0 35px rgba(168,85,247,.06)" }}>
-      <div className="flex items-center gap-1.5 mb-1">
-        <div className="w-6 h-6 rounded-[7px] flex items-center justify-center text-xs" style={{ background: iconBg, color: iconColor }}>{icon}</div>
-        <p className="text-[11px] uppercase tracking-[.06em] font-medium" style={{ color: "var(--color-text-muted)" }}>{label}</p>
-      </div>
-      <p className="text-2xl font-bold leading-none" style={{ color: "#fff" }}>{value}<span className="text-sm ml-0.5" style={{ color: "var(--color-text-muted)" }}>{unit}</span></p>
-    </div>
-  );
-}
-
-function ProgressRing({ pct }: { pct: number }) {
-  const r=44; const circ=2*Math.PI*r; const off=circ-(pct/100)*circ;
-  return (
-    <div className="relative w-24 h-24 flex-shrink-0">
-      <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-        <defs><linearGradient id="prg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#ec4899"/><stop offset="50%" stopColor="#d946ef"/><stop offset="100%" stopColor="#8b5cf6"/></linearGradient><linearGradient id="ringShine" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#ffffff" stopOpacity="0.95"/><stop offset="18%" stopColor="#f9a8d4" stopOpacity="0.55"/><stop offset="45%" stopColor="#d946ef" stopOpacity="0.22"/><stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.16"/></linearGradient></defs>
-        <circle cx="50" cy="50" r="48" fill="none" stroke="url(#ringShine)" strokeWidth="1.6" style={{filter:"drop-shadow(0 0 3px rgba(217,70,239,0.4))"}}/>
-        <circle cx="50" cy="50" r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6"/>
-        <circle cx="50" cy="50" r={r} fill="none" stroke="url(#prg)" strokeWidth="6" strokeLinecap="round"
-          strokeDasharray={circ} strokeDashoffset={off} style={{transition:"stroke-dashoffset 1s ease",filter:"drop-shadow(0 0 6px rgba(123,63,251,0.3))"}}/>
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-bold" style={{color:"#fff"}}>{pct}%</span>
-        <span className="text-[9px] font-semibold uppercase tracking-widest mt-0.5" style={{color:"var(--color-text-muted)"}}>Complete</span>
-      </div>
-    </div>
-  );
-}
 
 function DashboardSkeleton() {
   return (<div className="space-y-5"><Skeleton variant="dashboard" /></div>);
@@ -209,7 +90,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Hero ───────────────────────────── */}
-      <Hero />
+      <DashboardHero />
 
       {/* ── Today's Plan ──────────────────── */}
       <div>

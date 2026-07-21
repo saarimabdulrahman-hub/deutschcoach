@@ -6,16 +6,10 @@ import type { DashboardData } from "@/types";
 import { AnalyticsLayout } from "@/components/layouts/AnalyticsLayout";
 import { KPICard, ChartContainer, LineChart, BarChart } from "@/components/charts";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { EmptyState } from "@/components/ui/EmptyState";
 
-const MOCK_LEARNING_DATA = [
-  { day: "Mon", lessons: 2, vocab: 8, quiz: 70 },
-  { day: "Tue", lessons: 1, vocab: 5, quiz: 85 },
-  { day: "Wed", lessons: 3, vocab: 12, quiz: 90 },
-  { day: "Thu", lessons: 0, vocab: 0, quiz: 0 },
-  { day: "Fri", lessons: 2, vocab: 10, quiz: 75 },
-  { day: "Sat", lessons: 4, vocab: 15, quiz: 95 },
-  { day: "Sun", lessons: 1, vocab: 6, quiz: 80 },
-];
+// Placeholder — replace when backend analytics endpoint is available
+const EMPTY_LEARNING_DATA: { day: string; lessons: number; vocab: number; quiz: number }[] = [];
 
 export default function AnalyticsPage() {
   const { data: dash, isLoading } = useQuery<DashboardData>({
@@ -57,43 +51,53 @@ export default function AnalyticsPage() {
         </>
       }
       chartGrid={
-        <>
-          <ChartContainer title="Lessons Completed" loading={isLoading}>
-            <BarChart
-              data={MOCK_LEARNING_DATA}
-              xKey="day"
-              bars={[{ key: "lessons", color: "#8b5cf6", label: "Lessons" }]}
+        EMPTY_LEARNING_DATA.length === 0 ? (
+          <div style={{ gridColumn: "1 / -1", padding: "var(--space-8)" }}>
+            <EmptyState
+              icon="📊"
+              title="Analytics coming soon"
+              description="Detailed learning analytics with daily breakdowns will be available in a future update. Your KPI stats above are live."
             />
-          </ChartContainer>
+          </div>
+        ) : (
+          <>
+            <ChartContainer title="Lessons Completed" loading={isLoading}>
+              <BarChart
+                data={EMPTY_LEARNING_DATA}
+                xKey="day"
+                bars={[{ key: "lessons", color: "#8b5cf6", label: "Lessons" }]}
+              />
+            </ChartContainer>
 
-          <ChartContainer title="Vocabulary Learned" loading={isLoading}>
-            <BarChart
-              data={MOCK_LEARNING_DATA}
-              xKey="day"
-              bars={[{ key: "vocab", color: "#22c55e", label: "Words" }]}
-            />
-          </ChartContainer>
+            <ChartContainer title="Vocabulary Learned" loading={isLoading}>
+              <BarChart
+                data={EMPTY_LEARNING_DATA}
+                xKey="day"
+                bars={[{ key: "vocab", color: "#22c55e", label: "Words" }]}
+              />
+            </ChartContainer>
 
-          <ChartContainer title="Quiz Accuracy Trend" loading={isLoading}>
-            <LineChart
-              data={MOCK_LEARNING_DATA}
-              xKey="day"
-              lines={[{ key: "quiz", color: "#f59e0b", label: "Accuracy %" }]}
-            />
-          </ChartContainer>
+            <ChartContainer title="Quiz Accuracy Trend" loading={isLoading}>
+              <LineChart
+                data={EMPTY_LEARNING_DATA}
+                xKey="day"
+                lines={[{ key: "quiz", color: "#f59e0b", label: "Accuracy %" }]}
+              />
+            </ChartContainer>
 
-          <ChartContainer title="Learning Activity" loading={isLoading}>
-            <BarChart
-              data={MOCK_LEARNING_DATA}
-              xKey="day"
-              bars={[
-                { key: "lessons", color: "#8b5cf6", label: "Lessons" },
-                { key: "vocab", color: "#22c55e", label: "Vocabulary" },
-              ]}
-              stacked
-            />
-          </ChartContainer>
-        </>
+            <ChartContainer title="Learning Activity" loading={isLoading}>
+              <BarChart
+                data={EMPTY_LEARNING_DATA}
+                xKey="day"
+                bars={[
+                  { key: "lessons", color: "#8b5cf6", label: "Lessons" },
+                  { key: "vocab", color: "#22c55e", label: "Vocabulary" },
+                ]}
+                stacked
+              />
+            </ChartContainer>
+          </>
+        )
       }
     />
   );

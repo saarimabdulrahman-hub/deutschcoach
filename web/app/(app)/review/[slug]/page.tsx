@@ -658,7 +658,7 @@ export default function ReviewSlugPage() {
                         <p style={{ fontSize: "10px", color: "rgba(255,255,255,.25)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Score</p>
                         <p style={{ fontSize: "20px", fontWeight: 700, color: "#FFF", margin: 0 }}>{item.content.score}<span style={{ fontSize: "13px", color: "rgba(255,255,255,.3)" }}>/{item.content.total}</span></p>
                         <div style={{ width: "100%", height: "4px", borderRadius: "999px", background: "rgba(255,255,255,.06)", marginTop: "6px", overflow: "hidden" }}>
-                          <div style={{ width: `${(item.content.score / item.content.total) * 100}%`, height: "100%", borderRadius: "999px", background: "linear-gradient(90deg, #3B82F6, #60A5FA)" }} />
+                          <div style={{ width: `${((item.content.score ?? 0) / (item.content.total ?? 1)) * 100}%`, height: "100%", borderRadius: "999px", background: "linear-gradient(90deg, #3B82F6, #60A5FA)" }} />
                         </div>
                       </div>
                     )}
