@@ -509,9 +509,19 @@ export default function ReviewSlugPage() {
                 <img src="/weakwords-hero.png" alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 <div className="absolute inset-0 flex items-end pb-7 px-8" style={{ zIndex: 2 }}>
                   <div style={{ width: "35%" }}>
-                    <h2 style={{ fontSize: "34px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.1 }}>Great job!</h2>
-                    <p style={{ fontSize: "24px", fontWeight: 500, color: "#A855F7", margin: "8px 0 0" }}>No weak words found</p>
-                    <p style={{ fontSize: "15px", color: "#B7B8C4", margin: "10px 0 0", lineHeight: 1.4, maxWidth: "280px" }}>Your memory is performing exceptionally well.</p>
+                    {(() => {
+                      const wc = dash?.weakest_words?.length ?? 0;
+                      const h2 = wc === 0 ? "Great job!" : wc <= 2 ? "Almost there!" : "Keep practicing!";
+                      const sub = wc === 0 ? "No weak words found" : `${wc} weak word${wc !== 1 ? "s" : ""} found`;
+                      const desc = wc === 0 ? "Your memory is performing exceptionally well."
+                        : wc <= 2 ? "Just a few words need a little more practice."
+                        : "Focus on these words to strengthen your vocabulary.";
+                      return (<>
+                    <h2 style={{ fontSize: "34px", fontWeight: 500, color: "#FFF", margin: 0, lineHeight: 1.1 }}>{h2}</h2>
+                    <p style={{ fontSize: "24px", fontWeight: 500, color: wc === 0 ? "#A855F7" : "#F59E0B", margin: "8px 0 0" }}>{sub}</p>
+                    <p style={{ fontSize: "15px", color: "#B7B8C4", margin: "10px 0 0", lineHeight: 1.4, maxWidth: "280px" }}>{desc}</p>
+                      </>);
+                    })()}
                   </div>
                 </div>
               </div>
@@ -628,31 +638,49 @@ export default function ReviewSlugPage() {
                       <img src="/emma-avatar.webp" alt="Emma" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     </div>
                     <div style={{ flex: 1, paddingRight: "160px" }}>
-                      <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
-                        <span style={{ color: "#22C55E", fontSize: "10px", marginTop: "4px" }}>●</span>
+                      {(() => {
+                        const score = dash?.avg_quiz_score ?? 0;
+                        const streak = dash?.streak ?? 0;
+                        const mastered = stats?.mastered ?? 0;
+                        const weakCount = dash?.weakest_words?.length ?? 0;
+                        const total = (stats?.new ?? 0) + (stats?.learning ?? 0) + (stats?.reviewing ?? 0) + mastered;
+                        const retention = total > 0 ? Math.round((mastered / total) * 100) : 0;
+
+                        const insights: { color: string; line1: string; line2: string }[] = [];
+
+                        if (score > 0) {
+                          var adj = score >= 85 ? "Excellent" : score >= 70 ? "Good" : "Steady";
+                          insights.push({ color: "#22C55E", line1: adj + " recall — " + score + "% avg", line2: "quiz accuracy" });
+                        } else {
+                          insights.push({ color: "#A855F7", line1: "Take a quiz to measure", line2: "your recall accuracy" });
+                        }
+
+                        if (retention > 0) {
+                          insights.push({ color: "#22C55E", line1: retention + "% retention rate —", line2: mastered + " cards mastered" });
+                        } else {
+                          insights.push({ color: "#A855F7", line1: "Start reviewing cards", line2: "to build retention" });
+                        }
+
+                        if (streak > 0) {
+                          insights.push({ color: "#22C55E", line1: streak + "-day streak — review", line2: "daily for long-term retention" });
+                        } else {
+                          insights.push({ color: "#A855F7", line1: "Review daily for long", line2: "term retention" });
+                        }
+
+                        return insights.map((item, i) => (
+                      <div key={i} style={{ display: "flex", gap: "8px", marginBottom: i < 2 ? "14px" : 0 }}>
+                        <span style={{ color: item.color, fontSize: "10px", marginTop: "4px" }}>●</span>
                         <div>
-                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>Excellent recall over the</p>
-                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>past week</p>
+                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>{item.line1}</p>
+                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>{item.line2}</p>
                         </div>
                       </div>
-                      <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
-                        <span style={{ color: "#22C55E", fontSize: "10px", marginTop: "4px" }}>●</span>
-                        <div>
-                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>Pronunciation improved by</p>
-                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}><span style={{ color: "#22C55E", fontWeight: 500 }}>17%</span> this week</p>
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", gap: "8px" }}>
-                        <span style={{ color: "#22C55E", fontSize: "10px", marginTop: "4px" }}>●</span>
-                        <div>
-                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>Review daily for long</p>
-                          <p style={{ fontSize: "12px", color: "#A1A1AA", lineHeight: 1.5, margin: 0 }}>term retention</p>
+                        ));
+                      })()}
                         </div>
                       </div>
                     </div>
-                  </div>
                 </div>
-              </div>
 
               {/* ── Weak Word List Header (outside card) ── */}
               <div className="flex items-center justify-between mb-3">
