@@ -7,7 +7,7 @@ import { ReviewSidebar } from "@/components/review/ReviewSidebar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 import type { DashboardData } from "@/types";
-import { REVIEW_CATEGORIES, RECENT_ACTIVITY_ITEMS, KEEP_PRACTICING_ITEMS } from "@/lib/mockData/review";
+import { REVIEW_CATEGORIES, KEEP_PRACTICING_ITEMS } from "@/lib/mockData/review";
 
 interface SRSStatsData {
   new: number; learning: number; reviewing: number; mastered: number;
@@ -185,7 +185,12 @@ export default function ReviewPage() {
                           <div style={{ marginBottom: "10px", fontSize: "28px" }}>{cat.icon}</div>
                           <p className="text-xs font-medium m-0" style={{ color: "#FFF" }}>{cat.label}</p>
                           {cat.count !== null && (
-                            <p className="text-[11px] mt-1 m-0" style={{ color: "#A8A4BC" }}>{cat.count} cards due</p>
+                            <p className="text-[11px] mt-1 m-0" style={{ color: "#A8A4BC" }}>
+                              {cat.label === "Vocabulary" ? `${stats?.reviewing ?? "—"} cards due` :
+                               cat.label === "Grammar" ? `${stats?.learning ?? "—"} cards due` :
+                               cat.label === "Phrases" ? `${stats?.new ?? "—"} cards due` :
+                               `${cat.count} cards due`}
+                            </p>
                           )}
                           {cat.dashed && <p className="text-[11px] mt-1 m-0" style={{ color: "rgba(255,255,255,.2)" }}>Create deck</p>}
                         </button>
@@ -232,33 +237,34 @@ export default function ReviewPage() {
                         {/* Continuous vertical line */}
                         <div className="absolute left-[9px] top-0 bottom-0 w-[2px] rounded-full"
                           style={{ background: "linear-gradient(180deg, rgba(168,85,247,.3) 0%, rgba(168,85,247,.05) 100%)" }} />
-                        {RECENT_ACTIVITY_ITEMS.map((item, i) => (
+                        {(dash?.recent_activity?.length ? dash.recent_activity : []).map((item, i) => {
+                          const timeAgo = (() => {
+                            const diff = Date.now() - new Date(item.timestamp).getTime();
+                            const mins = Math.floor(diff / 60000);
+                            if (mins < 60) return `${mins}m ago`;
+                            const hrs = Math.floor(mins / 60);
+                            if (hrs < 24) return `${hrs}h ago`;
+                            return `${Math.floor(hrs / 24)}d ago`;
+                          })();
+                          const color = item.type === "quiz" ? "#EC4899" : item.type === "lesson_completed" ? "#84CC16" : "#8B5CF6";
+                          return (
                           <div key={i} className="flex gap-4 relative" style={{ minHeight: 52 }}>
-                            {/* Timeline dot */}
                             <div className="relative flex-shrink-0 flex items-start pt-[5px]">
                               <div className="relative rounded-full flex-shrink-0 z-10"
-                                style={{
-                                  width: 20, height: 20,
-                                  background: `${item.color}25`,
-                                  border: `1px solid ${item.color}40`,
-                                }}>
+                                style={{ width: 20, height: 20, background: `${color}25`, border: `1px solid ${color}40` }}>
                                 <div className="absolute rounded-full"
-                                  style={{ width: 8, height: 8, left: 5, top: 5, background: item.color, border: "none" }} />
+                                  style={{ width: 8, height: 8, left: 5, top: 5, background: color, border: "none" }} />
                               </div>
                             </div>
-                            {/* Content */}
                             <div className="flex-1 min-w-0 flex items-center" style={{ height: 52 }}>
                               <div className="min-w-0 mr-2">
-                                <p className="text-[13px] font-medium truncate leading-tight mb-0.5" style={{ color: "#FFF" }}>
-                                  {item.activity}
-                                </p>
-                                <p className="text-[12px] truncate leading-tight" style={{ color: "#A8A4BC" }}>
-                                  {item.time} · {item.desc}
-                                </p>
+                                <p className="text-[13px] font-medium truncate leading-tight mb-0.5" style={{ color: "#FFF" }}>{item.description}</p>
+                                <p className="text-[12px] truncate leading-tight" style={{ color: "#A8A4BC" }}>{timeAgo} · {item.type}</p>
                               </div>
                             </div>
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                       <button className="w-full py-2.5 rounded-xl text-xs font-medium border-none cursor-pointer"
                         style={{ background: "rgba(168,85,247,.15)", color: "#A855F7" }}>
