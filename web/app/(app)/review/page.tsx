@@ -7,6 +7,7 @@ import { ReviewSidebar } from "@/components/review/ReviewSidebar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 import type { DashboardData } from "@/types";
+import { REVIEW_CATEGORIES, RECENT_ACTIVITY_ITEMS, KEEP_PRACTICING_ITEMS } from "@/lib/mockData/review";
 
 interface SRSStatsData {
   new: number; learning: number; reviewing: number; mastered: number;
@@ -166,12 +167,7 @@ export default function ReviewPage() {
                   <div className="p-5" style={{ borderRadius: "18px", background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
                     <p className="text-[11px] font-medium uppercase tracking-[1px] mb-4" style={{ color: "#FFF" }}>Review by Category</p>
                     <div className="flex gap-3">
-                      {[
-                        { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="4" width="12" height="16" rx="1.5" stroke="#38BDF8" strokeWidth="1.5" fill="none"/><rect x="9" y="2.5" width="12" height="16" rx="1.5" stroke="#38BDF8" strokeWidth="1.5" fill="none" opacity="0.5"/><line x1="12" y1="8" x2="18" y2="8" stroke="#38BDF8" strokeWidth="1.2" strokeLinecap="round"/><line x1="12" y1="11" x2="16" y2="11" stroke="#38BDF8" strokeWidth="1.2" strokeLinecap="round"/></svg>, label: "Vocabulary", count: 9 },
-                        { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="5" y="3" width="18" height="22" rx="2" stroke="#EC4899" strokeWidth="1.5" fill="none"/><line x1="9" y1="9" x2="19" y2="9" stroke="#EC4899" strokeWidth="1.2" strokeLinecap="round"/><line x1="9" y1="13" x2="19" y2="13" stroke="#EC4899" strokeWidth="1.2" strokeLinecap="round"/><line x1="9" y1="17" x2="16" y2="17" stroke="#EC4899" strokeWidth="1.2" strokeLinecap="round"/></svg>, label: "Grammar", count: 4 },
-                        { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M5 10C5 7.5 7 5.5 9.5 5.5H18.5C21 5.5 23 7.5 23 10V15C23 17.5 21 19.5 18.5 19.5H15L10 23V19.5H9.5C7 19.5 5 17.5 5 15V10Z" stroke="#38BDF8" strokeWidth="1.5" fill="none"/><circle cx="10.5" cy="12.5" r="1" fill="#38BDF8"/><circle cx="14" cy="12.5" r="1" fill="#38BDF8"/><circle cx="17.5" cy="12.5" r="1" fill="#38BDF8"/></svg>, label: "Phrases", count: 2 },
-                        { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="9" stroke="rgba(255,255,255,.3)" strokeWidth="1.5" fill="none" strokeDasharray="3 2"/><line x1="14" y1="9" x2="14" y2="19" stroke="rgba(255,255,255,.3)" strokeWidth="1.5" strokeLinecap="round"/><line x1="9" y1="14" x2="19" y2="14" stroke="rgba(255,255,255,.3)" strokeWidth="1.5" strokeLinecap="round"/></svg>, label: "Custom", count: null, dashed: true },
-                      ].map((cat) => (
+                      {REVIEW_CATEGORIES.map((cat) => (
                         <button key={cat.label}
                           className="flex-1 text-center transition-all hover:-translate-y-0.5"
                           style={{
@@ -186,7 +182,7 @@ export default function ReviewPage() {
                             alignItems: "center",
                             justifyContent: "center",
                           }}>
-                          <div style={{ marginBottom: "10px" }}>{cat.icon}</div>
+                          <div style={{ marginBottom: "10px", fontSize: "28px" }}>{cat.icon}</div>
                           <p className="text-xs font-medium m-0" style={{ color: "#FFF" }}>{cat.label}</p>
                           {cat.count !== null && (
                             <p className="text-[11px] mt-1 m-0" style={{ color: "#A8A4BC" }}>{cat.count} cards due</p>
@@ -236,11 +232,7 @@ export default function ReviewPage() {
                         {/* Continuous vertical line */}
                         <div className="absolute left-[9px] top-0 bottom-0 w-[2px] rounded-full"
                           style={{ background: "linear-gradient(180deg, rgba(168,85,247,.3) 0%, rgba(168,85,247,.05) 100%)" }} />
-                        {[
-                          { time: "Today", activity: "Reviewed 8 cards", desc: "Vocabulary review session", color: "#EC4899" },
-                          { time: "Yesterday", activity: "Lesson completed", desc: "A1 Lesson 5: Family & Friends", color: "#84CC16" },
-                          { time: "2 days ago", activity: "Reviewed 6 cards", desc: "Grammar: Verb conjugation", color: "#EF4444" },
-                        ].map((item, i) => (
+                        {RECENT_ACTIVITY_ITEMS.map((item, i) => (
                           <div key={i} className="flex gap-4 relative" style={{ minHeight: 52 }}>
                             {/* Timeline dot */}
                             <div className="relative flex-shrink-0 flex items-start pt-[5px]">
@@ -281,18 +273,13 @@ export default function ReviewPage() {
               <div>
                 <p className="text-[11px] font-medium uppercase tracking-[1px] mb-3" style={{ color: "#FFF" }}>Keep Practicing</p>
                 <div className="grid grid-cols-4 gap-4">
-                  {[
-                    { icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10L8 6L12 10L16 6" stroke="#FFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 14L8 10L12 14L16 10" stroke="#FFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>, label: "Random Practice", desc: "Mixed exercises", grad: "linear-gradient(135deg, #8B5CF6, #A855F7)", href: "/quiz" },
-                    { icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="6" stroke="#FFF" strokeWidth="1.5" fill="none"/><circle cx="10" cy="10" r="3" stroke="#FFF" strokeWidth="1.5" fill="none"/><circle cx="10" cy="10" r="1" fill="#FFF"/></svg>, label: "Weak Words", desc: "Focus on weak vocabulary", grad: "linear-gradient(135deg, #EC4899, #F43F8E)", href: "/review" },
-                    { icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="14" height="16" rx="2" stroke="#FFF" strokeWidth="1.5" fill="none"/><path d="M6 10L9 13L14 7" stroke="#FFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>, label: "Quiz", desc: "Test knowledge", grad: "linear-gradient(135deg, #22C55E, #16A34A)", href: "/quiz" },
-                    { icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 4H15V10L13 12H7L5 10V4Z" stroke="#FFF" strokeWidth="1.5" strokeLinejoin="round" fill="none"/><line x1="8" y1="7" x2="12" y2="7" stroke="#FFF" strokeWidth="1.5" strokeLinecap="round"/><line x1="8" y1="10" x2="11" y2="10" stroke="#FFF" strokeWidth="1.5" strokeLinecap="round"/></svg>, label: "Learn New Words", desc: "Start new lesson", grad: "linear-gradient(135deg, #FB923C, #F97316)", href: "/curriculum" },
-                  ].map((item) => (
+                  {KEEP_PRACTICING_ITEMS.map((item) => (
                     <button key={item.label}
                       onClick={() => router.push(item.href)}
                       className="p-5 text-left transition-all hover:-translate-y-0.5 cursor-pointer group"
                       style={{ borderRadius: "18px", background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: item.grad }}>
-                        {item.icon}
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: item.gradient, fontSize: "20px" }}>
+                        {item.emoji}
                       </div>
                       <p className="text-sm font-medium m-0" style={{ color: "#FFF" }}>{item.label}</p>
                       <p className="text-xs mt-1 m-0" style={{ color: "#A8A4BC" }}>{item.desc}</p>

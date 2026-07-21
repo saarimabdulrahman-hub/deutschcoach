@@ -5,6 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { ReviewSidebar } from "@/components/review/ReviewSidebar";
 import type { DashboardData } from "@/types";
+import {
+  SPACED_REPETITION_QUEUE, HOW_IT_WORKS_STEPS,
+  FLASHCARD_QUICK_START, RECENTLY_STUDIED_DECKS,
+  MISTAKE_STATS, MISTAKE_FILTERS, MISTAKE_TABLE,
+  WEAK_WORD_STATS, MEMORY_DISTRIBUTION,
+  BOOKMARK_ITEMS, BOOKMARK_COLLECTIONS, BOOKMARK_TYPES, BOOKMARK_ACTIVITY,
+} from "@/lib/mockData/review";
 
 interface SRSStatsData {
   new: number; learning: number; reviewing: number; mastered: number;
@@ -136,13 +143,7 @@ export default function ReviewSlugPage() {
                     <span style={{ width: "60px", textAlign: "center" }}>Ease</span>
                     <span style={{ width: "20px" }} />
                   </div>
-                  {[
-                    { word: "der Fortschritt", trans: "progress", review: "Due now", interval: "1 day", ease: "Hard", easeColor: "#EF4444" },
-                    { word: "die Gelegenheit", trans: "opportunity", review: "Due now", interval: "1 day", ease: "Medium", easeColor: "#F59E0B" },
-                    { word: "entwickeln", trans: "develop", review: "Due now", interval: "1 day", ease: "Hard", easeColor: "#EF4444" },
-                    { word: "Herausforderung", trans: "challenge", review: "Due now", interval: "1 day", ease: "Medium", easeColor: "#F59E0B" },
-                    { word: "Veränderung", trans: "change", review: "Tomorrow", interval: "2 days", ease: "Easy", easeColor: "#22C55E" },
-                  ].map((row, i) => (
+                  {SPACED_REPETITION_QUEUE.map((row, i) => (
                     <div key={i} className="px-5 flex items-center gap-3 text-sm" style={{ height: "68px", borderTop: "1px solid rgba(255,255,255,.04)" }}>
                       <span className="flex-shrink-0" style={{ width: "18px", height: "18px", borderRadius: "4px", border: "1.5px solid rgba(168,85,247,.25)", background: "rgba(168,85,247,.05)", cursor: "pointer", display: "inline-block" }} />
                       <span className="flex-shrink-0" style={{ width: "24px", height: "24px", borderRadius: "4px", border: "1px solid rgba(168,85,247,.15)", background: "rgba(168,85,247,.04)", display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "12px" }}>🔊</span>
@@ -173,11 +174,7 @@ export default function ReviewSlugPage() {
                         </linearGradient>
                       </defs>
                     </svg>
-                    {[
-                      { num: "1", title: "Learn", desc: "New words introduced at optimal intervals." },
-                      { num: "2", title: "Review", desc: "Recall words actively to strengthen memory." },
-                      { num: "3", title: "Remember", desc: "Spaced repetition moves to long-term memory." },
-                    ].map((step) => (
+                    {HOW_IT_WORKS_STEPS.map((step) => (
                       <div key={step.num} className="flex gap-3">
                         <div className="flex-shrink-0 relative" style={{ width: "38px", height: "38px" }}>
                           <svg width="38" height="38" viewBox="0 0 38 38" className="absolute inset-0">
@@ -224,14 +221,10 @@ export default function ReviewSlugPage() {
 
               {/* ── Quick Start ── */}
               <div className="grid grid-cols-3 gap-5">
-                {[
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="#8B5CF6"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z" fill="#FFF"/></svg>, title: "Review Due Cards", desc: "Continue where you left off", color: "#8B5CF6" },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="#EC4899"><rect x="4" y="2" width="16" height="14" rx="2"/><rect x="7" y="5" width="10" height="2" rx="0.5" fill="#FFF"/><rect x="6" y="16" width="12" height="4" rx="1" fill="#FFF" opacity="0.6"/></svg>, title: "Browse Decks", desc: "Explore all your decks", color: "#EC4899" },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#C026D3"/><rect x="11" y="7" width="2" height="10" rx="1" fill="#FFF"/><rect x="7" y="11" width="10" height="2" rx="1" fill="#FFF"/></svg>, title: "Create New Deck", desc: "Add your own flashcards", color: "#C026D3" },
-                ].map((card) => (
+                {FLASHCARD_QUICK_START.map((card) => (
                   <button key={card.title} className="flex items-center gap-4 p-5 rounded-[18px] border-none cursor-pointer transition-all hover:-translate-y-0.5" style={{ background: "#161322", border: "1px solid rgba(255,255,255,.04)" }}>
                     <div className="flex items-center justify-center flex-shrink-0" style={{ width: "48px", height: "48px", borderRadius: "50%", background: `${card.color}08`, backdropFilter: "blur(8px)", border: `1px solid ${card.color}20` }}>
-                      {card.icon}
+                      <span style={{ fontSize: "20px" }}>{card.emoji}</span>
                     </div>
                     <div className="flex-1 text-left">
                       <p style={{ fontSize: "15px", fontWeight: 400, color: "#FFF", margin: 0 }}>{card.title}</p>
@@ -249,12 +242,7 @@ export default function ReviewSlugPage() {
               </div>
               <div className="rounded-[20px] overflow-hidden" style={{ background: "#161322", border: "1px solid rgba(255,255,255,.05)" }}>
 
-                {[
-                  { badge: "A1", badgeColor: "#22C55E", title: "A1 Beginner Essentials", sub: "Basic words and phrases", cards: "128", mastery: "92%", masteryColor: "#22C55E", last: "Today" },
-                  { badge: "A2", badgeColor: "#60A5FA", title: "A2 Everyday German", sub: "Common expressions", cards: "96", mastery: "87%", masteryColor: "#22C55E", last: "Yesterday" },
-                  { badge: "B1", badgeColor: "#8B5CF6", title: "B1 Intermediate", sub: "Complex conversations", cards: "72", mastery: "79%", masteryColor: "#FACC15", last: "2 days ago" },
-                  { badge: "★", badgeColor: "#FACC15", title: "Favorites", sub: "Bookmarked flashcards", cards: "34", mastery: "94%", masteryColor: "#22C55E", last: "Today" },
-                ].map((row, i) => (
+                {RECENTLY_STUDIED_DECKS.map((row, i) => (
                   <div key={i} className="px-6 flex items-center gap-4 text-sm" style={{ height: "72px", borderTop: "1px solid rgba(255,255,255,.04)", cursor: "pointer" }}>
                     <div className="flex items-center justify-center flex-shrink-0" style={{ width: "48px", height: "48px", borderRadius: "50%", background: `${row.badgeColor}15`, border: `1.5px solid ${row.badgeColor}30`, color: row.badgeColor, fontSize: "12px", fontWeight: 500 }}>{row.badge}</div>
                     <div style={{ flex: 1 }}>
@@ -287,16 +275,11 @@ export default function ReviewSlugPage() {
 
               {/* ── Statistics Cards ── */}
               <div className="grid grid-cols-4 gap-5">
-                {[
-                  { icon: <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="4" width="16" height="14" rx="2" stroke="#8B5CF6" strokeWidth="1.5" fill="none"/><line x1="6" y1="8" x2="16" y2="8" stroke="#8B5CF6" strokeWidth="1.5"/></svg>, value: "48", label: "Total Mistakes", desc: "All time mistakes", color: "#8B5CF6" },
-                  { icon: <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="7" stroke="#EC4899" strokeWidth="1.5" fill="none"/><path d="M11 7v4l3 2" stroke="#EC4899" strokeWidth="1.5" strokeLinecap="round"/></svg>, value: "16", label: "Needs Review", desc: "High priority words", color: "#EC4899" },
-                  { icon: <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="4" y="12" width="3" height="6" rx="1" fill="#8B5CF6"/><rect x="9" y="8" width="3" height="10" rx="1" fill="#8B5CF6"/><rect x="14" y="4" width="3" height="14" rx="1" fill="#8B5CF6"/></svg>, value: "87%", label: "Retention Impact", desc: "Mistakes affecting retention", color: "#8B5CF6" },
-                  { icon: <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="3" width="18" height="16" rx="2" stroke="#EC4899" strokeWidth="1.5" fill="none"/><line x1="2" y1="8" x2="20" y2="8" stroke="#EC4899" strokeWidth="1.5"/></svg>, value: "5", label: "Day Streak", desc: "Review streak", color: "#EC4899" },
-                ].map((stat) => (
+                {MISTAKE_STATS.map((stat) => (
                   <div key={stat.label} className="rounded-[18px] p-4 relative overflow-hidden" style={{ background: "#16162A", border: "1px solid rgba(255,255,255,.04)" }}>
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center justify-center" style={{ width: "40px", height: "40px", borderRadius: "50%", background: `${stat.color}12` }}>
-                        <span style={{ color: stat.color }}>{stat.icon}</span>
+                        <span style={{ color: stat.color, fontSize: "20px" }}>●</span>
                       </div>
                       <span style={{ fontSize: "24px", fontWeight: 500, color: "#FFF", lineHeight: 1 }}>{stat.value}</span>
                     </div>
@@ -313,7 +296,7 @@ export default function ReviewSlugPage() {
               {/* ── Filter Row ── */}
               <div className="flex items-center justify-between">
                 <div className="flex gap-1.5">
-                  {["All", "High Priority", "Medium", "Low"].map((f) => (
+                  {MISTAKE_FILTERS.map((f) => (
                     <button key={f} className="px-3 py-1.5 rounded-full text-xs font-medium border-none cursor-pointer" style={{ background: f === "All" ? "linear-gradient(135deg, #8B5CF6, #EC4899)" : "rgba(255,255,255,.04)", color: f === "All" ? "#FFF" : "rgba(255,255,255,.4)" }}>{f}</button>
                   ))}
                 </div>
@@ -324,13 +307,7 @@ export default function ReviewSlugPage() {
 
               {/* ── Mistake Table ── */}
               <div className="rounded-[20px] overflow-hidden" style={{ background: "#16162A", border: "1px solid rgba(255,255,255,.05)" }}>
-                {[
-                  { word: "abholen", trans: "to pick up", wrong: "abholen", correct: "abholen", time: "2 days ago", priority: "#EC4899" },
-                  { word: "die Gelegenheit", trans: "opportunity", wrong: "Gelegenheit", correct: "die Gelegenheit", time: "3 days ago", priority: "#F59E0B" },
-                  { word: "entwickeln", trans: "to develop", wrong: "entwikeln", correct: "entwickeln", time: "5 days ago", priority: "#EC4899" },
-                  { word: "die Herausforderung", trans: "challenge", wrong: "Herrausforderung", correct: "Herausforderung", time: "1 week ago", priority: "#22C55E" },
-                  { word: "die Veränderung", trans: "change", wrong: "Veränderung", correct: "Veränderung", time: "1 week ago", priority: "#F59E0B" },
-                ].map((row, i) => (
+                {MISTAKE_TABLE.map((row, i) => (
                   <div key={i} className="flex items-center gap-4 px-5" style={{ height: "80px", borderTop: i > 0 ? "1px solid rgba(255,255,255,.04)" : "none" }}>
                     {/* Priority dot + Word */}
                     <div style={{ flex: 1.5, display: "flex", alignItems: "center", gap: "10px" }}>
@@ -466,11 +443,7 @@ export default function ReviewSlugPage() {
                       <circle cx="60" cy="60" r="45" stroke="#F59E0B" strokeWidth="24" fill="none" strokeDasharray="8 283" strokeLinecap="round" transform="rotate(105 60 60)" />
                     </svg>
                     <div className="space-y-3">
-                      {[
-                        { color: "#22C55E", label: "Strong Memory", pct: "82%" },
-                        { color: "#8B5CF6", label: "Normal", pct: "14%" },
-                        { color: "#F59E0B", label: "Needs Review", pct: "4%" },
-                      ].map((item) => (
+                      {MEMORY_DISTRIBUTION.map((item) => (
                         <div key={item.label} className="flex items-center gap-3 h-full">
                           <span style={{ width: "12px", height: "12px", borderRadius: "3px", background: item.color }} />
                           <span style={{ fontSize: "13px", color: "#A1A1AA", flex: 1 }}>{item.label}</span>
@@ -629,13 +602,7 @@ export default function ReviewSlugPage() {
 
               {/* Bookmarked Items — horizontal scroll */}
               <div className="flex gap-4 overflow-x-auto pb-2 mb-5" style={{ scrollbarWidth: "thin" }}>
-                {[
-                  { type: "WORD", color: "#7C5CFF", title: "abholen", sub: "to pick up, to collect", content: { type: "example", german: "Ich hole dich morgen ab.", english: "I'll pick you up tomorrow." }, level: "A2", time: "2 days ago" },
-                  { type: "PHRASE", color: "#EC4899", title: "Ganz deiner Meinung.", sub: "Fully agree with you.", content: { type: "example", german: "Da stimme ich dir voll zu.", english: "I totally agree with you." }, level: "B1", time: "3 days ago" },
-                  { type: "EXERCISE", color: "#3B82F6", title: "Hörverstehen Übung 4", sub: "Audio comprehension", content: { type: "progress", score: 8, total: 10 }, level: "A1", time: "5 days ago" },
-                  { type: "GRAMMAR", color: "#F97316", title: "Dativ vs. Akkusativ", sub: "Case usage rules", content: { type: "notes", text: "Dativ answers 'to whom', Akkusativ answers 'whom/what'." }, level: "A2", time: "1 week ago" },
-                  { type: "WORD", color: "#7C5CFF", title: "vielleicht", sub: "perhaps, maybe", content: { type: "example", german: "Vielleicht komme ich morgen.", english: "Maybe I'll come tomorrow." }, level: "B1", time: "1 week ago" },
-                ].map((item, i) => (
+                {BOOKMARK_ITEMS.map((item, i) => (
                   <div key={i} className="flex-shrink-0 rounded-[18px] p-4 transition-all hover:-translate-y-1" style={{ width: "220px", background: "linear-gradient(180deg, #171A2A, #111322)", border: "1px solid rgba(255,255,255,.06)", boxShadow: "0 4px 20px rgba(0,0,0,.15)" }}>
                     {/* Header: Category + Bookmark */}
                     <div className="flex items-center justify-between mb-3">
@@ -683,7 +650,7 @@ export default function ReviewSlugPage() {
                 {/* Collections */}
                 <div className="flex-1 rounded-[16px] p-4" style={{ background: "#151827", border: "1px solid rgba(255,255,255,.04)" }}>
                   <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: "0 0 12px" }}>Collections</p>
-                  {["Important Words", "Essential Phrases", "Grammar Rules"].map((col) => (
+                  {BOOKMARK_COLLECTIONS.map((col) => (
                     <div key={col} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid rgba(255,255,255,.04)" }}>
                       <div className="flex items-center gap-2">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="9" rx="1.5" stroke="#A855F7" strokeWidth="1" fill="none"/></svg>
@@ -706,12 +673,7 @@ export default function ReviewSlugPage() {
                       <circle cx="50" cy="50" r="36" stroke="#F97316" strokeWidth="22" fill="none" strokeDasharray="8 226" strokeLinecap="round" transform="rotate(75 50 50)" />
                     </svg>
                     <div className="space-y-3">
-                      {[
-                        { color: "#A855F7", label: "Words", count: "12", pct: "50%" },
-                        { color: "#EC4899", label: "Phrases", count: "6", pct: "25%" },
-                        { color: "#3B82F6", label: "Exercises", count: "4", pct: "17%" },
-                        { color: "#F97316", label: "Grammar", count: "2", pct: "8%" },
-                      ].map((item) => (
+                      {BOOKMARK_TYPES.map((item) => (
                         <div key={item.label} className="flex items-center gap-3">
                           <span style={{ width: "10px", height: "10px", borderRadius: "3px", background: item.color }} />
                           <span style={{ fontSize: "12px", color: "#9CA3AF", minWidth: "55px" }}>{item.label}</span>
@@ -727,13 +689,9 @@ export default function ReviewSlugPage() {
                 <div className="flex-1 rounded-[16px] p-4" style={{ background: "#151827", border: "1px solid rgba(255,255,255,.04)" }}>
                   <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: "0 0 12px" }}>Recent Activity</p>
                   <div className="space-y-3">
-                    {[
-                      { icon: <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2v10l4-3 4 3V2H3z" stroke="#A855F7" strokeWidth="1" fill="none"/></svg>, title: "Bookmark added", desc: "der Fortschritt", time: "2h ago" },
-                      { icon: <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="11" rx="1.5" stroke="#EC4899" strokeWidth="1" fill="none"/><path d="M5 6l2 2 3-3" stroke="#EC4899" strokeWidth="1" strokeLinecap="round"/></svg>, title: "Exercise saved", desc: "Present Tense Quiz", time: "1d ago" },
-                      { icon: <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 2l3 1.5L10 2v4.5c0 2.5-2 4-3 4.5-1-.5-3-2-3-4.5V2z" stroke="#F97316" strokeWidth="1" fill="none"/></svg>, title: "Grammar saved", desc: "Wechselpräpositionen", time: "3d ago" },
-                    ].map((act, i) => (
+                    {BOOKMARK_ACTIVITY.map((act, i) => (
                       <div key={i} className="flex items-center gap-2.5">
-                        <span style={{ color: act.icon.props.stroke || "#A855F7" }}>{act.icon}</span>
+                        <span style={{ color: "#A855F7", fontSize: "14px" }}>●</span>
                         <div style={{ flex: 1 }}>
                           <p style={{ fontSize: "11px", fontWeight: 500, color: "#FFF", margin: 0 }}>{act.title}</p>
                           <p style={{ fontSize: "10px", color: "rgba(255,255,255,.3)", margin: 0 }}>{act.desc} · {act.time}</p>
