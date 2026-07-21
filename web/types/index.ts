@@ -203,6 +203,25 @@ export interface QuizResultOut {
   }[];
 }
 
+// ---- SRS / review ----
+
+export interface SRSCardOut {
+  id: number;
+  vocab_entry: {
+    id: number;
+    german: string;
+    english: string;
+    example_sentence?: string;
+    part_of_speech?: string;
+  };
+  status: string;
+  easiness_factor: number;
+  interval_days: number;
+  repetitions: number;
+  lapses: number;
+  next_review_at?: string;
+}
+
 // ---- Plans / pricing ----
 
 export interface Plan {

@@ -4,14 +4,20 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { ReviewSidebar } from "@/components/review/ReviewSidebar";
-import type { DashboardData } from "@/types";
+import type { DashboardData, SRSCardOut } from "@/types";
 import {
-  SPACED_REPETITION_QUEUE, HOW_IT_WORKS_STEPS,
+  HOW_IT_WORKS_STEPS,
   FLASHCARD_QUICK_START, RECENTLY_STUDIED_DECKS,
   MISTAKE_STATS, MISTAKE_FILTERS, MISTAKE_TABLE,
   WEAK_WORD_STATS, MEMORY_DISTRIBUTION,
   BOOKMARK_ITEMS, BOOKMARK_COLLECTIONS, BOOKMARK_TYPES, BOOKMARK_ACTIVITY,
 } from "@/lib/mockData/review";
+
+function easeLabel(ef: number): { label: string; color: string } {
+  if (ef >= 2.5) return { label: "Easy", color: "#22C55E" };
+  if (ef >= 2.0) return { label: "Medium", color: "#F59E0B" };
+  return { label: "Hard", color: "#EF4444" };
+}
 
 interface SRSStatsData {
   new: number; learning: number; reviewing: number; mastered: number;
@@ -37,6 +43,10 @@ export default function ReviewSlugPage() {
 
   const { data: dash } = useQuery<DashboardData>({
     queryKey: ["dashboard"], queryFn: () => api.get("/dashboard"),
+  });
+
+  const { data: dueCards } = useQuery<SRSCardOut[]>({
+    queryKey: ["srs-due"], queryFn: () => api.get("/srs/due"), staleTime: 30_000,
   });
 
   const streak = dash?.streak ?? 0;
@@ -66,7 +76,7 @@ export default function ReviewSlugPage() {
                 </div>
                 <div className="flex items-center gap-2 rounded-full px-4 py-2 flex-shrink-0" style={{ background: "rgba(168,85,247,.12)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "none", boxShadow: "0 0 20px rgba(168,85,247,.1)" }}>
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#C084FC" strokeWidth="1.2" fill="none"/><path d="M7 4.5V7l2 2" stroke="#C084FC" strokeWidth="1.2" strokeLinecap="round"/></svg>
-                  <span style={{ fontSize: "12px", fontWeight: 500, color: "#C084FC" }}>0 due today</span>
+                  <span style={{ fontSize: "12px", fontWeight: 500, color: "#C084FC" }}>{stats?.total_due_today ?? 0} due today</span>
                 </div>
               </div>
 
@@ -143,18 +153,22 @@ export default function ReviewSlugPage() {
                     <span style={{ width: "60px", textAlign: "center" }}>Ease</span>
                     <span style={{ width: "20px" }} />
                   </div>
-                  {SPACED_REPETITION_QUEUE.map((row, i) => (
-                    <div key={i} className="px-5 flex items-center gap-3 text-sm" style={{ height: "68px", borderTop: "1px solid rgba(255,255,255,.04)" }}>
+                  {(dueCards?.length ? dueCards : []).map((card, i) => {
+                    const ease = easeLabel(card.easiness_factor);
+                    const isDue = card.interval_days <= 0 ? "Due now" : "Later";
+                    return (
+                    <div key={card.id} className="px-5 flex items-center gap-3 text-sm" style={{ height: "68px", borderTop: "1px solid rgba(255,255,255,.04)" }}>
                       <span className="flex-shrink-0" style={{ width: "18px", height: "18px", borderRadius: "4px", border: "1.5px solid rgba(168,85,247,.25)", background: "rgba(168,85,247,.05)", cursor: "pointer", display: "inline-block" }} />
                       <span className="flex-shrink-0" style={{ width: "24px", height: "24px", borderRadius: "4px", border: "1px solid rgba(168,85,247,.15)", background: "rgba(168,85,247,.04)", display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "12px" }}>🔊</span>
-                      <span style={{ flex: 1, color: "#FFF", fontWeight: 500 }}>{row.word}</span>
-                      <span style={{ flex: 1, color: "#A8A4BC" }}>{row.trans}</span>
-                      <span style={{ width: "80px", color: row.review === "Due now" ? "#EF4444" : "#A8A4BC", fontSize: "12px" }}>{row.review}</span>
-                      <span style={{ width: "60px", textAlign: "center", fontSize: "12px", color: "rgba(255,255,255,.4)" }}>{row.interval}</span>
-                      <span style={{ width: "60px", textAlign: "center", fontSize: "11px", padding: "2px 8px", borderRadius: "999px", color: row.easeColor, background: `${row.easeColor}15` }}>{row.ease}</span>
+                      <span style={{ flex: 1, color: "#FFF", fontWeight: 500 }}>{card.vocab_entry?.german ?? "—"}</span>
+                      <span style={{ flex: 1, color: "#A8A4BC" }}>{card.vocab_entry?.english ?? "—"}</span>
+                      <span style={{ width: "80px", color: isDue === "Due now" ? "#EF4444" : "#A8A4BC", fontSize: "12px" }}>{isDue}</span>
+                      <span style={{ width: "60px", textAlign: "center", fontSize: "12px", color: "rgba(255,255,255,.4)" }}>{card.interval_days}d</span>
+                      <span style={{ width: "60px", textAlign: "center", fontSize: "11px", padding: "2px 8px", borderRadius: "999px", color: ease.color, background: `${ease.color}15` }}>{ease.label}</span>
                       <span style={{ width: "20px", color: "rgba(255,255,255,.2)" }}>⋮</span>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* How It Works — slim card (~30%) */}

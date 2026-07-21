@@ -81,6 +81,31 @@ def change_password(
     return {"message": "Password changed"}
 
 
+@router.get("/bookmarks")
+def get_bookmarks(
+    db: Session = Depends(get_db),
+    user: User = Depends(require_auth),
+):
+    """Return all saved vocabulary notes for the authenticated user."""
+    notes = (
+        db.query(UserVocabNote)
+        .filter(UserVocabNote.user_id == user.id)
+        .order_by(UserVocabNote.updated_at.desc())
+        .all()
+    )
+    return [
+        {
+            "id": n.id,
+            "german": n.german,
+            "english": n.english,
+            "notes": n.notes,
+            "created_at": n.created_at.isoformat() if n.created_at else "",
+            "updated_at": n.updated_at.isoformat() if n.updated_at else "",
+        }
+        for n in notes
+    ]
+
+
 @router.post("/delete-account")
 def delete_account(
     db: Session = Depends(get_db),
