@@ -28,6 +28,11 @@ export default function ProfilePage() {
     queryFn: () => api.get("/dashboard"),
   });
 
+  const { data: srsStats } = useQuery<{ new: number; learning: number; reviewing: number; mastered: number; total_due_today: number }>({
+    queryKey: ["srs-stats"],
+    queryFn: () => api.get("/srs/stats"),
+  });
+
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [bio, setBio] = useState("");
@@ -54,7 +59,7 @@ export default function ProfilePage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)", maxWidth: "720px" }}>
-      <ProfileHeader name={firstName} level="A1" memberSince={memberSince} />
+      <ProfileHeader name={firstName} level={user?.target_level ?? "A1"} memberSince={memberSince} />
 
       <Card variant="basic">
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
@@ -78,10 +83,10 @@ export default function ProfilePage() {
       </Card>
 
       <StatsOverview
-        lessonsCompleted={dash?.level_progress_pct ? Math.round(dash.level_progress_pct / 6) : 0}
-        streak={dash?.streak}
-        avgQuizScore={dash?.avg_quiz_score}
-        vocabularyLearned={dash?.weakest_words?.length ? dash.weakest_words.length * 5 : 0}
+        lessonsCompleted={dash?.level_progress_pct ? Math.round(dash.level_progress_pct * 0.8) : 0}
+        streak={dash?.streak ?? 0}
+        avgQuizScore={dash?.avg_quiz_score ?? 0}
+        vocabularyLearned={(srsStats?.mastered ?? 0) + (srsStats?.learning ?? 0) + (srsStats?.reviewing ?? 0)}
       />
 
       <AchievementList achievements={MOCK_ACHIEVEMENTS} />
