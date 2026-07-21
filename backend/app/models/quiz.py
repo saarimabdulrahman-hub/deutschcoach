@@ -23,4 +23,5 @@ class QuizResult(Base):
     questions_total = Column(Integer, nullable=False)
     questions_correct = Column(Integer, nullable=False)
     missed_vocab_ids = Column(JSON, nullable=True)
+    wrong_answers = Column(JSON, nullable=True)  # [{vocab_id, user_answer, correct_answer}]
     created_at = Column(DateTime, server_default=func.now())

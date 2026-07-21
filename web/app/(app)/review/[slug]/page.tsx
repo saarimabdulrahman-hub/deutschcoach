@@ -55,7 +55,7 @@ export default function ReviewSlugPage() {
     queryKey: ["bookmarks"], queryFn: () => api.get("/user/bookmarks"), staleTime: 30_000,
   });
 
-  const { data: mistakes } = useQuery<{ vocab_id: number; german: string; english: string; miss_count: number; lapses: number; status: string }[]>({
+  const { data: mistakes } = useQuery<{ vocab_id: number; german: string; english: string; miss_count: number; lapses: number; status: string; user_answer?: string; correct_answer?: string }[]>({
     queryKey: ["quiz-mistakes"], queryFn: () => api.get("/quiz/mistakes"), staleTime: 30_000,
   });
 
@@ -415,7 +415,9 @@ export default function ReviewSlugPage() {
                     return 0; // Recent — backend already returns ordered
                   })
                   .map((m) => ({
-                    word: m.german, trans: m.english, wrong: "—", correct: m.german,
+                    word: m.german, trans: m.english,
+                    wrong: m.user_answer || "—",
+                    correct: m.correct_answer || m.german,
                     time: `${m.miss_count} miss${m.miss_count !== 1 ? "es" : ""}`, priority: m.lapses > 2 ? "#EC4899" : m.lapses > 0 ? "#F59E0B" : "#22C55E",
                   })) : MISTAKE_TABLE).map((row, i) => (
                   <div key={i} className="flex items-center gap-4 px-5" style={{ height: "80px", borderTop: i > 0 ? "1px solid rgba(255,255,255,.04)" : "none" }}>
