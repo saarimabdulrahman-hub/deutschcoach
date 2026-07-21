@@ -359,7 +359,7 @@ export default function QuizPage() {
         <div className="grid grid-cols-5 gap-4">
           {[
             {
-              icon: <div style={{ position: "relative", width: "96px", height: "96px", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="96" height="96" viewBox="0 0 96 96" fill="none" style={{ position: "absolute" }}><circle cx="48" cy="48" r="38" stroke="rgba(255,255,255,.06)" strokeWidth="6" fill="none"/><circle cx="48" cy="48" r="38" stroke="#22C55E" strokeWidth="6" fill="none" strokeDasharray={`${0.78 * 239} 239`} strokeLinecap="round" transform="rotate(-90 48 48)"/></svg><span style={{ fontSize: "20px", fontWeight: 800, color: "#FFF" }}>{dash?.avg_quiz_score ?? 0}%</span></div>,
+              icon: <div style={{ position: "relative", width: "96px", height: "96px", display: "flex", alignItems: "center", justifyContent: "center" }}><svg width="96" height="96" viewBox="0 0 96 96" fill="none" style={{ position: "absolute" }}><circle cx="48" cy="48" r="38" stroke="rgba(255,255,255,.06)" strokeWidth="6" fill="none"/><circle cx="48" cy="48" r="38" stroke="#22C55E" strokeWidth="6" fill="none" strokeDasharray={`${((dash?.avg_quiz_score ?? 0) / 100) * 239} 239`} strokeLinecap="round" transform="rotate(-90 48 48)"/></svg><span style={{ fontSize: "20px", fontWeight: 800, color: "#FFF" }}>{dash?.avg_quiz_score ?? 0}%</span></div>,
               label: "Accuracy", value: null, sub: <>↑ <span style={{color:"#FFF"}}>8% this week</span></>, subColor: "#22C55E",
             },
             {
@@ -398,28 +398,34 @@ export default function QuizPage() {
                 <span style={{ fontSize: "16px" }}>🏆</span>
                 <span style={{ fontSize: "12px", fontWeight: 600, color: "#FFF" }}>Today's Challenge</span>
               </div>
-              <span style={{ fontSize: "10px", padding: "2px 8px", borderRadius: "999px", background: "rgba(255,255,255,.06)", color: "rgba(255,255,255,.4)" }}>12h 45m left</span>
+              <span style={{ fontSize: "10px", padding: "2px 8px", borderRadius: "999px", background: "rgba(255,255,255,.06)", color: "rgba(255,255,255,.4)" }}>
+                {(() => { const n = new Date(); const m = new Date(n); m.setHours(24,0,0,0); const r = m.getTime() - n.getTime(); return `${Math.floor(r/3600000)}h ${Math.floor((r%3600000)/60000)}m left`; })()}
+              </span>
             </div>
             {/* Challenge List */}
             <div className="px-5 flex-1 space-y-3 mb-4">
-              {[
-                { task: "Complete 1 Speed Quiz", xp: "+40 XP" },
-                { task: "Score 90% or higher", xp: "+40 XP" },
-                { task: "Complete 2 quizzes", xp: "+40 XP" },
-              ].map((c, i) => (
+              {(() => {
+                const s = dash?.streak ?? 0;
+                const challenges = [
+                  { task: "Complete 1 quiz today", done: (dash?.avg_quiz_score ?? 0) > 0 },
+                  { task: "Score 70% or higher", done: (dash?.avg_quiz_score ?? 0) >= 70 },
+                  { task: s > 0 ? `Extend your ${s}-day streak` : "Start your first streak", done: s > 0 },
+                ];
+                return challenges.map((c, i) => (
                 <div key={i} className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <span style={{ fontSize: "12px", filter: "drop-shadow(0 0 4px rgba(251,191,36,.3))" }}>⭐</span>
-                    <span style={{ fontSize: "12px", color: "#A8A4BC" }}>{c.task}</span>
+                    <span style={{ fontSize: "12px", filter: "drop-shadow(0 0 4px rgba(251,191,36,.3))", opacity: c.done ? 0.5 : 1 }}>{c.done ? "✅" : "⭐"}</span>
+                    <span style={{ fontSize: "12px", color: c.done ? "rgba(255,255,255,.3)" : "#A8A4BC", textDecoration: c.done ? "line-through" : "none" }}>{c.task}</span>
                   </div>
-                  <span style={{ fontSize: "11px", fontWeight: 600, color: "#EC4899" }}>{c.xp}</span>
+                  <span style={{ fontSize: "11px", fontWeight: 600, color: c.done ? "#22C55E" : "#EC4899" }}>{c.done ? "Done!" : "+40 XP"}</span>
                 </div>
-              ))}
+                ));
+              })()}
             </div>
             {/* Progress Bar */}
             <div className="px-5 mb-4">
               <div className="rounded-full h-1.5 overflow-hidden" style={{ background: "rgba(255,255,255,.05)" }}>
-                <div className="h-full rounded-full" style={{ width: "45%", background: "linear-gradient(90deg, #EC4899, #8B5CF6)" }} />
+                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(() => { const s = dash?.streak ?? 0; const sc = (dash?.avg_quiz_score ?? 0) > 0; const done = [sc, (dash?.avg_quiz_score ?? 0) >= 70, s > 0].filter(Boolean).length; return Math.round((done/3)*100); })()}%`, background: "linear-gradient(90deg, #EC4899, #8B5CF6)" }} />
               </div>
             </div>
             {/* Reward Footer */}
@@ -428,7 +434,7 @@ export default function QuizPage() {
                 <span style={{ fontSize: "14px" }}>🎁</span>
                 <span style={{ fontSize: "11px", fontWeight: 500, color: "rgba(255,255,255,.5)" }}>Challenge Reward</span>
               </div>
-              <span style={{ fontSize: "12px", fontWeight: 700, color: "#A855F7" }}>+120 XP</span>
+              <span style={{ fontSize: "12px", fontWeight: 700, color: "#A855F7" }}>+{(() => { const s = dash?.streak ?? 0; const sc = (dash?.avg_quiz_score ?? 0) > 0; return [sc, (dash?.avg_quiz_score ?? 0) >= 70, s > 0].filter(Boolean).length * 40; })()} XP</span>
             </div>
           </div>
 
