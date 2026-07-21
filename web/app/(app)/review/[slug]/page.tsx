@@ -418,7 +418,11 @@ export default function ReviewSlugPage() {
                   if (filtered.length === 0) {
                     return (
                       <div style={{ padding: "48px 24px", textAlign: "center" }}>
-                        <span style={{ fontSize: "32px", display: "block", marginBottom: "12px" }}>📝</span>
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ display: "block", margin: "0 auto 12px" }}>
+                          <circle cx="24" cy="24" r="22" stroke="#A855F7" strokeWidth="1.5" fill="none" opacity="0.4" />
+                          <circle cx="24" cy="24" r="18" stroke="#A855F7" strokeWidth="1" fill="none" opacity="0.25" strokeDasharray="4 6" />
+                          <path d="M24 14v12M24 30v1" stroke="#A855F7" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+                        </svg>
                         <p style={{ fontSize: "14px", fontWeight: 500, color: "#FFF", margin: "0 0 4px" }}>
                           {!mistakes || mistakes.length === 0 ? "No mistakes yet!" : "No results for this filter"}
                         </p>
