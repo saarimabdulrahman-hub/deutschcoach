@@ -166,7 +166,13 @@ export default function SignupPage() {
     }
   }
 
-  if (isLoading) return null;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#09090F" }}>
+        <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "#A855F7" }} />
+      </div>
+    );
+  }
 
   return (
     <AuthLayout

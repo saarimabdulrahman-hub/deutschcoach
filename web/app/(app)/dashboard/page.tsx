@@ -249,16 +249,18 @@ export default function DashboardPage() {
           <div className="rounded-[20px] p-3.5 flex flex-col gap-2.5" style={reviewWrap}>
             <p className="text-[11px] font-semibold uppercase tracking-[.13em]" style={{ color: "var(--color-text-muted)" }}>Review & Practice</p>
             <div className="flex flex-col gap-2.5 flex-1">
-              <div className="rounded-[14px] p-3.5 flex items-center gap-3 flex-1" style={reviewItem}>
+              <button onClick={() => router.push("/review")} className="rounded-[14px] p-3.5 flex items-center gap-3 flex-1 text-left cursor-pointer hover:brightness-110 transition-all duration-200 w-full border-none"
+              style={{...reviewItem, background: "rgba(255,255,255,0.03)"}}>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:"rgba(245,158,11,.14)",color:"#F59E0B"}}>🃏</div>
                 <div className="flex-1"><p className="text-[15px] font-semibold" style={{color:"#fff"}}>Flashcards Complete</p><p className="text-xs mt-0.5" style={{color:"var(--color-text-muted)"}}>Nothing due — excellent work!</p></div>
                 <span className="text-lg" style={{color:"var(--color-text-muted)"}}>›</span>
-              </div>
-              <div className="rounded-[14px] p-3.5 flex items-center gap-3 flex-1" style={reviewItem}>
+              </button>
+              <button onClick={() => router.push("/curriculum")} className="rounded-[14px] p-3.5 flex items-center gap-3 flex-1 text-left cursor-pointer hover:brightness-110 transition-all duration-200 w-full border-none"
+              style={{...reviewItem, background: "rgba(255,255,255,0.03)"}}>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:"rgba(168,85,247,.14)",color:"#A855F7"}}>🎯</div>
                 <div className="flex-1"><p className="text-[15px] font-semibold" style={{color:"#fff"}}>Discover Your Level</p><p className="text-xs mt-0.5" style={{color:"var(--color-text-muted)"}}>Find out what you already know</p></div>
                 <span className="text-lg" style={{color:"var(--color-text-muted)"}}>›</span>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -282,14 +284,16 @@ export default function DashboardPage() {
           </div>
           <div className="rounded-[20px] p-3.5 flex flex-col gap-2.5" style={reviewWrap}>
             <p className="text-[11px] font-semibold uppercase tracking-[.13em]" style={{ color: "var(--color-text-muted)" }}>Review & Practice</p>
-            <div className="rounded-[14px] p-3.5 flex items-center gap-3" style={reviewItem}>
+            <button onClick={() => router.push("/review")} className="rounded-[14px] p-3.5 flex items-center gap-3 text-left cursor-pointer hover:brightness-110 transition-all duration-200 w-full border-none"
+              style={{...reviewItem, background: "rgba(255,255,255,0.03)"}}>
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:"rgba(245,158,11,.14)",color:"#F59E0B"}}>🃏</div>
               <div className="flex-1"><p className="text-[15px] font-semibold" style={{color:"#fff"}}>Flashcards Complete</p><p className="text-xs mt-0.5" style={{color:"var(--color-text-muted)"}}>Nothing due</p></div>
-            </div>
-            <div className="rounded-[14px] p-3.5 flex items-center gap-3" style={reviewItem}>
+            </button>
+            <button onClick={() => router.push("/curriculum")} className="rounded-[14px] p-3.5 flex items-center gap-3 text-left cursor-pointer hover:brightness-110 transition-all duration-200 w-full border-none"
+              style={{...reviewItem, background: "rgba(255,255,255,0.03)"}}>
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:"rgba(168,85,247,.14)",color:"#A855F7"}}>🎯</div>
               <div className="flex-1"><p className="text-[15px] font-semibold" style={{color:"#fff"}}>Discover Your Level</p><p className="text-xs mt-0.5" style={{color:"var(--color-text-muted)"}}>Find out what you know</p></div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
