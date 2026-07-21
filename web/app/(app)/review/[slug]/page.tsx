@@ -49,6 +49,14 @@ export default function ReviewSlugPage() {
     queryKey: ["srs-due"], queryFn: () => api.get("/srs/due"), staleTime: 30_000,
   });
 
+  const { data: bookmarks } = useQuery<{ id: number; german: string; english: string; notes: string | null; created_at: string; updated_at: string }[]>({
+    queryKey: ["bookmarks"], queryFn: () => api.get("/user/bookmarks"), staleTime: 30_000,
+  });
+
+  const { data: mistakes } = useQuery<{ vocab_id: number; german: string; english: string; miss_count: number; lapses: number; status: string }[]>({
+    queryKey: ["quiz-mistakes"], queryFn: () => api.get("/quiz/mistakes"), staleTime: 30_000,
+  });
+
   const streak = dash?.streak ?? 0;
   const total = stats ? stats.new + stats.learning + stats.reviewing + stats.mastered : 0;
   const retention = total > 0 ? Math.round((stats!.mastered / total) * 100) : 0;
@@ -321,7 +329,10 @@ export default function ReviewSlugPage() {
 
               {/* ── Mistake Table ── */}
               <div className="rounded-[20px] overflow-hidden" style={{ background: "#16162A", border: "1px solid rgba(255,255,255,.05)" }}>
-                {MISTAKE_TABLE.map((row, i) => (
+                {(mistakes?.length ? mistakes.map((m) => ({
+                  word: m.german, trans: m.english, wrong: "—", correct: m.german,
+                  time: `${m.miss_count} miss${m.miss_count !== 1 ? "es" : ""}`, priority: m.lapses > 2 ? "#EC4899" : m.lapses > 0 ? "#F59E0B" : "#22C55E",
+                })) : MISTAKE_TABLE).map((row, i) => (
                   <div key={i} className="flex items-center gap-4 px-5" style={{ height: "80px", borderTop: i > 0 ? "1px solid rgba(255,255,255,.04)" : "none" }}>
                     {/* Priority dot + Word */}
                     <div style={{ flex: 1.5, display: "flex", alignItems: "center", gap: "10px" }}>
@@ -616,7 +627,11 @@ export default function ReviewSlugPage() {
 
               {/* Bookmarked Items — horizontal scroll */}
               <div className="flex gap-4 overflow-x-auto pb-2 mb-5" style={{ scrollbarWidth: "thin" }}>
-                {BOOKMARK_ITEMS.map((item, i) => (
+                {(bookmarks?.length ? bookmarks.map((b) => ({
+                  type: "WORD" as const, color: "#7C5CFF", title: b.german, sub: b.english,
+                  content: { type: "notes" as const, text: b.notes || "No notes" },
+                  level: "—", time: new Date(b.updated_at).toLocaleDateString(),
+                })) : BOOKMARK_ITEMS).map((item, i) => (
                   <div key={i} className="flex-shrink-0 rounded-[18px] p-4 transition-all hover:-translate-y-1" style={{ width: "220px", background: "linear-gradient(180deg, #171A2A, #111322)", border: "1px solid rgba(255,255,255,.06)", boxShadow: "0 4px 20px rgba(0,0,0,.15)" }}>
                     {/* Header: Category + Bookmark */}
                     <div className="flex items-center justify-between mb-3">

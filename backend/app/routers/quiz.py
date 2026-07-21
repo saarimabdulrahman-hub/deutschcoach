@@ -296,3 +296,66 @@ def get_next_suggestion(
         "suggestion": "Start a new quiz on your weakest vocabulary",
         "reason": "No recent activity found. Taking a quiz helps identify areas to improve.",
     }
+
+
+@router.get("/mistakes")
+def get_mistakes(
+    limit: int = 20,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_auth),
+):
+    """Return vocabulary words the user has gotten wrong in quizzes,
+    ordered by total miss count across all quiz attempts.
+    """
+    from sqlalchemy import func as sqlfunc
+
+    # Collect all missed_vocab_ids from quiz results
+    results = (
+        db.query(QuizResult)
+        .filter(QuizResult.user_id == user.id, QuizResult.missed_vocab_ids.isnot(None))
+        .all()
+    )
+
+    # Count misses per vocab_id
+    miss_count: dict[int, int] = {}
+    for r in results:
+        if r.missed_vocab_ids:
+            for vid in r.missed_vocab_ids:
+                miss_count[vid] = miss_count.get(vid, 0) + 1
+
+    if not miss_count:
+        return []
+
+    # Look up vocab entries and SRS states
+    vocab_ids = list(miss_count.keys())
+    vocab_map = {
+        v.id: v
+        for v in db.query(VocabEntry).filter(VocabEntry.id.in_(vocab_ids)).all()
+    }
+
+    srs_states = {
+        s.vocab_entry_id: s
+        for s in db.query(SRSState).filter(
+            SRSState.user_id == user.id,
+            SRSState.vocab_entry_id.in_(vocab_ids),
+        ).all()
+    }
+
+    mistakes = []
+    for vid, count in sorted(miss_count.items(), key=lambda x: x[1], reverse=True):
+        v = vocab_map.get(vid)
+        if not v:
+            continue
+        srs = srs_states.get(vid)
+        mistakes.append({
+            "vocab_id": vid,
+            "german": v.german,
+            "english": v.english,
+            "miss_count": count,
+            "lapses": srs.lapses if srs else 0,
+            "status": srs.status.value if srs and hasattr(srs.status, "value") else str(srs.status) if srs else "new",
+        })
+        if len(mistakes) >= limit:
+            break
+
+    return mistakes
