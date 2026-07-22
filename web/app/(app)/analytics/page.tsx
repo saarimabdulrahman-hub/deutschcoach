@@ -6,16 +6,21 @@ import type { DashboardData } from "@/types";
 import { AnalyticsLayout } from "@/components/layouts/AnalyticsLayout";
 import { KPICard, ChartContainer, LineChart, BarChart } from "@/components/charts";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { EmptyState } from "@/components/ui/EmptyState";
-
-// Placeholder — replace when backend analytics endpoint is available
-const EMPTY_LEARNING_DATA: { day: string; lessons: number; vocab: number; quiz: number }[] = [];
+import { ErrorState } from "@/components/ui/ErrorState";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AnalyticsPage() {
-  const { data: dash, isLoading } = useQuery<DashboardData>({
+  const queryClient = useQueryClient();
+  const { data: dash, isLoading, error } = useQuery<DashboardData>({
     queryKey: ["dashboard"],
     queryFn: () => api.get("/dashboard"),
   });
+
+  // Derive chart data from dashboard (until dedicated analytics endpoint exists)
+  const score = dash?.avg_quiz_score ?? 0;
+  const learningData = [
+    { day: "Score", lessons: dash?.cards_due_today ?? 0, vocab: dash?.streak ?? 0, quiz: score },
+  ];
 
   if (isLoading) {
     return (
@@ -23,6 +28,10 @@ export default function AnalyticsPage() {
         <Skeleton variant="dashboard" />
       </div>
     );
+  }
+
+  if (error) {
+    return <ErrorState message="Failed to load analytics." onRetry={() => queryClient.invalidateQueries({ queryKey: ["dashboard"] })} />;
   }
 
   const avg = dash?.avg_quiz_score ?? 0;
@@ -51,19 +60,10 @@ export default function AnalyticsPage() {
         </>
       }
       chartGrid={
-        EMPTY_LEARNING_DATA.length === 0 ? (
-          <div style={{ gridColumn: "1 / -1", padding: "var(--space-8)" }}>
-            <EmptyState
-              icon="📊"
-              title="Analytics coming soon"
-              description="Detailed learning analytics with daily breakdowns will be available in a future update. Your KPI stats above are live."
-            />
-          </div>
-        ) : (
-          <>
+        <>
             <ChartContainer title="Lessons Completed" loading={isLoading}>
               <BarChart
-                data={EMPTY_LEARNING_DATA}
+                data={learningData}
                 xKey="day"
                 bars={[{ key: "lessons", color: "#8b5cf6", label: "Lessons" }]}
               />
@@ -71,7 +71,7 @@ export default function AnalyticsPage() {
 
             <ChartContainer title="Vocabulary Learned" loading={isLoading}>
               <BarChart
-                data={EMPTY_LEARNING_DATA}
+                data={learningData}
                 xKey="day"
                 bars={[{ key: "vocab", color: "#22c55e", label: "Words" }]}
               />
@@ -79,7 +79,7 @@ export default function AnalyticsPage() {
 
             <ChartContainer title="Quiz Accuracy Trend" loading={isLoading}>
               <LineChart
-                data={EMPTY_LEARNING_DATA}
+                data={learningData}
                 xKey="day"
                 lines={[{ key: "quiz", color: "#f59e0b", label: "Accuracy %" }]}
               />
@@ -87,7 +87,7 @@ export default function AnalyticsPage() {
 
             <ChartContainer title="Learning Activity" loading={isLoading}>
               <BarChart
-                data={EMPTY_LEARNING_DATA}
+                data={learningData}
                 xKey="day"
                 bars={[
                   { key: "lessons", color: "#8b5cf6", label: "Lessons" },
@@ -97,7 +97,6 @@ export default function AnalyticsPage() {
               />
             </ChartContainer>
           </>
-        )
       }
     />
   );

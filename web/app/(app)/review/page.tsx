@@ -7,7 +7,7 @@ import { ReviewSidebar } from "@/components/review/ReviewSidebar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 import type { DashboardData } from "@/types";
-import { REVIEW_CATEGORIES, KEEP_PRACTICING_ITEMS } from "@/lib/mockData/review";
+import { REVIEW_CATEGORIES, KEEP_PRACTICING_ITEMS } from "@/lib/reviewConfig";
 
 interface SRSStatsData {
   new: number; learning: number; reviewing: number; mastered: number;
@@ -184,15 +184,16 @@ export default function ReviewPage() {
                           }}>
                           <div style={{ marginBottom: "10px", fontSize: "28px" }}>{cat.icon}</div>
                           <p className="text-xs font-medium m-0" style={{ color: "#FFF" }}>{cat.label}</p>
-                          {cat.count !== null && (
+                          {cat.dashed ? (
+                            <p className="text-[11px] mt-1 m-0" style={{ color: "rgba(255,255,255,.2)" }}>Create deck</p>
+                          ) : (
                             <p className="text-[11px] mt-1 m-0" style={{ color: "#A8A4BC" }}>
                               {cat.label === "Vocabulary" ? `${stats?.reviewing ?? "—"} cards due` :
                                cat.label === "Grammar" ? `${stats?.learning ?? "—"} cards due` :
                                cat.label === "Phrases" ? `${stats?.new ?? "—"} cards due` :
-                               `${cat.count} cards due`}
+                               "— cards due"}
                             </p>
                           )}
-                          {cat.dashed && <p className="text-[11px] mt-1 m-0" style={{ color: "rgba(255,255,255,.2)" }}>Create deck</p>}
                         </button>
                       ))}
                     </div>
@@ -201,8 +202,9 @@ export default function ReviewPage() {
                   {/* Bottom Row: Weak Words + Recent Activity */}
                   <div className="flex gap-5">
                     {/* Weak Words */}
-                    <div className="p-5" style={{ flex: "0.5 1 0%", borderRadius: "18px", background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
+                    <div className="p-5 flex flex-col" style={{ flex: "0.5 1 0%", borderRadius: "18px", background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
                       <p className="text-[11px] font-medium uppercase tracking-[1px] mb-3" style={{ color: "#FFF" }}>Weak Words</p>
+                      <div className="flex-1">
                       {dash?.weakest_words?.length ? (
                         <div className="space-y-0">
                           {dash.weakest_words.slice(0, 3).map((w, i) => {
@@ -224,16 +226,17 @@ export default function ReviewPage() {
                       ) : (
                         <p className="text-xs py-6 text-center" style={{ color: "rgba(255,255,255,.3)" }}>No weak words</p>
                       )}
-                      <button onClick={() => router.push("/review/weak-words")} className="w-full py-2.5 rounded-xl text-xs font-medium border-none cursor-pointer mt-3"
+                      </div>
+                      <button onClick={() => router.push("/review/weak-words")} className="w-full py-2.5 rounded-xl text-xs font-medium border-none cursor-pointer mt-auto"
                         style={{ background: "rgba(168,85,247,.15)", color: "#A855F7" }}>
                         Review Weak Words
                       </button>
                     </div>
 
                     {/* Recent Activity — roadmap-style timeline */}
-                    <div className="p-5" style={{ flex: "0.5 1 0%", borderRadius: "18px", background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
+                    <div className="p-5 flex flex-col" style={{ flex: "0.5 1 0%", borderRadius: "18px", background: "#141629", border: "1px solid rgba(255,255,255,.05)" }}>
                       <p className="text-[11px] font-medium uppercase tracking-[1px] mb-4" style={{ color: "#FFF" }}>Recent Activity</p>
-                      <div className="relative mb-4">
+                      <div className="relative mb-4 flex-1">
                         {/* Continuous vertical line */}
                         <div className="absolute left-[9px] top-0 bottom-0 w-[2px] rounded-full"
                           style={{ background: "linear-gradient(180deg, rgba(168,85,247,.3) 0%, rgba(168,85,247,.05) 100%)" }} />
@@ -265,8 +268,11 @@ export default function ReviewPage() {
                           </div>
                           );
                         })}
+                        {(!dash?.recent_activity || dash.recent_activity.length === 0) && (
+                          <p className="text-xs py-6 text-center" style={{ color: "rgba(255,255,255,.3)" }}>No recent activity</p>
+                        )}
                       </div>
-                      <button onClick={() => router.push("/review/mistakes")} className="w-full py-2.5 rounded-xl text-xs font-medium border-none cursor-pointer"
+                      <button onClick={() => router.push("/review/mistakes")} className="w-full py-2.5 rounded-xl text-xs font-medium border-none cursor-pointer mt-auto"
                         style={{ background: "rgba(168,85,247,.15)", color: "#A855F7" }}>
                         View History
                       </button>

@@ -61,7 +61,7 @@ export function ForgotPasswordForm({ onSent }: ForgotPasswordFormProps) {
           name="email"
           variant="email"
           label="Email address"
-          placeholder="you@example.com"
+          placeholder="name@email.com"
           value={email}
           onChange={(e: any) => setEmail(e.target.value)}
           required

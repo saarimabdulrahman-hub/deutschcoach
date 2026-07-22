@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { useToast } from "@/components/ui/Toast";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme, THEME_LIST } from "@/contexts/ThemeContext";
@@ -33,6 +34,8 @@ export default function SettingsPage() {
   const { user, isLoading, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const router = useRouter();
+  const { addToast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [active, setActive] = useState<Section>("profile");
 
   const { data: dash } = useQuery<DashboardData>({
@@ -171,7 +174,20 @@ export default function SettingsPage() {
                       <span style={{ fontSize: "24px", fontWeight: 700, color: "#FFF" }}>{(user?.name || "U").charAt(0).toUpperCase()}</span>
                     </div>
                   </div>
-                  <button type="button" className="px-3 py-1.5 rounded-lg text-xs font-medium border-none cursor-pointer" style={{ border: "1px solid rgba(255,255,255,.08)", color: "rgba(255,255,255,.5)", background: "transparent" }}>Upload</button>
+                  <input type="file" ref={fileInputRef} accept="image/*" style={{ display: "none" }}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      try {
+                        const formData = new FormData();
+                        formData.append("file", file);
+                        await api.post("/user/avatar", formData);
+                        addToast({ title: "Avatar updated", message: "Your profile picture has been updated.", variant: "success" });
+                      } catch {
+                        addToast({ title: "Upload failed", message: "Could not upload avatar. Please try again.", variant: "error" });
+                      }
+                    }} />
+                  <button type="button" onClick={() => fileInputRef.current?.click()} className="px-3 py-1.5 rounded-lg text-xs font-medium border-none cursor-pointer" style={{ border: "1px solid rgba(255,255,255,.08)", color: "rgba(255,255,255,.5)", background: "transparent" }}>Upload</button>
                 </div>
                 <InputField label="Full Name" value={name} onChange={setName} />
                 <InputField label="Email" value={email} onChange={setEmail} type="email" />
@@ -202,20 +218,12 @@ export default function SettingsPage() {
                   </div>
                   <button className="px-3 py-1.5 rounded-lg text-xs font-medium border-none cursor-pointer" style={{ border: "1px solid rgba(168,85,247,.2)", color: "#A855F7", background: "transparent" }}>Enable</button>
                 </div>
-                {/* Recent Devices */}
+                {/* Session Management */}
                 <div style={{ borderTop: "1px solid rgba(255,255,255,.04)" }}>
-                  <p style={{ fontSize: "13px", fontWeight: 500, color: "#FFF", margin: "12px 0 8px" }}>Recent Devices</p>
-                  {[
-                    { device: "Windows PC · Chrome", icon: "🖥" },
-                    { device: "Samsung S24 · Mobile", icon: "📱" },
-                    { device: "iPad · Safari", icon: "📱" },
-                  ].map((d) => (
-                    <div key={d.device} className="flex items-center gap-3 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,.04)" }}>
-                      <span>{d.icon}</span>
-                      <span style={{ fontSize: "12px", color: "rgba(255,255,255,.5)" }}>{d.device}</span>
-                      <span style={{ fontSize: "10px", marginLeft: "auto", color: "#22C55E" }}>Active</span>
-                    </div>
-                  ))}
+                  <p style={{ fontSize: "13px", fontWeight: 500, color: "#FFF", margin: "12px 0 8px" }}>Active Sessions</p>
+                  <p style={{ fontSize: "11px", color: "rgba(255,255,255,.3)", margin: 0, paddingBottom: 8 }}>
+                    Session management coming soon.
+                  </p>
                 </div>
               </div>
             </div>
@@ -339,7 +347,7 @@ export default function SettingsPage() {
                 </div>
                 {/* Heading */}
                 <h2 style={{ fontSize: "28px", fontWeight: 700, color: "#FFF", margin: 0, lineHeight: 1.1 }}>
-                  Deutsch<span style={{ background: "linear-gradient(90deg, #C96CFF, #8E4DFF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Flow</span>
+                  Deutsch<span style={{ background: "linear-gradient(90deg, #C96CFF, #8E4DFF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Coach</span>
                 </h2>
                 <p style={{ fontSize: "22px", fontWeight: 600, margin: "4px 0 20px", background: "linear-gradient(90deg, #C96CFF, #8E4DFF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pro</p>
 

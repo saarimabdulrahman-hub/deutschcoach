@@ -11,8 +11,10 @@ import { AchievementList } from "@/components/profile/AchievementList";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useToast } from "@/components/ui/Toast";
 
 export default function ProfilePage() {
+  const { addToast } = useToast();
   const { user } = useAuth();
   const { data: dash } = useQuery<DashboardData>({
     queryKey: ["dashboard"],
@@ -37,7 +39,7 @@ export default function ProfilePage() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
-      // silently fail — validation errors handled by input states
+      addToast({ title: "Save failed", message: "Could not update profile. Please try again.", variant: "error" });
     } finally {
       setSaving(false);
     }

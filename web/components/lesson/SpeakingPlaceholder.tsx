@@ -19,9 +19,13 @@ export function SpeakingPlaceholder({ vocabulary }: Props) {
           Emma: <span style={{ fontWeight: 400, color: "var(--color-text-secondary)" }}>Hallo! Wie heißt du?</span>
         </p>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>Type or speak:</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider flex-shrink-0" style={{ color: "var(--color-text-muted)" }}>Type or speak:</span>
           <input placeholder="Ich heiße …"
             className="flex-1 rounded-lg px-3 py-2.5 text-sm" style={{ background: "var(--color-page-bg)", color: "var(--color-text)", border: "1px solid var(--color-border)" }} />
+          <button className="flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-semibold border-none cursor-pointer"
+            style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
+            Send
+          </button>
         </div>
         {suggestion && <p className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>{suggestion}</p>}
         <button className="w-full py-2.5 rounded-xl text-sm font-semibold" style={{ background: "var(--color-hover-bg)", color: "var(--color-text-muted)" }}>

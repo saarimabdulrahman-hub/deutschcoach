@@ -206,7 +206,7 @@ export default function LoginPage() {
                           <path d="M2 5L9 10L16 5" stroke="#8E889E" strokeWidth="1.5" strokeLinejoin="round" fill="none"/>
                         </svg>
                       </span>
-                      <input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" type="email"
+                      <input value={email} onChange={e => setEmail(e.target.value)} placeholder="name@email.com" type="email"
                         className="flex-1 bg-transparent text-white text-sm outline-none h-full border-none"
                         style={{ color: "#FFF" }}
                         onFocus={(e) => { const p = e.currentTarget.parentElement; if (p) { p.style.borderColor = "#A855F7"; p.style.boxShadow = "0 0 0 3px rgba(168,85,247,0.15)"; }}}
@@ -276,17 +276,17 @@ export default function LoginPage() {
                   <span style={{ fontSize: "12px", color: "#6B7280" }}>or</span>
                   <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,.06)" }} />
                 </div>
-                <button type="button" onClick={() => alert("Google sign-in coming soon!")} className="w-full flex items-center justify-center gap-3 cursor-pointer font-medium"
+                <button type="button" disabled title="Google sign-in coming soon" className="w-full flex items-center justify-center gap-3 font-medium"
                   style={{
                     height: "48px",
                     borderRadius: "12px",
-                    border: "1px solid rgba(255,255,255,.08)",
-                    color: "#FFF",
+                    border: "1px solid rgba(255,255,255,.06)",
+                    color: "rgba(255,255,255,0.35)",
                     fontSize: "16px",
                     background: "transparent",
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,.03)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                    cursor: "not-allowed",
+                    opacity: 0.5,
+                  }}>
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path d="M18.5 10.2C18.5 9.5 18.4 8.8 18.3 8.1H10V12H14.8C14.6 13 14 13.8 13.2 14.3V16H16C17.5 14.6 18.5 12.6 18.5 10.2Z" fill="#4285F4"/>
                     <path d="M10 19C12.2 19 14 18.2 15.4 16.9L12.6 14.8C11.8 15.3 10.9 15.6 10 15.6C7.8 15.6 6 14.1 5.4 12.1H2.3V16.3C3.7 18.8 6.6 19 10 19Z" fill="#34A853"/>

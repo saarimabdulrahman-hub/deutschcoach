@@ -64,7 +64,7 @@ export function DashboardHero() {
             className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] mb-2"
             style={{ color: "rgba(226,232,240,0.82)", textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}
           >
-            Welcome to DeutschFlow
+            Welcome to DeutschCoach
           </p>
           <h2
             className="text-[1.5rem] sm:text-[1.9rem] lg:text-[2.35rem] font-extrabold leading-[1.03] tracking-[-0.02em] mb-2.5"

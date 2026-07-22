@@ -10,7 +10,7 @@ import {
   HOW_IT_WORKS_STEPS,
   FLASHCARD_QUICK_START,
   WEAK_WORD_STATS,
-} from "@/lib/mockData/review";
+} from "@/lib/reviewConfig";
 
 function easeLabel(ef: number): { label: string; color: string } {
   if (ef >= 2.5) return { label: "Easy", color: "#22C55E" };

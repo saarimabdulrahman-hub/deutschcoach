@@ -52,7 +52,7 @@ export default function LoginForm() {
         <Input
           variant="email"
           label="Email address"
-          placeholder="you@example.com"
+          placeholder="name@email.com"
           error={errors.email?.message}
           {...register("email")}
           autoComplete="email"

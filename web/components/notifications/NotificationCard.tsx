@@ -6,7 +6,7 @@
 
 interface Notification {
   id: string;
-  type: "lesson" | "quiz" | "review" | "streak" | "system";
+  type: string;
   title: string;
   message: string;
   read: boolean;

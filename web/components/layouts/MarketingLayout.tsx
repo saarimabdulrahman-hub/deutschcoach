@@ -26,7 +26,7 @@ export function MarketingLayout({ children }: MarketingLayoutProps) {
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
             <span style={{ fontSize: "20px" }}>🇩🇪</span>
             <span style={{ fontSize: "var(--type-heading-sm)", fontWeight: 700, color: "var(--color-text-primary)" }}>
-              Deutsch<span style={{ background: "var(--color-accent-gradient)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Flow</span>
+              Deutsch<span style={{ background: "var(--color-accent-gradient)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Coach</span>
             </span>
           </Link>
           <nav style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
@@ -51,7 +51,7 @@ export function MarketingLayout({ children }: MarketingLayoutProps) {
       }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "24px" }}>
           <div>
-            <p style={{ fontWeight: 600, color: "var(--color-text-primary)", margin: "0 0 8px" }}>DeutschFlow</p>
+            <p style={{ fontWeight: 600, color: "var(--color-text-primary)", margin: "0 0 8px" }}>DeutschCoach</p>
             <p style={{ margin: 0 }}>Master German with confidence.</p>
           </div>
           <div style={{ display: "flex", gap: "32px" }}>

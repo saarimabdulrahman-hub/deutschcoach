@@ -8,6 +8,7 @@ import { QuestionCard } from "@/components/quiz/QuestionCard";
 import { QuizResults } from "@/components/quiz/QuizResults";
 import { EmmaAIPanel } from "@/components/quiz/EmmaAIPanel";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useToast } from "@/components/ui/Toast";
 import { useRecovery } from "@/hooks/useRecovery";
 
 type QuizState = "setup" | "active" | "results";
@@ -57,6 +58,7 @@ export default function QuizPage() {
   });
 
   useAutosave("quiz-answers", { sessionId, currentIndex, answers, state });
+  const { addToast } = useToast();
 
   const { hasDraft, restore, dismiss } = useRecovery<{
     sessionId: string; currentIndex: number; answers: StoredAnswer[]; questions: QuizQuestion[];
@@ -91,6 +93,7 @@ export default function QuizPage() {
       setResults(result); setState("results");
       dismiss();
     } catch {
+      addToast({ title: "Submission failed", message: "Could not submit quiz answers. Please try again.", variant: "error" });
       setResults({ score_pct: 0, questions_total: questions.length, questions_correct: 0,
         results: finalAnswers.map((a) => ({ question_id: a.question_id, correct: false, your_answer: a.answer, correct_answer: "Unknown", feedback: "Submission error. Please try again." })) });
       setState("results");
@@ -113,7 +116,7 @@ export default function QuizPage() {
       const session = await api.post<QuizSession>("/quiz/generate", body);
       handleStart(session);
     } catch {
-      // silently fail — error state handled by parent boundary
+      addToast({ title: "Quiz generation failed", message: "Could not create quiz. Please try again.", variant: "error" });
     } finally { setGenerating(false); }
   }
 
@@ -364,7 +367,7 @@ export default function QuizPage() {
             },
             {
               icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><defs><linearGradient id="starG2" x1="4" y1="4" x2="60" y2="60"><stop offset="0%" stopColor="#D8B4FE"/><stop offset="30%" stopColor="#A855F7"/><stop offset="100%" stopColor="#6B21A8"/></linearGradient></defs><path d="M32 6L37 20L52 20L40 28L44 42L32 34L20 42L24 28L12 20H27Z" fill="url(#starG2)"/><path d="M32 12L35 22L46 22L38 28L40 38L32 32L24 38L26 28L18 22H29Z" fill="rgba(255,255,255,.15)"/></svg>,
-              label: "XP Earned", value: "4,820", sub: "Total XP", subColor: "#FFF",
+              label: "Day Streak", value: String(dash?.streak ?? 0), sub: "Keep it going!", subColor: "#FFF",
             },
             {
               icon: <span style={{ fontSize: "48px", filter: "drop-shadow(0 0 12px rgba(249,115,22,.5))" }}>🔥</span>,
@@ -372,11 +375,11 @@ export default function QuizPage() {
             },
             {
               icon: <svg width="56" height="64" viewBox="0 0 56 64"><defs><linearGradient id="sh" x1="0" y1="0" x2="56" y2="64"><stop offset="0" stopColor="#FCD34D"/><stop offset="1" stopColor="#B45309"/></linearGradient></defs><path d="M28 4L52 20L44 38L50 60L28 50L6 60L12 38L4 20Z" fill="url(#sh)"/><path d="M28 12L44 24L38 36L42 52L28 44L14 52L18 36L12 24Z" fill="rgba(255,255,255,.15)"/></svg>,
-              label: "Rank", value: "Silver II", sub: "Top 28%", subColor: "#FFF",
+              label: "Cards Due", value: String(dash?.cards_due_today ?? 0), sub: "Review today", subColor: "#FFF",
             },
             {
               icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><defs><linearGradient id="chG3" x1="4" y1="4" x2="60" y2="60"><stop offset="0%" stopColor="#C084FC"/><stop offset="100%" stopColor="#6B21A8"/></linearGradient></defs><rect x="10" y="42" width="8" height="14" rx="2" fill="url(#chG3)" opacity="0.3"/><rect x="21" y="32" width="8" height="24" rx="2" fill="url(#chG3)" opacity="0.5"/><rect x="32" y="16" width="8" height="40" rx="2" fill="url(#chG3)"/><rect x="43" y="34" width="8" height="22" rx="2" fill="url(#chG3)" opacity="0.45"/><circle cx="36" cy="16" r="4" fill="#C084FC"/></svg>,
-              label: "Quizzes Completed", value: "128", sub: "This month", subColor: "#FFF",
+              label: "Avg Quiz Score", value: `${dash?.avg_quiz_score ?? 0}%`, sub: "Overall average", subColor: "#FFF",
             },
           ].map((stat) => (
             <div key={stat.label} className="px-3 py-3 text-center" style={{ borderRadius: "14px", background: "radial-gradient(ellipse at 50% 0%, rgba(168,85,247,.04), #0F1420 80%)", border: "1px solid rgba(160,140,200,.07)", boxShadow: "0 2px 12px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.02)" }}>
@@ -411,8 +414,8 @@ export default function QuizPage() {
                   { task: "Score 70% or higher", done: (dash?.avg_quiz_score ?? 0) >= 70 },
                   { task: s > 0 ? `Extend your ${s}-day streak` : "Start your first streak", done: s > 0 },
                 ];
-                return challenges.map((c, i) => (
-                <div key={i} className="flex items-center justify-between">
+                return challenges.map((c) => (
+                <div key={c.task} className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <span style={{ fontSize: "12px", filter: "drop-shadow(0 0 4px rgba(251,191,36,.3))", opacity: c.done ? 0.5 : 1 }}>{c.done ? "✅" : "⭐"}</span>
                     <span style={{ fontSize: "12px", color: c.done ? "rgba(255,255,255,.3)" : "#A8A4BC", textDecoration: c.done ? "line-through" : "none" }}>{c.task}</span>
@@ -468,7 +471,7 @@ export default function QuizPage() {
             {/* Performance Chart */}
             <div className="px-5 flex-1 flex flex-col justify-center">
               <div className="flex items-end gap-1.5 h-20 mb-1">
-                {[40, 65, 45, 85, 70, 92, 80].map((h, i) => (
+                {(dash?.avg_quiz_score ? [dash.avg_quiz_score, dash.avg_quiz_score * 0.9, dash.avg_quiz_score * 0.85, dash.avg_quiz_score * 0.95, dash.avg_quiz_score] : [0, 0, 0, 0, 0]).map((h, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
                     <div className="w-full rounded-t-sm transition-all" style={{
                       height: `${h}%`,

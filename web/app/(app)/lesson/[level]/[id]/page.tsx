@@ -139,7 +139,13 @@ export default function LessonPage() {
         />;
 
       default:
-        return <p className="text-sm py-8 text-center" style={{ color: "var(--color-text-muted)" }}>Coming soon</p>;
+        return (
+          <div style={{ textAlign: "center", padding: "48px 24px" }}>
+            <span style={{ fontSize: "32px", display: "block", marginBottom: 12 }}>🚧</span>
+            <p style={{ fontSize: "15px", fontWeight: 600, color: "var(--color-text-primary)", margin: "0 0 4px" }}>Coming soon</p>
+            <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: 0 }}>This lesson stage is being built. Check back soon!</p>
+          </div>
+        );
     }
   }, [data, isLoading, dialogueLines, vocabWords, nextLesson, level, router]);
 

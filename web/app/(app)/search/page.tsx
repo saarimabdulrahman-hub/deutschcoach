@@ -1,33 +1,35 @@
 "use client";
 
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { SearchResults } from "@/components/search/SearchResults";
 import { useSearch } from "@/hooks/useSearch";
 
-// Mock data — replace with API search endpoint
-const MOCK_ALL_RESULTS = [
-  { id: "l1", title: "A1: Greetings & Introductions", description: "Learn how to say hello, introduce yourself, and say goodbye.", category: "lesson" as const, href: "/curriculum/a1/1", relevance: 95 },
-  { id: "l2", title: "A1: Numbers & Counting", description: "Count from 1 to 100 and use numbers in everyday situations.", category: "lesson" as const, href: "/curriculum/a1/2", relevance: 88 },
-  { id: "l3", title: "A2: Ordering at a Restaurant", description: "Practice ordering food and drinks in German.", category: "lesson" as const, href: "/curriculum/a2/3", relevance: 82 },
-  { id: "g1", title: "Der, Die, Das — German Articles", description: "Understanding grammatical gender in German nouns.", category: "grammar" as const, href: "/grammar/articles", relevance: 90 },
-  { id: "g2", title: "Verb Conjugation: Present Tense", description: "How to conjugate regular and irregular verbs.", category: "grammar" as const, href: "/grammar/verb-conjugation", relevance: 85 },
-  { id: "v1", title: "Common Greetings", description: "Hallo, Guten Morgen, Tschüss, Auf Wiedersehen", category: "vocabulary" as const, href: "/curriculum/a1/1", relevance: 92 },
-  { id: "v2", title: "Food & Drink Vocabulary", description: "der Kaffee, das Wasser, das Brot, der Apfel", category: "vocabulary" as const, href: "/curriculum/a2/3", relevance: 78 },
-  { id: "c1", title: "Chat with Emma", description: "Practice a real conversation about ordering at a café.", category: "chat" as const, href: "/chat", relevance: 80 },
-];
+interface SearchResult {
+  id: string;
+  title: string;
+  description: string;
+  category: "lesson" | "grammar" | "vocabulary" | "chat";
+  href: string;
+  relevance: number;
+}
 
 export default function SearchPage() {
-  const { query, setQuery, debouncedQuery, loading, recentSearches, saveRecent } = useSearch();
+  const { query, setQuery, debouncedQuery, recentSearches, saveRecent } = useSearch();
+
+  const { data: apiResults, isLoading } = useQuery<SearchResult[]>({
+    queryKey: ["search", debouncedQuery],
+    queryFn: () => api.get(`/search?q=${encodeURIComponent(debouncedQuery!)}`),
+    enabled: !!debouncedQuery && debouncedQuery.length > 0,
+    staleTime: 30_000,
+  });
 
   const results = useMemo(() => {
-    if (!debouncedQuery) return [];
-    const q = debouncedQuery.toLowerCase();
-    return MOCK_ALL_RESULTS
-      .filter((r) => r.title.toLowerCase().includes(q) || r.description.toLowerCase().includes(q))
-      .sort((a, b) => b.relevance - a.relevance)
-      .slice(0, 10);
-  }, [debouncedQuery]);
+    if (!apiResults) return [];
+    return [...apiResults].sort((a, b) => b.relevance - a.relevance).slice(0, 10);
+  }, [apiResults]);
 
   const handleSearch = (q: string) => {
     saveRecent(q);
@@ -43,7 +45,7 @@ export default function SearchPage() {
           onSearch={handleSearch}
           placeholder="Search lessons, grammar, vocabulary..."
           variant="global"
-          loading={loading}
+          loading={isLoading}
         />
       </div>
 
@@ -69,7 +71,7 @@ export default function SearchPage() {
           </p>
         </div>
       ) : (
-        <SearchResults results={results} query={debouncedQuery} loading={loading} />
+        <SearchResults results={results} query={debouncedQuery} loading={isLoading} />
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { GrammarTopicCard } from "@/components/grammar/GrammarTopicCard";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -41,12 +42,10 @@ function SkeletonGrid() {
 }
 
 export default function GrammarPage() {
+  const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [level, setLevel] = useState<string>("All");
-  const [topics, setTopics] = useState<GrammarTopic[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
   // Selected lesson for right panel
   const [selectedLesson, setSelectedLesson] = useState<GrammarTopic | null>(null);
 
@@ -55,21 +54,14 @@ export default function GrammarPage() {
     return () => clearTimeout(timer);
   }, [query]);
 
-  const fetchTopics = useCallback(async () => {
-    setLoading(true); setFetchError(null);
-    try {
-      const params = new URLSearchParams();
-      if (debouncedQuery) params.set("q", debouncedQuery);
-      if (level !== "All") params.set("level", level);
-      const data = await api.get<GrammarTopic[]>(`/grammar?${params.toString()}`);
-      setTopics(data);
-    } catch (err) {
-      setFetchError(err instanceof Error ? err.message : "Failed to load grammar topics.");
-      setTopics([]);
-    } finally { setLoading(false); }
-  }, [debouncedQuery, level]);
+  const params = new URLSearchParams();
+  if (debouncedQuery) params.set("q", debouncedQuery);
+  if (level !== "All") params.set("level", level);
 
-  useEffect(() => { fetchTopics(); }, [fetchTopics]);
+  const { data: topics = [], isLoading: loading, error: fetchError } = useQuery<GrammarTopic[]>({
+    queryKey: ["grammar", debouncedQuery, level],
+    queryFn: () => api.get(`/grammar?${params.toString()}`),
+  });
 
   const grouped = useMemo(() => {
     if (level !== "All" || debouncedQuery) return null;
@@ -127,7 +119,7 @@ export default function GrammarPage() {
 
       {/* ── MAIN CONTENT: TWO-COLUMN LAYOUT ── */}
       {loading ? <SkeletonGrid /> : fetchError ? (
-        <ErrorState message={fetchError} onRetry={fetchTopics} />
+        <ErrorState message={fetchError instanceof Error ? fetchError.message : "Failed to load grammar topics."} onRetry={() => queryClient.invalidateQueries({ queryKey: ["grammar"] })} />
       ) : topics.length === 0 ? (
         <div className="rounded-2xl p-8 text-center" style={{ background: "#101627", border: "1px solid rgba(255,255,255,.08)" }}>
           <p className="text-3xl mb-3">📖</p>
@@ -216,12 +208,12 @@ export default function GrammarPage() {
                     <div className="flex-1 flex items-start gap-2 relative" style={{ paddingTop: "8px", minHeight: "90px" }}>
                       {/* Connection line */}
                       <div style={{ position: "absolute", left: "0", right: "0", top: "32px", height: "1px", borderTop: `1.5px dashed ${color}25`, pointerEvents: "none" }} />
-                      {topics.map((topic, i) => {
+                      {topics.map((topic) => {
                         const isCompleted = topic.status === "completed";
                         const isCurrent = topic.status === "current";
                         const isLocked = topic.status === "locked";
                         return (
-                          <div key={i} className="flex-1 flex flex-col items-center gap-1.5" style={{ position: "relative", zIndex: 1 }}>
+                          <div key={topic.label} className="flex-1 flex flex-col items-center gap-1.5" style={{ position: "relative", zIndex: 1 }}>
                             <button
                               onClick={() => setSelectedLesson({ id: 0, slug: lvl.toLowerCase(), title: topic.label, level: lvl, content: `Study the ${topic.label.toLowerCase()} for ${lvl} level.` })}
                               className="rounded-full flex items-center justify-center transition-all border-none cursor-pointer"
@@ -326,30 +318,22 @@ export default function GrammarPage() {
                   </Link>
                 </div>
 
-                {/* Lesson List */}
+                {/* Related Topics — from API */}
                 <div className="space-y-2 mb-6">
-                  {[
-                    { title: "Regular Verb Conjugation", time: "3 min read", status: "completed" },
-                    { title: "Irregular Verb Conjugation", time: "4 min read", status: "current" },
-                    { title: "Common Verb Patterns", time: "3 min read", status: "locked" },
-                    { title: "Using Present Tense", time: "5 min read", status: "locked" },
-                    { title: "Practice Exercise", time: "2 min read", status: "locked" },
-                  ].map((lesson) => (
-                    <div key={lesson.title} className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: "#101627", border: "1px solid rgba(255,255,255,.06)" }}>
+                  {topics.slice(0, 5).length > 0 ? topics.slice(0, 5).map((topic) => (
+                    <div key={topic.slug || topic.id} className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: "#101627", border: "1px solid rgba(255,255,255,.06)" }}>
                       <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{
-                        background: lesson.status === "completed" ? "rgba(51,230,118,.15)" : lesson.status === "current" ? "rgba(44,141,255,.12)" : "rgba(255,255,255,.04)",
+                        background: "rgba(44,141,255,.12)",
                       }}>
-                        {lesson.status === "completed" ? <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#33E676" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        : lesson.status === "current" ? <div className="w-3 h-3 rounded-full" style={{ background: "#2C8DFF", boxShadow: "0 0 6px rgba(44,141,255,.4)" }} />
-                        : <span style={{ fontSize: "10px", color: "rgba(255,255,255,.15)" }}>🔒</span>}
+                        <div className="w-3 h-3 rounded-full" style={{ background: "#2C8DFF", boxShadow: "0 0 6px rgba(44,141,255,.4)" }} />
                       </div>
-                      <span className="flex-1 text-sm" style={{ color: lesson.status === "locked" ? "rgba(255,255,255,.2)" : "#FFF" }}>{lesson.title}</span>
-                      <span style={{ fontSize: "11px", color: "rgba(255,255,255,.2)" }}>{lesson.time}</span>
-                      {lesson.status === "current" && (
-                        <button className="px-3 py-1 rounded-lg text-[10px] font-medium border-none cursor-pointer" style={{ background: "linear-gradient(135deg, #F44BCF, #8A4DFF)", color: "#FFF" }}>Continue</button>
-                      )}
+                      <span className="flex-1 text-sm" style={{ color: "#FFF" }}>{topic.title}</span>
+                      <span style={{ fontSize: "11px", color: "rgba(255,255,255,.2)" }}>{topic.level}</span>
+                      <Link href={`/grammar/${topic.slug}`} className="px-3 py-1 rounded-lg text-[10px] font-medium border-none cursor-pointer" style={{ background: "linear-gradient(135deg, #F44BCF, #8A4DFF)", color: "#FFF", textDecoration: "none" }}>View</Link>
                     </div>
-                  ))}
+                  )) : (
+                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,.2)", padding: "12px 0", textAlign: "center" }}>No topics loaded</p>
+                  )}
                 </div>
 
                 {/* Bottom Info Cards */}
@@ -358,22 +342,23 @@ export default function GrammarPage() {
                   <div className="p-4 rounded-xl" style={{ background: "#101627", border: "1px solid rgba(255,255,255,.06)" }}>
                     <p className="text-xs font-semibold mb-3" style={{ color: "#FFF" }}>Key Grammar Points</p>
                     <div className="space-y-2">
-                      {["Subject pronouns", "Verb endings", "Irregular forms", "Sentence structure"].map((point) => (
-                        <div key={point} className="flex items-center gap-2">
-                          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#33E676" strokeWidth="1" fill="none"/><path d="M3 5l1.5 1.5 2.5-3" stroke="#33E676" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                          <span style={{ fontSize: "10px", color: "#A8A4BC" }}>{point}</span>
+                      {topics.slice(0, 4).map((topic) => (
+                        <div key={topic.slug || topic.id} className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#8A4DFF" }} />
+                          <span className="text-xs" style={{ color: "rgba(255,255,255,.5)" }}>{topic.title}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Examples */}
+                  {/* Examples — from selected topic */}
                   <div className="p-4 rounded-xl" style={{ background: "#101627", border: "1px solid rgba(255,255,255,.06)" }}>
                     <p className="text-xs font-semibold mb-3" style={{ color: "#FFF" }}>Examples</p>
-                    <p className="text-xs m-0" style={{ color: "#A8A4BC" }}>Ich <span style={{ color: "#33E676" }}>lern</span>e Deutsch.</p>
-                    <p className="text-xs mt-1 m-0" style={{ color: "rgba(255,255,255,.3)" }}>I learn German.</p>
-                    <p className="text-xs mt-2 m-0" style={{ color: "#A8A4BC" }}>Du <span style={{ color: "#33E676" }}>lern</span>st Deutsch.</p>
-                    <p className="text-xs mt-1 m-0" style={{ color: "rgba(255,255,255,.3)" }}>You learn German.</p>
+                    {selectedLesson?.content ? (
+                      <p className="text-xs m-0" style={{ color: "#A8A4BC" }}>{selectedLesson.content.slice(0, 120)}...</p>
+                    ) : (
+                      <p className="text-xs m-0" style={{ color: "rgba(255,255,255,.3)" }}>Select a topic to see examples.</p>
+                    )}
                   </div>
 
                   {/* You'll Master */}

@@ -52,7 +52,14 @@ const MODE_SUGGESTIONS: Record<TutorMode, string[]> = {
 
 // ── Welcome panel — what Emma knows about the learner ────────────────
 
-function WelcomePanel({ userName, onPrompt }: { userName: string; onPrompt: (text: string) => void }) {
+function WelcomePanel({ userName, dashboard, onPrompt }: { userName: string; dashboard?: DashboardData; onPrompt: (text: string) => void }) {
+  const recentWords = (dashboard?.weakest_words?.length ? dashboard.weakest_words.map(w => w.german) : [])
+    .concat(dashboard?.recent_activity?.filter(a => a.type === 'lesson_completed').flatMap(a => {
+      const match = a.description.match(/vocab(?:ulary)?:?\s*(.+)/i);
+      return match ? match[1].split(/,\s*/).slice(0, 3) : [];
+    }) || [])
+    .slice(0, 5);
+
   return (
     <div className="text-center py-6 sm:py-8 max-w-md mx-auto">
       <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden">
@@ -71,7 +78,7 @@ function WelcomePanel({ userName, onPrompt }: { userName: string; onPrompt: (tex
           Recently learned
         </p>
         <div className="flex flex-wrap gap-1.5 justify-center">
-          {["Hallo", "Ich heiße…", "Tschüss", "Wie geht's?", "Danke"].map((w) => (
+          {(recentWords.length > 0 ? recentWords : ["Hallo", "Tschüss", "Danke"]).map((w) => (
             <button key={w} onClick={() => onPrompt(`Explain the word: ${w}`)}
               className="px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:-translate-y-0.5"
               style={{ background: "var(--color-hover-bg)", color: "var(--color-active-text)", border: "1px solid var(--color-badge-bg)" }}>
@@ -440,7 +447,7 @@ export function ChatInterface() {
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto space-y-3 px-1" style={{ scrollBehavior: "smooth" }}>
-          {isEmpty && <WelcomePanel userName={userName} onPrompt={(t) => send(t)} />}
+          {isEmpty && <WelcomePanel userName={userName} dashboard={dashboard} onPrompt={(t) => send(t)} />}
 
           {messages.map((msg, i) => (
             <ChatMessage key={i} role={msg.role} content={msg.content} corrections={msg.corrections} userName={userName} />

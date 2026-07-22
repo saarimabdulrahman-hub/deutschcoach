@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueries, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
-import type { CurriculumLevel, LessonListItem, DashboardData } from "@/types";
+import type { CurriculumLevel, LessonListItem, DashboardData, SubscriptionTier } from "@/types";
 import { LevelPath } from "@/components/curriculum/LevelPath";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -16,6 +16,16 @@ import { EmptyState } from "@/components/ui/EmptyState";
 const LEVEL_ORDER = ["A1", "A2", "B1", "B2", "C1"];
 const LEVEL_NAME: Record<string, string> = {
   A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper Intermediate", C1: "Advanced",
+};
+const LEVEL_META: Record<string, { emoji: string; name: string }> = {
+  A1: { emoji: "🌱", name: "Beginner" },
+  A2: { emoji: "🌿", name: "Elementary" },
+  B1: { emoji: "🌳", name: "Intermediate" },
+  B2: { emoji: "🎯", name: "Upper Intermediate" },
+  C1: { emoji: "🏆", name: "Advanced" },
+};
+const TIER_MAX_LEVEL: Record<SubscriptionTier, number> = {
+  free: 0, starter: 1, plus: 2, pro: 4,
 };
 // Assumption: the API exposes no per-lesson duration yet, so we derive a flat
 // estimate. Replace with a real field when available (see notes / future sprint).
@@ -74,6 +84,7 @@ export default function CurriculumPage() {
   const queryClient = useQueryClient();
   const router = useRouter();
   const [override, setOverride] = useState<string | null>(null); // explicit "jump ahead" level
+  const [showFullRoadmap, setShowFullRoadmap] = useState(false);
 
   const { user } = useAuth();
   const { data: levels, isLoading, error } = useQuery<CurriculumLevel[]>({
@@ -90,6 +101,26 @@ export default function CurriculumPage() {
     queryKey: ["curriculum", viewLevel], queryFn: () => api.get(`/curriculum/${viewLevel}`),
     enabled: !!levels,
   });
+
+  // Fetch all levels' lessons when the full roadmap is expanded
+  const allLevelQueries = useQueries({
+    queries: LEVEL_ORDER
+      .filter((lvl) => levels?.find((l) => l.level === lvl && l.lesson_count > 0))
+      .map((lvl) => ({
+        queryKey: ["curriculum", lvl],
+        queryFn: () => api.get<LessonListItem[]>(`/curriculum/${lvl}`),
+        staleTime: 60_000,
+        enabled: showFullRoadmap,
+      })),
+  });
+  const allLessonsByLevel = useMemo(() => {
+    const map = new Map<string, LessonListItem[]>();
+    LEVEL_ORDER.filter((lvl) => levels?.find((l) => l.level === lvl && l.lesson_count > 0))
+      .forEach((lvl, i) => {
+        if (allLevelQueries[i]?.data) map.set(lvl, allLevelQueries[i].data);
+      });
+    return map;
+  }, [allLevelQueries, levels]);
 
   // Catalog enhancements: search, filter, sort
   const [searchQuery, setSearchQuery] = useState("");
@@ -298,8 +329,8 @@ export default function CurriculumPage() {
                     { icon: "📖", iconBg: "rgba(168,85,247,0.15)", iconColor: "#A855F7", glow: "rgba(168,85,247,0.08)", title: `Complete Lesson ${nextLesson.order}`, subtitle: nextLesson.title, meta: `~${MIN_PER_LESSON} min`, onClick: () => goLesson(nextLesson!.id) },
                     { icon: "🃏", iconBg: "rgba(255,180,60,0.15)", iconColor: "#E19C18", glow: "rgba(255,180,60,0.06)", title: cardsDue > 0 ? `Review ${cardsDue} cards` : "Vocabulary — all caught up", subtitle: cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now", meta: cardsDue > 0 ? "~2 min" : "✓", onClick: () => router.push("/review") },
                     { icon: "🎤", iconBg: "rgba(34,197,94,0.13)", iconColor: "#22C55E", glow: "rgba(34,197,94,0.05)", title: "Practice speaking", subtitle: "Chat with Emma — your AI coach", meta: "~2 min", onClick: () => router.push("/chat") },
-                  ].map((m, i) => (
-                    <button key={i} onClick={m.onClick}
+                  ].map((m) => (
+                    <button key={m.title} onClick={m.onClick}
                       className="text-left rounded-xl p-4 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-3.5 group relative overflow-hidden"
                       style={{
                         background: "linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
@@ -433,109 +464,298 @@ export default function CurriculumPage() {
           ) : null}
         </div>
 
-        {/* RIGHT: Roadmap — dense compact card, layered dots, continuous timeline */}
+        {/* RIGHT: Roadmap — mini or expanded */}
         <div className="flex-1 min-w-0 flex flex-col" style={{ flexBasis: "30%" }}>
           <div className="rounded-[15px] p-6"
             style={{
               background: "#12162B",
               border: "1px solid rgba(255,255,255,0.06)",
               boxShadow: "0 16px 40px rgba(0,0,0,0.35)",
+              display: "flex",
+              flexDirection: "column",
+              ...(showFullRoadmap ? { flex: 1, minHeight: 0, maxHeight: "calc(100vh - 220px)", overflow: "hidden" } : {}),
             }}>
-            <h3 className="text-lg font-bold mb-5" style={{ color: "#F8FAFC" }}>Roadmap</h3>
-
-            {/* Timeline — relative container for the continuous line */}
-            <div className="relative mb-6">
-              {/* Continuous vertical line behind all dots */}
-              <div className="absolute left-[9px] top-0 bottom-0 w-[2px] rounded-full"
-                style={{ background: "linear-gradient(180deg, #6D28D9 0%, rgba(109,40,217,0.2) 100%)" }} />
-
-              {currentUnit?.lessons.map((l, i) => {
-                const isActive = nextLesson?.id === l.id;
-                const isComp = l.completed;
-                const isLast = i === currentUnit.lessons.length - 1;
-                return (
-                  <div key={l.id} className={`flex gap-4 relative ${isLast ? "" : "mb-5"}`}
-                    style={{ minHeight: 52 }}>
-                    {/* Layered timeline dot */}
-                    <div className="relative flex-shrink-0 flex items-start pt-[5px]">
-                      {/* Outer glow ring */}
-                      {isActive && (
-                        <div className="absolute rounded-full" style={{ width: 28, height: 28, left: -5, top: 1, background: "radial-gradient(circle, rgba(139,92,246,0.3), transparent 60%)" }} />
-                      )}
-                      {/* Dot — larger */}
-                      <div className="relative rounded-full flex-shrink-0 z-10"
-                        style={{
-                          width: 20, height: 20,
-                          background: isComp ? "rgba(34,197,94,0.5)" : isActive ? "rgba(139,92,246,0.5)" : "rgba(75,85,99,0.35)",
-                          border: isActive ? "1px solid rgba(139,92,246,0.25)" : "none",
-                          boxShadow: isActive ? "0 0 16px rgba(139,92,246,0.25)" : "none",
-                        }}>
-                        {isActive && (
-                          <div className="absolute rounded-full"
-                            style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
-                        )}
-                      </div>
-                    </div>
-                    {/* Content row */}
-                    <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
-                      <div className="min-w-0 mr-2">
-                        <p className="text-[15px] font-semibold truncate leading-tight mb-0.5"
-                          style={{ color: isComp ? "#6B7280" : isActive ? "#F8FAFC" : "#D1D5DB" }}>
-                          Lesson {l.order}
-                        </p>
-                        <p className="text-[13px] truncate leading-tight"
-                          style={{ color: isComp ? "#5C6370" : "#6B7280" }}>
-                          {l.title}
-                        </p>
-                      </div>
-                      {/* Status badge — solid purple for Current */}
-                      <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
-                        style={{
-                          width: 72,
-                          background: isComp ? "rgba(34,197,94,0.08)" : isActive ? "#8B5CF6" : "rgba(75,85,99,0.1)",
-                          color: isComp ? "#22C55E" : isActive ? "#FFFFFF" : "rgba(107,114,128,0.5)",
-                          border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
-                        }}>
-                        {isComp ? "Done" : isActive ? "Current" : "Locked"}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Review node */}
-              <div className="flex gap-4 relative" style={{ minHeight: 52 }}>
-                <div className="flex-shrink-0 flex items-start pt-[5px]">
-                  <div className="relative z-10 rounded-full" style={{ width: 20, height: 20, background: "rgba(245,158,11,0.5)", boxShadow: "0 0 14px rgba(245,158,11,0.3)" }}>
-                    <div className="absolute rounded-full" style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
-                  <div className="min-w-0 mr-2">
-                    <p className="text-[15px] font-semibold truncate leading-tight mb-0.5" style={{ color: "#D1D5DB" }}>Review</p>
-                    <p className="text-[13px] truncate leading-tight" style={{ color: "#6B7280" }}>Unit {currentUnitNum} Review</p>
-                  </div>
-                  <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
-                    style={{ width: 72, background: "rgba(75,85,99,0.1)", color: "rgba(107,114,128,0.5)" }}>
-                    Locked
-                  </span>
-                </div>
-              </div>
+            {/* Header row */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+              <h3 className="text-lg font-bold" style={{ color: "#F8FAFC", margin: 0 }}>Roadmap</h3>
+              {showFullRoadmap && (
+                <button onClick={() => setShowFullRoadmap(false)}
+                  style={{
+                    background: "#8B5CF6", border: "1px solid rgba(139,92,246,0.3)",
+                    borderRadius: "8px", padding: "4px 12px", cursor: "pointer",
+                    color: "#FFFFFF", fontSize: "12px", fontWeight: 600,
+                  }}>
+                  Show Less
+                </button>
+              )}
             </div>
 
-            {/* CTA — gradient with shadow + hover lift */}
-            <button onClick={() => {
-              const el = document.getElementById("complete-journey");
-              el?.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
-              className="w-full py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-250 hover:-translate-y-0.5"
-              style={{
-                background: "rgba(139,92,246,0.12)",
-                color: "#A78BFA",
-                border: "1px solid rgba(139,92,246,0.2)",
-              }}>
-              View Full Roadmap
-            </button>
+            {/* ── MINI VIEW: current unit timeline ── */}
+            {!showFullRoadmap && (
+              <>
+                <div className="relative mb-6">
+                  <div className="absolute left-[9px] top-0 bottom-0 w-[2px] rounded-full"
+                    style={{ background: "linear-gradient(180deg, #6D28D9 0%, rgba(109,40,217,0.2) 100%)" }} />
+                  {currentUnit?.lessons.map((l, i) => {
+                    const isActive = nextLesson?.id === l.id;
+                    const isComp = l.completed;
+                    const isLast = i === currentUnit.lessons.length - 1;
+                    return (
+                      <div key={l.id} className={`flex gap-4 relative ${isLast ? "" : "mb-5"}`} style={{ minHeight: 52 }}>
+                        <div className="relative flex-shrink-0 flex items-start pt-[5px]">
+                          {isActive && (
+                            <div className="absolute rounded-full" style={{ width: 28, height: 28, left: -5, top: 1, background: "radial-gradient(circle, rgba(139,92,246,0.3), transparent 60%)" }} />
+                          )}
+                          <div className="relative rounded-full flex-shrink-0 z-10"
+                            style={{
+                              width: 20, height: 20,
+                              background: isComp ? "rgba(34,197,94,0.5)" : isActive ? "rgba(139,92,246,0.5)" : "rgba(75,85,99,0.35)",
+                              border: isActive ? "1px solid rgba(139,92,246,0.25)" : "none",
+                              boxShadow: isActive ? "0 0 16px rgba(139,92,246,0.25)" : "none",
+                            }}>
+                            {isActive && (
+                              <div className="absolute rounded-full"
+                                style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
+                          <div className="min-w-0 mr-2">
+                            <p className="text-[15px] font-semibold truncate leading-tight mb-0.5"
+                              style={{ color: isComp ? "#6B7280" : isActive ? "#F8FAFC" : "#D1D5DB" }}>
+                              Lesson {l.order}
+                            </p>
+                            <p className="text-[13px] truncate leading-tight"
+                              style={{ color: isComp ? "#5C6370" : "#6B7280" }}>{l.title}</p>
+                          </div>
+                          <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
+                            style={{
+                              width: 72,
+                              background: isComp ? "rgba(34,197,94,0.08)" : isActive ? "#8B5CF6" : "rgba(75,85,99,0.1)",
+                              color: isComp ? "#22C55E" : isActive ? "#FFFFFF" : "rgba(107,114,128,0.5)",
+                              border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
+                            }}>
+                            {isComp ? "Done" : isActive ? "Current" : "Locked"}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div className="flex gap-4 relative" style={{ minHeight: 52 }}>
+                    <div className="flex-shrink-0 flex items-start pt-[5px]">
+                      <div className="relative z-10 rounded-full" style={{ width: 20, height: 20, background: "rgba(245,158,11,0.5)", boxShadow: "0 0 14px rgba(245,158,11,0.3)" }}>
+                        <div className="absolute rounded-full" style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
+                      <div className="min-w-0 mr-2">
+                        <p className="text-[15px] font-semibold truncate leading-tight mb-0.5" style={{ color: "#D1D5DB" }}>Review</p>
+                        <p className="text-[13px] truncate leading-tight" style={{ color: "#6B7280" }}>Unit {currentUnitNum} Review</p>
+                      </div>
+                      <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
+                        style={{ width: 72, background: "rgba(75,85,99,0.1)", color: "rgba(107,114,128,0.5)" }}>Locked</span>
+                    </div>
+                  </div>
+                </div>
+                <button onClick={() => setShowFullRoadmap(true)}
+                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-250 hover:-translate-y-0.5"
+                  style={{
+                    background: "rgba(139,92,246,0.12)",
+                    color: "#A78BFA",
+                    border: "1px solid rgba(139,92,246,0.2)",
+                  }}>
+                  View Full Roadmap
+                </button>
+              </>
+            )}
+
+            {/* ── EXPANDED VIEW: continuous timeline extended from mini roadmap ── */}
+            {showFullRoadmap && (
+              <div className="relative" style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
+                {/* Single continuous vertical line */}
+                <div className="absolute left-[9px] top-0 bottom-0 w-[2px] rounded-full"
+                  style={{ background: "linear-gradient(180deg, #6D28D9 0%, rgba(109,40,217,0.2) 100%)" }} />
+
+                {LEVEL_ORDER.map((lvl, lvlIdx) => {
+                  const meta = levels?.find((l) => l.level === lvl);
+                  if (!meta) return null;
+
+                  const lvlLessons = allLessonsByLevel.get(lvl);
+                  const isLocked = lvlIdx > (TIER_MAX_LEVEL[user?.subscription_tier ?? "free"] ?? 0);
+                  const pct = meta.lesson_count > 0 ? Math.round((meta.completed_count / meta.lesson_count) * 100) : 0;
+                  const units = lvlLessons ? groupUnits(lvlLessons) : [];
+
+                  return (
+                    <div key={lvl} style={{ marginBottom: 4 }}>
+                      {/* Level marker — emoji circle + label, matching Complete Journey style */}
+                      <div className="flex gap-4 relative" style={{ minHeight: 44, marginBottom: 12, alignItems: "center" }}>
+                        <div className="relative flex-shrink-0 flex items-center justify-center"
+                          style={{
+                            width: 32, height: 32, borderRadius: "50%",
+                            background: isLocked ? "rgba(75,85,99,0.12)" :
+                              pct >= 100 ? "rgba(34,197,94,0.12)" :
+                              lvl === currentLevel ? "rgba(139,92,246,0.18)" : "rgba(255,255,255,0.04)",
+                            border: isLocked ? "1px solid rgba(75,85,99,0.2)" :
+                              pct >= 100 ? "1px solid rgba(34,197,94,0.3)" :
+                              lvl === currentLevel ? "1px solid rgba(139,92,246,0.35)" : "1px solid rgba(255,255,255,0.08)",
+                            boxShadow: lvl === currentLevel && !isLocked ? "0 0 16px rgba(139,92,246,0.2)" : "none",
+                            opacity: isLocked ? 0.5 : 1,
+                            fontSize: "16px",
+                          }}>
+                          {isLocked ? "🔒" : LEVEL_META[lvl]?.emoji || "📚"}
+                        </div>
+                        <div className="flex-1 min-w-0 flex items-center justify-between">
+                          <div>
+                            <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: isLocked ? "#6B7280" : "#E2E8F0", lineHeight: 1.2 }}>
+                              {lvl} · {LEVEL_META[lvl]?.name}
+                            </p>
+                            <p style={{ margin: 0, fontSize: "11px", color: "#64748B", marginTop: 1 }}>
+                              {meta.lesson_count === 0 ? "Coming soon" : isLocked
+                                ? `🔒 Upgrade to unlock ${meta.lesson_count} lessons`
+                                : `${meta.completed_count} of ${meta.lesson_count} lessons complete`}
+                            </p>
+                          </div>
+                          {meta.lesson_count > 0 && !isLocked && (
+                            <span style={{
+                              fontSize: "12px", fontWeight: 700,
+                              color: pct >= 100 ? "#22C55E" : "#8B5CF6",
+                              background: pct >= 100 ? "rgba(34,197,94,0.08)" : "rgba(139,92,246,0.1)",
+                              padding: "2px 10px", borderRadius: "99px",
+                            }}>
+                              {pct}%
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Lessons — exact same row styling as mini roadmap */}
+                      {!isLocked && lvlLessons && units.map((unit) => {
+                        return unit.lessons.map((lesson, i) => {
+                          const isCurrentLesson = cont?.id === lesson.id;
+                          const isComp = lesson.completed;
+                          const isLastInLevel = lvlIdx === LEVEL_ORDER.length - 1
+                            && units.indexOf(unit) === units.length - 1
+                            && i === unit.lessons.length - 1;
+
+                          return (
+                            <div key={lesson.id}
+                              onClick={() => router.push(`/curriculum/${lvl.toLowerCase()}/${lesson.id}`)}
+                              className={`flex gap-4 relative ${isLastInLevel ? "" : "mb-5"}`}
+                              style={{ minHeight: 52, cursor: "pointer" }}>
+                              {/* Dot — exact copy of mini roadmap */}
+                              <div className="relative flex-shrink-0 flex items-start pt-[5px]">
+                                {isCurrentLesson && (
+                                  <div className="absolute rounded-full" style={{ width: 28, height: 28, left: -5, top: 1, background: "radial-gradient(circle, rgba(139,92,246,0.3), transparent 60%)" }} />
+                                )}
+                                <div className="relative rounded-full flex-shrink-0 z-10"
+                                  style={{
+                                    width: 20, height: 20,
+                                    background: isComp ? "rgba(34,197,94,0.5)" : isCurrentLesson ? "rgba(139,92,246,0.5)" : "rgba(75,85,99,0.35)",
+                                    border: isCurrentLesson ? "1px solid rgba(139,92,246,0.25)" : "none",
+                                    boxShadow: isCurrentLesson ? "0 0 16px rgba(139,92,246,0.25)" : "none",
+                                  }}>
+                                  {isCurrentLesson && (
+                                    <div className="absolute rounded-full"
+                                      style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
+                                  )}
+                                </div>
+                              </div>
+                              {/* Content row — exact copy of mini roadmap */}
+                              <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
+                                <div className="min-w-0 mr-2">
+                                  <p className="text-[15px] font-semibold truncate leading-tight mb-0.5"
+                                    style={{ color: isComp ? "#6B7280" : isCurrentLesson ? "#F8FAFC" : "#D1D5DB" }}>
+                                    Lesson {lesson.order}
+                                  </p>
+                                  <p className="text-[13px] truncate leading-tight"
+                                    style={{ color: isComp ? "#5C6370" : "#6B7280" }}>
+                                    {lesson.title}
+                                  </p>
+                                </div>
+                                {/* Status badge — exact copy of mini roadmap */}
+                                <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
+                                  style={{
+                                    width: 72,
+                                    background: isComp ? "rgba(34,197,94,0.08)" : isCurrentLesson ? "#8B5CF6" : "rgba(75,85,99,0.1)",
+                                    color: isComp ? "#22C55E" : isCurrentLesson ? "#FFFFFF" : "rgba(107,114,128,0.5)",
+                                    border: isCurrentLesson ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
+                                  }}>
+                                  {isComp ? "Done" : isCurrentLesson ? "Current" : "Locked"}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        });
+                      })}
+
+                      {/* Locked level placeholder */}
+                      {isLocked && meta.lesson_count > 0 && (
+                        <div className="flex gap-4 relative" style={{ minHeight: 52, opacity: 0.4 }}>
+                          <div className="relative flex-shrink-0 flex items-start pt-[5px]">
+                            <div className="relative rounded-full flex-shrink-0 z-10"
+                              style={{ width: 20, height: 20, background: "rgba(75,85,99,0.35)" }} />
+                          </div>
+                          <div className="flex-1 min-w-0 flex items-center" style={{ height: 52 }}>
+                            <p className="text-[15px] font-semibold truncate" style={{ color: "#6B7280" }}>
+                              {meta.lesson_count} locked lessons
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Loading skeleton */}
+                      {!isLocked && !lvlLessons && meta.lesson_count > 0 && (
+                        <div>
+                          {[1, 2, 3].map((n) => (
+                            <div key={n} className="flex gap-4 relative mb-5" style={{ minHeight: 52 }}>
+                              <div className="flex-shrink-0 flex items-start pt-[5px]">
+                                <div className="shimmer rounded-full" style={{ width: 20, height: 20 }} />
+                              </div>
+                              <div className="flex-1 min-w-0 flex items-center" style={{ height: 52 }}>
+                                <div className="w-full">
+                                  <div className="shimmer" style={{ width: "60%", height: 16, borderRadius: 4, marginBottom: 4 }} />
+                                  <div className="shimmer" style={{ width: "80%", height: 14, borderRadius: 4 }} />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Review node — same as mini roadmap */}
+                <div className="flex gap-4 relative" style={{ minHeight: 52, marginTop: 4 }}>
+                  <div className="flex-shrink-0 flex items-start pt-[5px]">
+                    <div className="relative z-10 rounded-full" style={{ width: 20, height: 20, background: "rgba(245,158,11,0.5)", boxShadow: "0 0 14px rgba(245,158,11,0.3)" }}>
+                      <div className="absolute rounded-full" style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
+                    <div className="min-w-0 mr-2">
+                      <p className="text-[15px] font-semibold truncate leading-tight mb-0.5" style={{ color: "#D1D5DB" }}>Review All</p>
+                      <p className="text-[13px] truncate leading-tight" style={{ color: "#6B7280" }}>Full course review</p>
+                    </div>
+                    <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
+                      style={{ width: 72, background: "rgba(75,85,99,0.1)", color: "rgba(107,114,128,0.5)" }}>Locked</span>
+                  </div>
+                </div>
+
+                {/* Show Less button */}
+                <div style={{ paddingLeft: 28, marginTop: 16, marginBottom: 4 }}>
+                  <button onClick={() => setShowFullRoadmap(false)}
+                    className="w-full py-2 rounded-xl text-[12px] font-semibold transition-all duration-250 hover:-translate-y-0.5"
+                    style={{
+                      background: "#8B5CF6",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(139,92,246,0.3)",
+                    }}>
+                    Show Less ↑
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -560,6 +780,7 @@ export default function CurriculumPage() {
           </div>
         </section>
       )}
+
     </div>
   );
 }

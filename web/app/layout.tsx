@@ -3,7 +3,7 @@ import { Providers } from "@/contexts/Providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DeutschFlow — Learn German",
+  title: "DeutschCoach — Learn German",
   description:
     "Learn German with structured CEFR-aligned lessons, an AI tutor, and scientifically-proven spaced repetition.",
 };
