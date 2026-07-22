@@ -12,10 +12,19 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
+  timeout: 30000,
   use: {
-    baseURL: process.env.BASE_URL || "http://localhost:3000",
+    baseURL: process.env.BASE_URL || "http://localhost:3457",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
+  },
+  // Auto-start Next.js dev server when running tests
+  webServer: {
+    command: "npm run dev",
+    url: "http://localhost:3457",
+    reuseExistingServer: !process.env.CI,
+    timeout: 120000,
+    cwd: ".",
   },
   projects: [
     {
