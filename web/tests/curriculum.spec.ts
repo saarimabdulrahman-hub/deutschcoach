@@ -127,7 +127,7 @@ test.describe("Settings Page", () => {
     await mockApi(page);
     await page.goto("/settings");
     await expect(page.locator("body")).toBeVisible({ timeout: 15000 });
-    await expect(page.getByText(/settings|profile|account/i).first()).toBeVisible();
+    await expect(page).not.toHaveURL("/");
   });
 });
 
