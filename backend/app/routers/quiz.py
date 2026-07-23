@@ -176,6 +176,7 @@ def submit_quiz(
 
     results: list[QuizResultItem] = []
     missed_vocab_ids: list[int] = []
+    wrong_answers: list[dict] = []
 
     for q in questions:
         qid = q["id"]
@@ -202,6 +203,11 @@ def submit_quiz(
             vocab_entry = _find_vocab_entry(db, correct_answer)
             if vocab_entry:
                 missed_vocab_ids.append(vocab_entry.id)
+                wrong_answers.append({
+                    "vocab_id": vocab_entry.id,
+                    "user_answer": user_answer,
+                    "correct_answer": correct_answer,
+                })
 
     questions_total = len(questions)
     questions_correct = sum(1 for r in results if r.correct)
@@ -217,6 +223,7 @@ def submit_quiz(
         questions_total=questions_total,
         questions_correct=questions_correct,
         missed_vocab_ids=missed_vocab_ids if missed_vocab_ids else None,
+        wrong_answers=wrong_answers if wrong_answers else None,
     )
     db.add(quiz_result)
 
@@ -296,3 +303,78 @@ def get_next_suggestion(
         "suggestion": "Start a new quiz on your weakest vocabulary",
         "reason": "No recent activity found. Taking a quiz helps identify areas to improve.",
     }
+
+
+@router.get("/mistakes")
+def get_mistakes(
+    limit: int = 20,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_auth),
+):
+    """Return vocabulary words the user has gotten wrong in quizzes,
+    ordered by total miss count across all quiz attempts.
+    """
+    from sqlalchemy import func as sqlfunc
+
+    # Collect all missed_vocab_ids from quiz results
+    results = (
+        db.query(QuizResult)
+        .filter(QuizResult.user_id == user.id, QuizResult.missed_vocab_ids.isnot(None))
+        .all()
+    )
+
+    # Count misses per vocab_id and collect latest wrong answers
+    miss_count: dict[int, int] = {}
+    latest_wrong: dict[int, dict] = {}  # vocab_id -> {user_answer, correct_answer}
+    for r in sorted(results, key=lambda x: x.created_at, reverse=True):
+        if r.missed_vocab_ids:
+            for vid in r.missed_vocab_ids:
+                miss_count[vid] = miss_count.get(vid, 0) + 1
+        if r.wrong_answers:
+            for wa in r.wrong_answers:
+                vid = wa.get("vocab_id")
+                if vid and vid not in latest_wrong:
+                    latest_wrong[vid] = {
+                        "user_answer": wa.get("user_answer", ""),
+                        "correct_answer": wa.get("correct_answer", ""),
+                    }
+
+    if not miss_count:
+        return []
+
+    # Look up vocab entries and SRS states
+    vocab_ids = list(miss_count.keys())
+    vocab_map = {
+        v.id: v
+        for v in db.query(VocabEntry).filter(VocabEntry.id.in_(vocab_ids)).all()
+    }
+
+    srs_states = {
+        s.vocab_entry_id: s
+        for s in db.query(SRSState).filter(
+            SRSState.user_id == user.id,
+            SRSState.vocab_entry_id.in_(vocab_ids),
+        ).all()
+    }
+
+    mistakes = []
+    for vid, count in sorted(miss_count.items(), key=lambda x: x[1], reverse=True):
+        v = vocab_map.get(vid)
+        if not v:
+            continue
+        srs = srs_states.get(vid)
+        wrong = latest_wrong.get(vid, {})
+        mistakes.append({
+            "vocab_id": vid,
+            "german": v.german,
+            "english": v.english,
+            "miss_count": count,
+            "lapses": srs.lapses if srs else 0,
+            "status": srs.status.value if srs and hasattr(srs.status, "value") else str(srs.status) if srs else "new",
+            "user_answer": wrong.get("user_answer", ""),
+            "correct_answer": wrong.get("correct_answer", v.german),
+        })
+        if len(mistakes) >= limit:
+            break
+
+    return mistakes

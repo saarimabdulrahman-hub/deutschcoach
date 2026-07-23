@@ -14,30 +14,28 @@ export function Logo({ size = 40 }: { size?: number }) {
           <stop offset="100%" stopColor="#14111f" />
         </linearGradient>
         <linearGradient id="logoStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.6" />
-          <stop offset="50%" stopColor="#a855f7" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.5" />
+          <stop offset="0%" stopColor="#ec4899" stopOpacity="0.6" />
+          <stop offset="50%" stopColor="#d946ef" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.6" />
         </linearGradient>
         <linearGradient id="logoLetter" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="100%" stopColor="#c4b5fd" />
+          <stop offset="0%" stopColor="#ec4899" />
+          <stop offset="50%" stopColor="#d946ef" />
+          <stop offset="100%" stopColor="#8b5cf6" />
         </linearGradient>
         <linearGradient id="logoAccent" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#fbbf24" />
+          <stop offset="0%" stopColor="#ec4899" />
+          <stop offset="100%" stopColor="#d946ef" />
         </linearGradient>
       </defs>
 
-      {/* Rounded square */}
-      <rect
-        x="1"
-        y="1"
-        width="46"
-        height="46"
-        rx="14"
+      {/* Hexagon shield */}
+      <path
+        d="M24 2 L43 13 L43 35 L24 46 L5 35 L5 13 Z"
         fill="url(#logoBg)"
         stroke="url(#logoStroke)"
         strokeWidth="1.5"
+        strokeLinejoin="round"
       />
 
       {/* Stylised "D" with flowing tail */}

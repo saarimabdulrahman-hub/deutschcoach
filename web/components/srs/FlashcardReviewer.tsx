@@ -100,28 +100,7 @@ export function FlashcardReviewer({ onDone }: FlashcardReviewerProps) {
   }
 
   if (done && cards.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6" style={{ background: "rgba(34,197,94,0.1)" }}>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" style={{ color: "var(--color-success)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <h2 className="text-2xl font-bold mb-2" style={{ color: "var(--color-text)" }}>All caught up!</h2>
-        <p className="mb-6" style={{ color: "var(--color-text-muted)" }}>No cards due right now. Come back later for more practice.</p>
-        <button
-          onClick={loadCards}
-          className="px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 hover:-translate-y-0.5"
-          style={{
-            color: "var(--color-text)",
-            background: "var(--color-accent-gradient)",
-            boxShadow: "0 4px 14px var(--color-accent-glow)",
-          }}
-        >
-          Check Again
-        </button>
-      </div>
-    );
+    return null;
   }
 
   if (done) {

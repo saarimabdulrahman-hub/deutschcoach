@@ -31,6 +31,8 @@ from app.models.quiz_session import QuizSession
 from app.models.lesson_progress import LessonProgress
 from app.models.user_vocab_note import UserVocabNote
 from app.models.reset_token import PasswordResetToken
+from app.models.learning_event import LearningEvent
+from app.models.lesson_checkpoint import LessonCheckpoint
 from database import Base
 target_metadata = Base.metadata
 

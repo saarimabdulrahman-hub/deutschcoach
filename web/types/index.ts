@@ -190,6 +190,38 @@ export interface QuizQuestion {
   hint?: string;
 }
 
+export interface QuizResultOut {
+  score_pct: number;
+  questions_total: number;
+  questions_correct: number;
+  results: {
+    question_id: string;
+    correct: boolean;
+    your_answer: string;
+    correct_answer: string;
+    feedback?: string | null;
+  }[];
+}
+
+// ---- SRS / review ----
+
+export interface SRSCardOut {
+  id: number;
+  vocab_entry: {
+    id: number;
+    german: string;
+    english: string;
+    example_sentence?: string;
+    part_of_speech?: string;
+  };
+  status: string;
+  easiness_factor: number;
+  interval_days: number;
+  repetitions: number;
+  lapses: number;
+  next_review_at?: string;
+}
+
 // ---- Plans / pricing ----
 
 export interface Plan {

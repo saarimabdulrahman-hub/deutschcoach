@@ -39,6 +39,8 @@
     "node_modules",
     "__tests__",
     "vitest.setup.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "tests"
   ]
 }

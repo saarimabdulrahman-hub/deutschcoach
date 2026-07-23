@@ -3,8 +3,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { GrammarContent } from "@/components/grammar/GrammarContent";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 interface GrammarTopicDetail {
   id: number;
@@ -36,28 +39,13 @@ function extractHeadings(content: string): { id: string; text: string }[] {
 export default function GrammarDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const [topic, setTopic] = useState<GrammarTopicDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeHeading, setActiveHeading] = useState<string>("");
 
-  useEffect(() => {
-    async function fetchTopic() {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await api.get<GrammarTopicDetail>(`/grammar/${slug}`);
-        setTopic(data);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load grammar topic"
-        );
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchTopic();
-  }, [slug]);
+  const { data: topic, isLoading: loading, error } = useQuery<GrammarTopicDetail>({
+    queryKey: ["grammar", slug],
+    queryFn: () => api.get(`/grammar/${slug}`),
+    enabled: !!slug,
+  });
 
   const headings = useMemo(
     () => (topic?.content ? extractHeadings(topic.content) : []),
@@ -114,7 +102,7 @@ export default function GrammarDetailPage() {
         <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "var(--color-error-bg)" }}>
           <span className="text-3xl">&#9888;</span>
         </div>
-        <div className="mb-4" style={{ color: "var(--color-error-text)" }}>{error}</div>
+        <div className="mb-4" style={{ color: "var(--color-error-text)" }}>{error instanceof Error ? error.message : "Failed to load grammar topic"}</div>
         <Link
           href="/grammar"
           className="hover:text-indigo-300 underline text-sm" style={{ color: "var(--color-active-text)" }}

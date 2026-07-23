@@ -1,197 +1,786 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, useMemo } from "react";
+import { useQuery, useQueries, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import type { CurriculumLevel, LessonListItem } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
+import type { CurriculumLevel, LessonListItem, DashboardData, SubscriptionTier } from "@/types";
 import { LevelPath } from "@/components/curriculum/LevelPath";
-import { LessonCard } from "@/components/curriculum/LessonCard";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { EmptyState } from "@/components/ui/EmptyState";
+
+// ── Constants / derivations ──────────────────────────────────────────
+const LEVEL_ORDER = ["A1", "A2", "B1", "B2", "C1"];
+const LEVEL_NAME: Record<string, string> = {
+  A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper Intermediate", C1: "Advanced",
+};
+const LEVEL_META: Record<string, { emoji: string; name: string }> = {
+  A1: { emoji: "🌱", name: "Beginner" },
+  A2: { emoji: "🌿", name: "Elementary" },
+  B1: { emoji: "🌳", name: "Intermediate" },
+  B2: { emoji: "🎯", name: "Upper Intermediate" },
+  C1: { emoji: "🏆", name: "Advanced" },
+};
+const TIER_MAX_LEVEL: Record<SubscriptionTier, number> = {
+  free: 0, starter: 1, plus: 2, pro: 4,
+};
+// Assumption: the API exposes no per-lesson duration yet, so we derive a flat
+// estimate. Replace with a real field when available (see notes / future sprint).
+const MIN_PER_LESSON = 10;
+
+const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// Derive a readable unit theme from its lessons' topics (no unit-title field yet).
+function unitTheme(lessons: LessonListItem[]): string {
+  const topics = Array.from(new Set(lessons.flatMap((l) => l.topics || []))).slice(0, 2).map(titleCase);
+  return topics.join(" & ");
+}
+
+interface UnitGroup {
+  unit: number; lessons: LessonListItem[]; total: number; completed: number; isComplete: boolean; theme: string;
+}
+function groupUnits(lessons: LessonListItem[]): UnitGroup[] {
+  const map = new Map<number, LessonListItem[]>();
+  for (const l of [...lessons].sort((a, b) => a.order - b.order)) {
+    if (!map.has(l.unit)) map.set(l.unit, []);
+    map.get(l.unit)!.push(l);
+  }
+  return [...map.entries()].sort((a, b) => a[0] - b[0]).map(([unit, ls]) => ({
+    unit, lessons: ls, total: ls.length,
+    completed: ls.filter((l) => l.completed).length,
+    isComplete: ls.every((l) => l.completed), theme: unitTheme(ls),
+  }));
+}
+
+// The learner's true current level: continue_lesson wins, else first incomplete.
+function computeCurrentLevel(levels: CurriculumLevel[], dash?: DashboardData): string {
+  if (dash?.continue_lesson?.level) return dash.continue_lesson.level;
+  const ordered = LEVEL_ORDER.map((c) => levels.find((l) => l.level === c)).filter(Boolean) as CurriculumLevel[];
+  const inc = ordered.find((l) => l.lesson_count > 0 && l.completed_count < l.lesson_count);
+  if (inc) return inc.level;
+  return ordered.find((l) => l.lesson_count > 0)?.level || "A1";
+}
 
 function CurriculumSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="h-8 w-48 rounded shimmer" />
-      <div className="flex gap-2">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex-1 h-16 rounded-2xl shimmer" />
-        ))}
-      </div>
-      <div className="space-y-3">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-24 rounded-2xl shimmer" />
-        ))}
-      </div>
+      <div className="h-28 rounded-2xl shimmer" />
+      <div className="h-32 rounded-2xl shimmer" />
+      <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-24 rounded-2xl shimmer" />)}</div>
     </div>
   );
 }
 
+// ── Small building blocks (reuse existing design tokens only) ─────────
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "var(--color-text-muted)" }}>{children}</p>;
+}
+
+// ── Page ──────────────────────────────────────────────────────────────
 export default function CurriculumPage() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [activeLevel, setActiveLevel] = useState<string>("A1");
+  const [override, setOverride] = useState<string | null>(null); // explicit "jump ahead" level
+  const [showFullRoadmap, setShowFullRoadmap] = useState(false);
 
+  const { user } = useAuth();
   const { data: levels, isLoading, error } = useQuery<CurriculumLevel[]>({
-    queryKey: ["curriculum"],
-    queryFn: () => api.get("/curriculum"),
+    queryKey: ["curriculum"], queryFn: () => api.get("/curriculum"),
   });
+  const { data: dashboard } = useQuery<DashboardData>({
+    queryKey: ["dashboard"], queryFn: () => api.get("/dashboard"),
+  });
+
+  const currentLevel = levels ? computeCurrentLevel(levels, dashboard) : "A1";
+  const viewLevel = override ?? currentLevel;
 
   const { data: lessons, isLoading: lessonsLoading } = useQuery<LessonListItem[]>({
-    queryKey: ["curriculum", activeLevel],
-    queryFn: () => api.get(`/curriculum/${activeLevel}`),
-    enabled: !!activeLevel,
+    queryKey: ["curriculum", viewLevel], queryFn: () => api.get(`/curriculum/${viewLevel}`),
+    enabled: !!levels,
   });
+
+  // Fetch all levels' lessons when the full roadmap is expanded
+  const allLevelQueries = useQueries({
+    queries: LEVEL_ORDER
+      .filter((lvl) => levels?.find((l) => l.level === lvl && l.lesson_count > 0))
+      .map((lvl) => ({
+        queryKey: ["curriculum", lvl],
+        queryFn: () => api.get<LessonListItem[]>(`/curriculum/${lvl}`),
+        staleTime: 60_000,
+        enabled: showFullRoadmap,
+      })),
+  });
+  const allLessonsByLevel = useMemo(() => {
+    const map = new Map<string, LessonListItem[]>();
+    LEVEL_ORDER.filter((lvl) => levels?.find((l) => l.level === lvl && l.lesson_count > 0))
+      .forEach((lvl, i) => {
+        if (allLevelQueries[i]?.data) map.set(lvl, allLevelQueries[i].data);
+      });
+    return map;
+  }, [allLevelQueries, levels]);
+
+  // Catalog enhancements: search, filter, sort
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"order" | "topics" | "duration">("order");
+
+  const filteredLessons = useMemo(() => {
+    if (!lessons) return [];
+    let result = [...lessons];
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter((l) =>
+        l.title?.toLowerCase().includes(q) ||
+        l.topics?.some((t: string) => t.toLowerCase().includes(q))
+      );
+    }
+    // Sort
+    if (sortBy === "order") result.sort((a, b) => a.order - b.order);
+    else if (sortBy === "duration") result.sort((a, b) => (a.topics?.length || 1) - (b.topics?.length || 1));
+    return result;
+  }, [lessons, searchQuery, sortBy]);
 
   if (isLoading) return <CurriculumSkeleton />;
   if (error)
-    return (
-      <ErrorState
-        message={error instanceof Error ? error.message : "Failed to load curriculum."}
-        onRetry={() => queryClient.invalidateQueries({ queryKey: ["curriculum"] })}
-      />
-    );
+    return <ErrorState message={error instanceof Error ? error.message : "Failed to load curriculum."}
+      onRetry={() => queryClient.invalidateQueries({ queryKey: ["curriculum"] })} />;
 
-  const currentLvl = levels?.find((l) => l.level === activeLevel);
-  const totalLessons = levels?.reduce((s, l) => s + l.lesson_count, 0) || 0;
+  const units = (searchQuery ? filteredLessons : lessons) ? groupUnits(searchQuery ? filteredLessons : lessons ?? []) : [];
   const totalCompleted = levels?.reduce((s, l) => s + l.completed_count, 0) || 0;
-  const overallPct = totalLessons > 0 ? Math.round((totalCompleted / totalLessons) * 100) : 0;
+  const isFreshStart = totalCompleted === 0;
 
-  // Find first incomplete lesson to highlight as "next"
-  const nextLesson = lessons?.find((l) => !l.completed);
+  // Next lesson for the viewed level (continue_lesson wins when on the current level)
+  const cont = dashboard?.continue_lesson;
+  let nextLesson: LessonListItem | undefined;
+  if (cont && cont.level === viewLevel) nextLesson = lessons?.find((l) => l.id === cont.id);
+  if (!nextLesson) nextLesson = lessons?.find((l) => !l.completed);
+  const levelDone = !!lessons && lessons.length > 0 && lessons.every((l) => l.completed);
+
+  const currentUnitNum = nextLesson?.unit ?? units[units.length - 1]?.unit;
+  const currentUnit = units.find((u) => u.unit === currentUnitNum);
+  const objective = nextLesson
+    ? (nextLesson.topics?.length ? `Learn ${nextLesson.topics.slice(0, 3).join(", ")}.` : `Continue your ${LEVEL_NAME[viewLevel] || viewLevel} journey.`)
+    : "";
+  const goLesson = (id: number) => router.push(`/curriculum/${viewLevel.toLowerCase()}/${id}`);
+  const cardsDue = dashboard?.cards_due_today ?? 0;
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-8">
-      {/* ── Header ──────────────────────────────── */}
-      <div>
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "var(--color-text-muted)" }}>
-              Your Learning Path
-            </p>
-            <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: "var(--color-text)" }}>
-              {totalCompleted > 0 ? `${overallPct}% complete` : "Let's get started"}
-            </h1>
-            <p className="text-sm mt-1.5" style={{ color: "var(--color-text-secondary)" }}>
-              {totalCompleted > 0
-                ? `${totalCompleted} of ${totalLessons} lessons done — keep going!`
-                : "Master German step by step, from absolute beginner to advanced fluency"}
-            </p>
-          </div>
-          {totalCompleted > 0 && (
-            <div className="flex items-center gap-1.5 text-sm font-semibold" style={{ color: "var(--color-brand-purple)" }}>
-              <span className="text-lg">📚</span>
-              {totalCompleted}/{totalLessons} lessons
-            </div>
-          )}
+      {/* ── Search & Filters ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }} className="sm:flex-row">
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search lessons, topics..."
+          variant="inline"
+        />
+        <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
+          {["order", "topics", "duration"].map((s) => (
+            <button key={s} onClick={() => setSortBy(s as any)}
+              style={{
+                padding: "6px 12px", borderRadius: "var(--radius-sm)", border: "1px solid var(--color-border-subtle)",
+                background: sortBy === s ? "var(--color-accent)" : "transparent",
+                color: sortBy === s ? "#fff" : "var(--color-text-muted)",
+                fontSize: "var(--type-label-sm)", fontWeight: 600, cursor: "pointer",
+                transition: "all var(--duration-fast) ease",
+              }}>
+              {s === "order" ? "Default" : s === "topics" ? "Topic" : "Duration"}
+            </button>
+          ))}
         </div>
-
-        {/* ── Level Path Milestones ──────────────── */}
-        {levels && levels.length > 0 && (
-          <div className="rounded-2xl p-4 sm:p-6"
-            style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-            <LevelPath
-              levels={levels}
-              currentLevel={activeLevel}
-              onSelect={setActiveLevel}
-            />
-          </div>
-        )}
       </div>
 
-      {/* ── Current Level Lessons ────────────────── */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold" style={{ color: "var(--color-text)" }}>
-              {activeLevel} Lessons
-            </h2>
-            {currentLvl && (
-              <p className="text-xs sm:text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
-                {currentLvl.completed_count} of {currentLvl.lesson_count} completed
+      {/* Remove empty state if search has no results */}
+      {searchQuery && filteredLessons.length === 0 && (
+        <EmptyState variant="no-results" icon="🔍" title="No lessons found" description={`No results for "${searchQuery}". Try a different search term.`} />
+      )}
+
+      {/* ── 1. Continue Learning Hero (3-column: info · castle · progress) ── */}
+      {nextLesson ? (
+        <section aria-labelledby="continue-heading"
+          className="relative rounded-[22px] p-5 sm:p-6 overflow-hidden"
+          style={{
+            background: "linear-gradient(120deg, #100A24 0%, #1B1437 40%, #1B1437 60%, #100A24 100%)",
+            border: "1px solid rgba(255,255,255,0.06)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+            minHeight: 200,
+          }}>
+          {/* ── Background layers ─────────────────────────────── */}
+          {/* Purple ambient glow */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: "radial-gradient(ellipse at 65% 50%, rgba(109,59,255,0.25) 0%, transparent 55%), radial-gradient(ellipse at 60% 60%, rgba(255,60,166,0.10) 0%, transparent 40%)" }} />
+          {/* Hero background image */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: "url('/learn-hero.webp')",
+              backgroundSize: "cover",
+              backgroundPosition: "38% 50%",
+              opacity: 0.4,
+            }} />
+          {/* Dark overlay for text legibility */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: "linear-gradient(90deg, rgba(16,10,36,0.55) 0%, rgba(16,10,36,0.15) 45%, transparent 65%, rgba(16,10,36,0.2) 85%, rgba(16,10,36,0.45) 100%)" }} />
+          {/* Purple glow boost */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(168,85,247,.08), transparent 60%)" }} />
+
+          {/* ── Content row ───────────────────────────────────── */}
+          <div className="relative z-10 flex flex-col sm:flex-row gap-6 h-full">
+            {/* LEFT: Lesson info + avatar + CTA (35%) */}
+            <div className="flex-1 flex flex-col justify-center min-w-0" style={{ flexBasis: "35%" }}>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] mb-3" style={{ color: "rgba(200,190,240,0.7)" }}>
+                Continue Learning
               </p>
+              {/* Avatar (biggest) + lesson title stack */}
+              <div className="flex items-center gap-5 mb-4">
+                {/* Avatar — 80px */}
+                <div className="flex-shrink-0 w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold"
+                  style={{
+                    background: "linear-gradient(135deg, #6D3BFF, #FF3CA6)",
+                    color: "#fff",
+                    border: "2px solid rgba(255,255,255,0.18)",
+                    boxShadow: "0 0 0 6px rgba(109,59,255,0.25), 0 0 36px rgba(109,59,255,0.25)",
+                  }}>
+                  <img src="/emma-avatar.webp" alt="Emma" className="w-full h-full rounded-full object-cover scale-110" />
+                </div>
+                {/* Lesson title stack beside avatar */}
+                <div className="min-w-0">
+                  <p className="text-base sm:text-lg font-bold" style={{ color: "var(--color-active-text)" }}>
+                    Lesson {nextLesson.order}
+                  </p>
+                  <h1 id="continue-heading" className="text-[2.2rem] sm:text-[2.6rem] font-extrabold leading-[1.05]" style={{ color: "#fff" }}>
+                    {nextLesson.title}
+                  </h1>
+                  <p className="text-sm sm:text-base mt-1.5" style={{ color: "var(--color-text-secondary)" }}>
+                    {(nextLesson.topics || []).slice(0, 3).join(" · ")}
+                  </p>
+                </div>
+              </div>
+              {/* Metadata row — derived from real lesson data when available */}
+              <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm mb-4" style={{ color: "var(--color-text-muted)" }}>
+                <span>⏱ ~{MIN_PER_LESSON}m</span>
+                {nextLesson.topics && nextLesson.topics.length > 0 && <span>📖 {nextLesson.topics.length} topics</span>}
+              </div>
+              {/* CTA */}
+              <button onClick={() => goLesson(nextLesson!.id)}
+                className="px-5 py-2.5 rounded-full text-sm font-bold inline-flex items-center gap-1.5 self-start"
+                style={{
+                  background: "linear-gradient(135deg, #FF3CA6, #6D3BFF, #3B82F6)",
+                  color: "#fff",
+                  boxShadow: "0 4px 18px rgba(255,60,166,0.35)",
+                  width: "fit-content",
+                }}>
+                Continue Lesson →
+              </button>
+            </div>
+
+          </div>
+
+          {/* SVG gradient for progress ring */}
+          <svg width="0" height="0" aria-hidden>
+            <defs>
+              <linearGradient id="heroPctGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FF3CA6" />
+                <stop offset="100%" stopColor="#6D3BFF" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </section>
+      ) : levelDone ? (
+        <section aria-labelledby="continue-heading" className="rounded-2xl p-5 sm:p-6"
+          style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+          <SectionLabel>Milestone reached</SectionLabel>
+          <h1 id="continue-heading" className="text-2xl sm:text-3xl font-bold" style={{ color: "var(--color-text)" }}>
+            🎉 {viewLevel} · {LEVEL_NAME[viewLevel]} complete
+          </h1>
+          <p className="text-sm mt-1.5" style={{ color: "var(--color-text-secondary)" }}>
+            Every lesson in this level is done. Keep the vocabulary fresh, or explore the next level below.
+          </p>
+          <button onClick={() => router.push("/review")}
+            className="mt-4 px-6 py-3 rounded-xl text-sm font-semibold w-full sm:w-auto"
+            style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
+            Review your vocabulary
+          </button>
+        </section>
+      ) : null}
+
+      {/* ── 2. 2-Column: Today's Mission + Unit | Roadmap ── */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* LEFT: Main learning area — 70% */}
+        <div className="flex-1 min-w-0 space-y-6" style={{ flexBasis: "70%" }}>
+          {/* Today's Mission — glass-effect outer card with ambient glow */}
+          {nextLesson && (
+            <section aria-labelledby="mission-heading" className="relative rounded-[20px] p-6 overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, rgba(20,16,50,0.85), rgba(25,20,55,0.75))",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.06)",
+                boxShadow: "0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(109,59,255,0.06) inset",
+              }}>
+              {/* Subtle purple glow behind the card */}
+              <div className="absolute inset-0 pointer-events-none"
+                style={{ background: "radial-gradient(ellipse at 30% 50%, rgba(109,59,255,0.08) 0%, transparent 60%)" }} />
+              <div className="relative z-10">
+                <h2 id="mission-heading" className="text-[22px] font-extrabold mb-5" style={{ color: "#FFFFFF" }}>Today's Mission</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { icon: "📖", iconBg: "rgba(168,85,247,0.15)", iconColor: "#A855F7", glow: "rgba(168,85,247,0.08)", title: `Complete Lesson ${nextLesson.order}`, subtitle: nextLesson.title, meta: `~${MIN_PER_LESSON} min`, onClick: () => goLesson(nextLesson!.id) },
+                    { icon: "🃏", iconBg: "rgba(255,180,60,0.15)", iconColor: "#E19C18", glow: "rgba(255,180,60,0.06)", title: cardsDue > 0 ? `Review ${cardsDue} cards` : "Vocabulary — all caught up", subtitle: cardsDue > 0 ? "Reinforce what you've learned" : "No cards due right now", meta: cardsDue > 0 ? "~2 min" : "✓", onClick: () => router.push("/review") },
+                    { icon: "🎤", iconBg: "rgba(34,197,94,0.13)", iconColor: "#22C55E", glow: "rgba(34,197,94,0.05)", title: "Practice speaking", subtitle: "Chat with Emma — your AI coach", meta: "~2 min", onClick: () => router.push("/chat") },
+                  ].map((m) => (
+                    <button key={m.title} onClick={m.onClick}
+                      className="text-left rounded-xl p-4 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-3.5 group relative overflow-hidden"
+                      style={{
+                        background: "linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
+                        border: "1px solid rgba(255,255,255,0.05)",
+                        boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+                      }}>
+                      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{ background: `radial-gradient(ellipse at 20% 50%, ${m.glow}, transparent 70%)` }} />
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 relative z-10"
+                        style={{ background: m.iconBg, color: m.iconColor }}>
+                        {m.icon}
+                      </div>
+                      <div className="min-w-0 relative z-10">
+                        <p className="text-[15px] font-bold mb-0.5 truncate" style={{ color: "var(--color-text-primary)" }}>{m.title}</p>
+                        <p className="text-[12px] truncate" style={{ color: "var(--color-text-muted)" }}>{m.subtitle}</p>
+                        <span className="text-[10px] font-semibold mt-1.5 block" style={{ color: "var(--color-text-tertiary)" }}>{m.meta}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Current Unit */}
+          {lessonsLoading ? (
+            <div className="space-y-3">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}</div>
+          ) : currentUnit ? (
+            <section aria-labelledby="unit-heading">
+              <h2 id="unit-heading" className="text-[22px] font-extrabold mb-2" style={{ color: "#FFFFFF" }}>
+                Unit {currentUnit.unit}{currentUnit.theme ? ` · ${currentUnit.theme}` : ""}
+              </h2>
+              <p className="text-sm mb-5" style={{ color: "#9CA3AF" }}>
+                {currentUnit.completed} of {currentUnit.total} lessons complete · {Math.round((currentUnit.completed / currentUnit.total) * 100)}%
+              </p>
+              {/* Lessons — 4-column layout */}
+              <div className="space-y-2.5">
+                {currentUnit.lessons.map((l) => {
+                  const isActive = nextLesson?.id === l.id;
+                  const isComp = l.completed;
+                  return (
+                    <div key={l.id} role="button" tabIndex={0}
+                      onClick={() => router.push(`/curriculum/${viewLevel.toLowerCase()}/${l.id}`)}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(`/curriculum/${viewLevel.toLowerCase()}/${l.id}`); } }}
+                      className="flex items-center gap-5 rounded-2xl px-5 py-4 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer group relative overflow-hidden"
+                      style={{
+                        background: isActive
+                          ? "linear-gradient(135deg, rgba(139,92,246,0.1), rgba(217,70,239,0.06), rgba(109,59,255,0.03))"
+                          : "linear-gradient(180deg, rgba(255,255,255,0.02), transparent)",
+                        border: isActive ? "1px solid rgba(139,92,246,0.2)" : "1px solid rgba(255,255,255,0.04)",
+                        boxShadow: isActive ? "0 0 40px rgba(139,92,246,0.08), inset 0 1px 0 rgba(255,255,255,0.04)" : "0 4px 12px rgba(0,0,0,0.15)",
+                      }}>
+                      {isActive && (
+                        <div className="absolute inset-0 pointer-events-none"
+                          style={{ background: "linear-gradient(90deg, rgba(139,92,246,0.06) 0%, transparent 50%)" }} />
+                      )}
+                      {/* Number circle — plum glass shell + gold medallion */}
+                      <div className="flex-shrink-0 relative z-10 flex items-center justify-center"
+                        style={{ width: 44, height: 44 }}>
+                        {/* Outer plum glass shell */}
+                        <div className="absolute inset-0 rounded-full"
+                          style={{
+                            background: isComp
+                              ? "rgba(34,197,94,0.08)"
+                              : isActive
+                                ? "radial-gradient(circle at 50% 40%, rgba(168,85,247,0.25), rgba(109,40,217,0.12))"
+                                : "rgba(255,255,255,0.02)",
+                            border: isActive
+                              ? "1px solid rgba(168,85,247,0.28)"
+                              : "1px solid rgba(255,255,255,0.06)",
+                            boxShadow: isActive
+                              ? "0 0 18px rgba(139,92,246,0.2), inset 0 1px 0 rgba(255,255,255,0.06)"
+                              : "none",
+                          }} />
+                        {/* Inner metallic gold medallion */}
+                        <div className="absolute rounded-full flex items-center justify-center"
+                          style={{
+                            width: 30, height: 30,
+                            background: isComp
+                              ? "rgba(34,197,94,0.12)"
+                              : isActive
+                                ? "radial-gradient(circle at 40% 35%, #FCD34D, #D97706 70%, #92400E)"
+                                : "radial-gradient(circle at 40% 35%, rgba(255,255,255,0.06), rgba(255,255,255,0.01))",
+                            boxShadow: isActive
+                              ? "0 0 10px rgba(245,158,11,0.25), inset 0 1px 0 rgba(255,255,255,0.2)"
+                              : "none",
+                          }}>
+                          {/* Numeric label */}
+                          <span className="text-sm font-bold"
+                            style={{
+                              color: isComp ? "#22C55E" : isActive ? "#FDE68A" : "#6B7280",
+                            }}>
+                            {isComp ? "✓" : l.order}
+                          </span>
+                        </div>
+                      </div>
+                      {/* Lesson info — "Lesson N · Title" format */}
+                      <div className="flex-1 min-w-0 relative z-10">
+                        <p className="text-[15px] font-semibold truncate" style={{ color: isComp ? "#6B7280" : "#D1D5DB" }}>
+                          Lesson {l.order}{l.title ? ` · ${l.title}` : ""}
+                        </p>
+                      </div>
+                      {/* Duration */}
+                      <span className="text-xs flex-shrink-0 hidden sm:block relative z-10" style={{ color: "#6B7280" }}>~{MIN_PER_LESSON} min</span>
+                      {/* Status chip */}
+                      <span className="flex-shrink-0 text-[11px] font-semibold px-3 py-1 rounded-full relative z-10"
+                        style={{
+                          background: isComp ? "rgba(34,197,94,0.1)" : isActive ? "#8B5CF6" : "rgba(255,255,255,0.02)",
+                          color: isComp ? "#22C55E" : isActive ? "#FFFFFF" : "rgba(107,114,128,0.5)",
+                          border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid rgba(255,255,255,0.04)",
+                          boxShadow: isActive ? "0 0 12px rgba(217,70,239,0.2)" : "none",
+                        }}>
+                        {isComp ? "Completed" : isActive ? "Current" : "Locked"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : lessons && lessons.length === 0 ? (
+            <div className="rounded-[20px] p-8 text-center"
+              style={{
+                background: "linear-gradient(180deg, rgba(255,255,255,0.02), transparent)",
+                border: "1px solid rgba(255,255,255,0.04)",
+                boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+              }}>
+              <div className="text-4xl mb-3">📚</div>
+              <p className="text-sm font-medium mb-1" style={{ color: "#FFFFFF" }}>{viewLevel} lessons are coming soon</p>
+              <p className="text-xs" style={{ color: "#9CA3AF" }}>We're building this level — check back shortly.</p>
+            </div>
+          ) : null}
+        </div>
+
+        {/* RIGHT: Roadmap — mini or expanded */}
+        <div className="flex-1 min-w-0 flex flex-col" style={{ flexBasis: "30%" }}>
+          <div className="rounded-[15px] p-6"
+            style={{
+              background: "#12162B",
+              border: "1px solid rgba(255,255,255,0.06)",
+              boxShadow: "0 16px 40px rgba(0,0,0,0.35)",
+              display: "flex",
+              flexDirection: "column",
+              ...(showFullRoadmap ? { flex: 1, minHeight: 0, maxHeight: "calc(100vh - 220px)", overflow: "hidden" } : {}),
+            }}>
+            {/* Header row */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+              <h3 className="text-lg font-bold" style={{ color: "#F8FAFC", margin: 0 }}>Roadmap</h3>
+              {showFullRoadmap && (
+                <button onClick={() => setShowFullRoadmap(false)}
+                  style={{
+                    background: "#8B5CF6", border: "1px solid rgba(139,92,246,0.3)",
+                    borderRadius: "8px", padding: "4px 12px", cursor: "pointer",
+                    color: "#FFFFFF", fontSize: "12px", fontWeight: 600,
+                  }}>
+                  Show Less
+                </button>
+              )}
+            </div>
+
+            {/* ── MINI VIEW: current unit timeline ── */}
+            {!showFullRoadmap && (
+              <>
+                <div className="relative mb-6">
+                  <div className="absolute left-[9px] top-0 bottom-0 w-[2px] rounded-full"
+                    style={{ background: "linear-gradient(180deg, #6D28D9 0%, rgba(109,40,217,0.2) 100%)" }} />
+                  {currentUnit?.lessons.map((l, i) => {
+                    const isActive = nextLesson?.id === l.id;
+                    const isComp = l.completed;
+                    const isLast = i === currentUnit.lessons.length - 1;
+                    return (
+                      <div key={l.id} className={`flex gap-4 relative ${isLast ? "" : "mb-5"}`} style={{ minHeight: 52 }}>
+                        <div className="relative flex-shrink-0 flex items-start pt-[5px]">
+                          {isActive && (
+                            <div className="absolute rounded-full" style={{ width: 28, height: 28, left: -5, top: 1, background: "radial-gradient(circle, rgba(139,92,246,0.3), transparent 60%)" }} />
+                          )}
+                          <div className="relative rounded-full flex-shrink-0 z-10"
+                            style={{
+                              width: 20, height: 20,
+                              background: isComp ? "rgba(34,197,94,0.5)" : isActive ? "rgba(139,92,246,0.5)" : "rgba(75,85,99,0.35)",
+                              border: isActive ? "1px solid rgba(139,92,246,0.25)" : "none",
+                              boxShadow: isActive ? "0 0 16px rgba(139,92,246,0.25)" : "none",
+                            }}>
+                            {isActive && (
+                              <div className="absolute rounded-full"
+                                style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
+                          <div className="min-w-0 mr-2">
+                            <p className="text-[15px] font-semibold truncate leading-tight mb-0.5"
+                              style={{ color: isComp ? "#6B7280" : isActive ? "#F8FAFC" : "#D1D5DB" }}>
+                              Lesson {l.order}
+                            </p>
+                            <p className="text-[13px] truncate leading-tight"
+                              style={{ color: isComp ? "#5C6370" : "#6B7280" }}>{l.title}</p>
+                          </div>
+                          <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
+                            style={{
+                              width: 72,
+                              background: isComp ? "rgba(34,197,94,0.08)" : isActive ? "#8B5CF6" : "rgba(75,85,99,0.1)",
+                              color: isComp ? "#22C55E" : isActive ? "#FFFFFF" : "rgba(107,114,128,0.5)",
+                              border: isActive ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
+                            }}>
+                            {isComp ? "Done" : isActive ? "Current" : "Locked"}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div className="flex gap-4 relative" style={{ minHeight: 52 }}>
+                    <div className="flex-shrink-0 flex items-start pt-[5px]">
+                      <div className="relative z-10 rounded-full" style={{ width: 20, height: 20, background: "rgba(245,158,11,0.5)", boxShadow: "0 0 14px rgba(245,158,11,0.3)" }}>
+                        <div className="absolute rounded-full" style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
+                      <div className="min-w-0 mr-2">
+                        <p className="text-[15px] font-semibold truncate leading-tight mb-0.5" style={{ color: "#D1D5DB" }}>Review</p>
+                        <p className="text-[13px] truncate leading-tight" style={{ color: "#6B7280" }}>Unit {currentUnitNum} Review</p>
+                      </div>
+                      <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
+                        style={{ width: 72, background: "rgba(75,85,99,0.1)", color: "rgba(107,114,128,0.5)" }}>Locked</span>
+                    </div>
+                  </div>
+                </div>
+                <button onClick={() => setShowFullRoadmap(true)}
+                  className="w-full py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-250 hover:-translate-y-0.5"
+                  style={{
+                    background: "rgba(139,92,246,0.12)",
+                    color: "#A78BFA",
+                    border: "1px solid rgba(139,92,246,0.2)",
+                  }}>
+                  View Full Roadmap
+                </button>
+              </>
+            )}
+
+            {/* ── EXPANDED VIEW: continuous timeline extended from mini roadmap ── */}
+            {showFullRoadmap && (
+              <div className="relative" style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
+                {/* Single continuous vertical line */}
+                <div className="absolute left-[9px] top-0 bottom-0 w-[2px] rounded-full"
+                  style={{ background: "linear-gradient(180deg, #6D28D9 0%, rgba(109,40,217,0.2) 100%)" }} />
+
+                {LEVEL_ORDER.map((lvl, lvlIdx) => {
+                  const meta = levels?.find((l) => l.level === lvl);
+                  if (!meta) return null;
+
+                  const lvlLessons = allLessonsByLevel.get(lvl);
+                  const isLocked = lvlIdx > (TIER_MAX_LEVEL[user?.subscription_tier ?? "free"] ?? 0);
+                  const pct = meta.lesson_count > 0 ? Math.round((meta.completed_count / meta.lesson_count) * 100) : 0;
+                  const units = lvlLessons ? groupUnits(lvlLessons) : [];
+
+                  return (
+                    <div key={lvl} style={{ marginBottom: 4 }}>
+                      {/* Level marker — emoji circle + label, matching Complete Journey style */}
+                      <div className="flex gap-4 relative" style={{ minHeight: 44, marginBottom: 12, alignItems: "center" }}>
+                        <div className="relative flex-shrink-0 flex items-center justify-center"
+                          style={{
+                            width: 32, height: 32, borderRadius: "50%",
+                            background: isLocked ? "rgba(75,85,99,0.12)" :
+                              pct >= 100 ? "rgba(34,197,94,0.12)" :
+                              lvl === currentLevel ? "rgba(139,92,246,0.18)" : "rgba(255,255,255,0.04)",
+                            border: isLocked ? "1px solid rgba(75,85,99,0.2)" :
+                              pct >= 100 ? "1px solid rgba(34,197,94,0.3)" :
+                              lvl === currentLevel ? "1px solid rgba(139,92,246,0.35)" : "1px solid rgba(255,255,255,0.08)",
+                            boxShadow: lvl === currentLevel && !isLocked ? "0 0 16px rgba(139,92,246,0.2)" : "none",
+                            opacity: isLocked ? 0.5 : 1,
+                            fontSize: "16px",
+                          }}>
+                          {isLocked ? "🔒" : LEVEL_META[lvl]?.emoji || "📚"}
+                        </div>
+                        <div className="flex-1 min-w-0 flex items-center justify-between">
+                          <div>
+                            <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: isLocked ? "#6B7280" : "#E2E8F0", lineHeight: 1.2 }}>
+                              {lvl} · {LEVEL_META[lvl]?.name}
+                            </p>
+                            <p style={{ margin: 0, fontSize: "11px", color: "#64748B", marginTop: 1 }}>
+                              {meta.lesson_count === 0 ? "Coming soon" : isLocked
+                                ? `🔒 Upgrade to unlock ${meta.lesson_count} lessons`
+                                : `${meta.completed_count} of ${meta.lesson_count} lessons complete`}
+                            </p>
+                          </div>
+                          {meta.lesson_count > 0 && !isLocked && (
+                            <span style={{
+                              fontSize: "12px", fontWeight: 700,
+                              color: pct >= 100 ? "#22C55E" : "#8B5CF6",
+                              background: pct >= 100 ? "rgba(34,197,94,0.08)" : "rgba(139,92,246,0.1)",
+                              padding: "2px 10px", borderRadius: "99px",
+                            }}>
+                              {pct}%
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Lessons — exact same row styling as mini roadmap */}
+                      {!isLocked && lvlLessons && units.map((unit) => {
+                        return unit.lessons.map((lesson, i) => {
+                          const isCurrentLesson = cont?.id === lesson.id;
+                          const isComp = lesson.completed;
+                          const isLastInLevel = lvlIdx === LEVEL_ORDER.length - 1
+                            && units.indexOf(unit) === units.length - 1
+                            && i === unit.lessons.length - 1;
+
+                          return (
+                            <div key={lesson.id}
+                              onClick={() => router.push(`/curriculum/${lvl.toLowerCase()}/${lesson.id}`)}
+                              className={`flex gap-4 relative ${isLastInLevel ? "" : "mb-5"}`}
+                              style={{ minHeight: 52, cursor: "pointer" }}>
+                              {/* Dot — exact copy of mini roadmap */}
+                              <div className="relative flex-shrink-0 flex items-start pt-[5px]">
+                                {isCurrentLesson && (
+                                  <div className="absolute rounded-full" style={{ width: 28, height: 28, left: -5, top: 1, background: "radial-gradient(circle, rgba(139,92,246,0.3), transparent 60%)" }} />
+                                )}
+                                <div className="relative rounded-full flex-shrink-0 z-10"
+                                  style={{
+                                    width: 20, height: 20,
+                                    background: isComp ? "rgba(34,197,94,0.5)" : isCurrentLesson ? "rgba(139,92,246,0.5)" : "rgba(75,85,99,0.35)",
+                                    border: isCurrentLesson ? "1px solid rgba(139,92,246,0.25)" : "none",
+                                    boxShadow: isCurrentLesson ? "0 0 16px rgba(139,92,246,0.25)" : "none",
+                                  }}>
+                                  {isCurrentLesson && (
+                                    <div className="absolute rounded-full"
+                                      style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
+                                  )}
+                                </div>
+                              </div>
+                              {/* Content row — exact copy of mini roadmap */}
+                              <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
+                                <div className="min-w-0 mr-2">
+                                  <p className="text-[15px] font-semibold truncate leading-tight mb-0.5"
+                                    style={{ color: isComp ? "#6B7280" : isCurrentLesson ? "#F8FAFC" : "#D1D5DB" }}>
+                                    Lesson {lesson.order}
+                                  </p>
+                                  <p className="text-[13px] truncate leading-tight"
+                                    style={{ color: isComp ? "#5C6370" : "#6B7280" }}>
+                                    {lesson.title}
+                                  </p>
+                                </div>
+                                {/* Status badge — exact copy of mini roadmap */}
+                                <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
+                                  style={{
+                                    width: 72,
+                                    background: isComp ? "rgba(34,197,94,0.08)" : isCurrentLesson ? "#8B5CF6" : "rgba(75,85,99,0.1)",
+                                    color: isComp ? "#22C55E" : isCurrentLesson ? "#FFFFFF" : "rgba(107,114,128,0.5)",
+                                    border: isCurrentLesson ? "1px solid rgba(139,92,246,0.3)" : "1px solid transparent",
+                                  }}>
+                                  {isComp ? "Done" : isCurrentLesson ? "Current" : "Locked"}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        });
+                      })}
+
+                      {/* Locked level placeholder */}
+                      {isLocked && meta.lesson_count > 0 && (
+                        <div className="flex gap-4 relative" style={{ minHeight: 52, opacity: 0.4 }}>
+                          <div className="relative flex-shrink-0 flex items-start pt-[5px]">
+                            <div className="relative rounded-full flex-shrink-0 z-10"
+                              style={{ width: 20, height: 20, background: "rgba(75,85,99,0.35)" }} />
+                          </div>
+                          <div className="flex-1 min-w-0 flex items-center" style={{ height: 52 }}>
+                            <p className="text-[15px] font-semibold truncate" style={{ color: "#6B7280" }}>
+                              {meta.lesson_count} locked lessons
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Loading skeleton */}
+                      {!isLocked && !lvlLessons && meta.lesson_count > 0 && (
+                        <div>
+                          {[1, 2, 3].map((n) => (
+                            <div key={n} className="flex gap-4 relative mb-5" style={{ minHeight: 52 }}>
+                              <div className="flex-shrink-0 flex items-start pt-[5px]">
+                                <div className="shimmer rounded-full" style={{ width: 20, height: 20 }} />
+                              </div>
+                              <div className="flex-1 min-w-0 flex items-center" style={{ height: 52 }}>
+                                <div className="w-full">
+                                  <div className="shimmer" style={{ width: "60%", height: 16, borderRadius: 4, marginBottom: 4 }} />
+                                  <div className="shimmer" style={{ width: "80%", height: 14, borderRadius: 4 }} />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Review node — same as mini roadmap */}
+                <div className="flex gap-4 relative" style={{ minHeight: 52, marginTop: 4 }}>
+                  <div className="flex-shrink-0 flex items-start pt-[5px]">
+                    <div className="relative z-10 rounded-full" style={{ width: 20, height: 20, background: "rgba(245,158,11,0.5)", boxShadow: "0 0 14px rgba(245,158,11,0.3)" }}>
+                      <div className="absolute rounded-full" style={{ width: 10, height: 10, left: 5, top: 5, background: "rgba(255,255,255,0.45)", border: "none" }} />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0 flex items-center justify-between" style={{ height: 52 }}>
+                    <div className="min-w-0 mr-2">
+                      <p className="text-[15px] font-semibold truncate leading-tight mb-0.5" style={{ color: "#D1D5DB" }}>Review All</p>
+                      <p className="text-[13px] truncate leading-tight" style={{ color: "#6B7280" }}>Full course review</p>
+                    </div>
+                    <span className="flex-shrink-0 text-[11px] font-medium px-3 py-1 rounded-full text-center transition-colors duration-300"
+                      style={{ width: 72, background: "rgba(75,85,99,0.1)", color: "rgba(107,114,128,0.5)" }}>Locked</span>
+                  </div>
+                </div>
+
+                {/* Show Less button */}
+                <div style={{ paddingLeft: 28, marginTop: 16, marginBottom: 4 }}>
+                  <button onClick={() => setShowFullRoadmap(false)}
+                    className="w-full py-2 rounded-xl text-[12px] font-semibold transition-all duration-250 hover:-translate-y-0.5"
+                    style={{
+                      background: "#8B5CF6",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(139,92,246,0.3)",
+                    }}>
+                    Show Less ↑
+                  </button>
+                </div>
+              </div>
             )}
           </div>
-
-          {/* Level selector pills */}
-          {levels && levels.length > 0 && (
-            <div className="hidden sm:flex gap-1.5">
-              {levels.map((lvl) => (
-                <button
-                  key={lvl.level}
-                  onClick={() => setActiveLevel(lvl.level)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
-                  style={{
-                    background: activeLevel === lvl.level ? "var(--color-active-bg)" : "transparent",
-                    color: activeLevel === lvl.level ? "var(--color-active-text)" : "var(--color-text-muted)",
-                  }}
-                >
-                  {lvl.level}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
-
-        {/* Lesson list */}
-        {lessonsLoading ? (
-          <div className="space-y-3">
-            {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-24 rounded-2xl" />
-            ))}
-          </div>
-        ) : lessons && lessons.length > 0 ? (
-          <div className="space-y-3">
-            {lessons.map((lesson, idx) => (
-              <LessonCard
-                key={lesson.id}
-                id={lesson.id}
-                title={lesson.title}
-                level={activeLevel}
-                unit={lesson.unit}
-                order={lesson.order}
-                topics={lesson.topics || []}
-                completed={lesson.completed}
-                isNext={!lesson.completed && nextLesson?.id === lesson.id}
-                index={idx + 1}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-2xl p-8 text-center"
-            style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-            <div className="text-4xl mb-3">📚</div>
-            <p className="text-sm font-medium mb-1" style={{ color: "var(--color-text)" }}>
-              No lessons available for {activeLevel}
-            </p>
-            <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-              Check back soon for new content
-            </p>
-          </div>
-        )}
       </div>
 
-      {/* ── Quick shortcuts ──────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { label: "Practice Words", icon: "🃏", href: "/review", desc: "Spaced repetition" },
-          { label: "Take a Quiz", icon: "✅", href: "/quiz", desc: "Test yourself" },
-          { label: "AI Chat", icon: "🗣️", href: "/chat", desc: "Practice speaking" },
-          { label: "Grammar", icon: "📖", href: "/grammar", desc: "Browse topics" },
-        ].map((item) => (
-          <button
-            key={item.label}
-            onClick={() => router.push(item.href)}
-            className="rounded-xl p-4 text-left transition-all hover:-translate-y-0.5"
-            style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}
-          >
-            <span className="text-xl mb-2 block">{item.icon}</span>
-            <p className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>{item.label}</p>
-            <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>{item.desc}</p>
-          </button>
-        ))}
-      </div>
+      {/* ── Complete Journey (premium, layered) ── */}
+      {levels && levels.length > 0 && (
+        <section id="complete-journey" aria-labelledby="journey-heading">
+          <h2 id="journey-heading" className="text-[22px] font-extrabold mb-5" style={{ color: "#FFFFFF" }}>Complete Journey</h2>
+          <div className="rounded-[20px] p-6 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(135deg, rgba(20,16,50,0.8), rgba(18,14,45,0.65))",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              border: "1px solid rgba(255,255,255,0.05)",
+              boxShadow: "0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(109,59,255,0.04) inset",
+            }}>
+            <div className="absolute inset-0 pointer-events-none"
+              style={{ background: "radial-gradient(ellipse at 50% 30%, rgba(109,59,255,0.06), transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(255,60,166,0.04), transparent 50%)" }} />
+            <div className="relative z-10">
+              <LevelPath levels={levels} currentLevel={viewLevel} onSelect={setOverride} />
+            </div>
+          </div>
+        </section>
+      )}
+
     </div>
   );
 }

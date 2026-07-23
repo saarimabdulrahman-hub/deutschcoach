@@ -60,7 +60,7 @@ export function LevelPath({ levels, currentLevel, onSelect }: LevelPathProps) {
         const pct = lvl.lesson_count > 0 ? Math.round((lvl.completed_count / lvl.lesson_count) * 100) : 0;
         const isCurrent = lvl.level === currentLevel;
         const isCompleted = pct >= 100;
-        const isLocked = i > 0 && levels[i - 1].completed_count === 0 && levels[i - 1].lesson_count > 0 && pct === 0;
+        const isComingSoon = lvl.lesson_count === 0; // no fake locks — either it has content or it's coming soon
 
         return (
           <div key={lvl.level} className="flex-1 flex sm:flex-col items-center gap-3 sm:gap-2 relative">
@@ -71,9 +71,10 @@ export function LevelPath({ levels, currentLevel, onSelect }: LevelPathProps) {
             )}
 
             <button
-              onClick={() => onSelect(lvl.level)}
-              className="relative z-10 flex sm:flex-col items-center gap-3 sm:gap-2 p-2 sm:p-0 transition-all hover:scale-105"
-              aria-label={`${lvl.level} — ${levelMeta[lvl.level]?.name}`}
+              onClick={() => !isComingSoon && onSelect(lvl.level)}
+              disabled={isComingSoon}
+              className="relative z-10 flex sm:flex-col items-center gap-3 sm:gap-2 p-2 sm:p-0 transition-all hover:scale-105 disabled:cursor-default"
+              aria-label={`${lvl.level} — ${levelMeta[lvl.level]?.name}${isComingSoon ? " (coming soon)" : ""}`}
             >
               {/* Milestone circle */}
               <div className="rounded-full flex items-center justify-center flex-shrink-0 transition-all"
@@ -81,11 +82,12 @@ export function LevelPath({ levels, currentLevel, onSelect }: LevelPathProps) {
                   width: 48, height: 48,
                   background: isCompleted ? "rgba(34,197,94,0.15)" :
                     isCurrent ? "rgba(124,58,237,0.2)" :
-                    isLocked ? "var(--color-border)" : "var(--color-card-bg)",
+                    isComingSoon ? "var(--color-border)" : "var(--color-card-bg)",
                   border: isCompleted ? "2px solid rgba(34,197,94,0.4)" :
                     isCurrent ? "2px solid rgba(124,58,237,0.5)" :
-                    isLocked ? "1px solid var(--color-border)" : "1px solid var(--color-border)",
+                    "1px solid var(--color-border)",
                   boxShadow: isCurrent ? "0 0 0 4px rgba(124,58,237,0.15)" : "none",
+                  opacity: isComingSoon ? 0.5 : 1,
                 }}
               >
                 <span className="text-xl">{levelMeta[lvl.level]?.emoji || "📚"}</span>
@@ -94,28 +96,29 @@ export function LevelPath({ levels, currentLevel, onSelect }: LevelPathProps) {
               {/* Label */}
               <div className="text-left sm:text-center">
                 <p className="text-sm font-bold leading-tight" style={{
-                  color: isLocked ? "var(--color-text-muted)" : "var(--color-text)",
-                  opacity: isLocked ? 0.4 : 1,
+                  color: "var(--color-text)",
+                  opacity: isComingSoon ? 0.5 : 1,
                 }}>
                   {lvl.level}
                 </p>
                 <p className="text-[10px] leading-tight hidden sm:block" style={{
                   color: "var(--color-text-muted)",
-                  opacity: isLocked ? 0.4 : 1,
                 }}>
-                  {levelMeta[lvl.level]?.name || lvl.title}
+                  {isComingSoon ? "Coming soon" : (levelMeta[lvl.level]?.name || lvl.title)}
                 </p>
               </div>
             </button>
 
-            {/* Mini progress ring — desktop only */}
-            <div className="hidden sm:block">
-              <MiniRing pct={pct} size={32} />
-            </div>
+            {/* Mini progress ring — desktop only, hidden for coming-soon */}
+            {!isComingSoon && (
+              <div className="hidden sm:block">
+                <MiniRing pct={pct} size={32} />
+              </div>
+            )}
 
             {/* Mobile: inline progress fraction */}
             <span className="sm:hidden text-xs" style={{ color: "var(--color-text-muted)" }}>
-              {lvl.completed_count}/{lvl.lesson_count}
+              {isComingSoon ? "Soon" : `${lvl.completed_count}/${lvl.lesson_count}`}
             </span>
           </div>
         );

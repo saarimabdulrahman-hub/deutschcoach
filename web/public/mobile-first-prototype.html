@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile-first Dashboard — Prototype</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0c0b18; color: #fff; }
+
+  /* ── Layout ────────────────────────────────── */
+  .shell { max-width: 1280px; margin: 0 auto; padding: 16px; }
+  .section-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.13em; color: #888; margin-bottom: 12px;
+  }
+
+  /* ── Shared card ───────────────────────────── */
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%), #111127;
+    border: 1px solid rgba(186, 120, 255, 0.18);
+    border-radius: 20px;
+    box-shadow: 0 0 35px rgba(168,85,247,.08);
+  }
+  .card-review {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%), #111127;
+    border: 1px solid rgba(217,70,239,0.18);
+    border-radius: 20px;
+    box-shadow: inset 0 -2px 8px rgba(217,70,239,0.06), inset 0 0 16px rgba(217,70,239,0.14);
+  }
+
+  /* ═══════════════════════════════════════════════
+     MOBILE-FIRST: base styles (everything below sm)
+     ═══════════════════════════════════════════════ */
+
+  .mid-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── Progress block ───────────────── */
+  .progress-block {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .progress-ring-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .progress-ring {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(#a855f7 0deg 35%, #2a2a45 35deg 360deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .progress-ring-inner {
+    width: 66px; height: 66px;
+    border-radius: 50%;
+    background: #111127;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .progress-text h3 {
+    font-size: 22px; font-weight: 700;
+    background: linear-gradient(135deg, #ec4899, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .progress-text p {
+    font-size: 13px; color: #888;
+    margin-top: 2px;
+  }
+  .progress-text button {
+    margin-top: 8px;
+    padding: 8px 18px;
+    border-radius: 10px;
+    border: 1px solid #a855f7;
+    background: transparent;
+    color: #c084fc;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ── KPI row (horizontal scroll on mobile) ─ */
+  .kpi-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+  }
+  .kpi-scroll::-webkit-scrollbar { display: none; }
+  .kpi-chip {
+    flex-shrink: 0;
+    padding: 12px 16px;
+    min-width: 130px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(186,120,255,0.12);
+  }
+  .kpi-chip-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .kpi-chip-text { flex-shrink: 0; }
+  .kpi-chip-value { font-size: 18px; font-weight: 700; color: #fff; line-height: 1.1; }
+  .kpi-chip-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ── Review block ────────────────── */
+  .review-block { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .review-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(186,120,255,0.12);
+    cursor: pointer;
+    text-decoration: none;
+    min-height: 64px; /* ≥ 44px touch target */
+  }
+  .review-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+  .review-body { flex: 1; }
+  .review-title { font-size: 14px; font-weight: 600; color: #fff; }
+  .review-desc { font-size: 12px; color: #888; margin-top: 1px; }
+  .review-arrow { font-size: 18px; color: #666; }
+
+  /* ── Action bar (mobile sticky) ──── */
+  .quick-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .quick-action-btn {
+    flex: 1;
+    padding: 14px 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(186,120,255,0.18);
+    background: rgba(255,255,255,0.03);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .quick-action-btn.primary {
+    background: linear-gradient(135deg, #a855f7, #7c3aed);
+    border-color: transparent;
+  }
+
+  /* ═══════════════════════════════════════════════
+     TABLET+ (≥ 640px sm)
+     ═══════════════════════════════════════════════ */
+  @media (min-width: 640px) {
+    .mid-row {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 12px;
+    }
+    .kpi-scroll {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      overflow-x: visible;
+    }
+    .kpi-chip { min-width: 0; }
+    .review-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════
+     DESKTOP (≥ 1024px lg)
+     ═══════════════════════════════════════════════ */
+  @media (min-width: 1024px) {
+    .mid-row {
+      grid-template-columns: 240px 1fr 240px;
+    }
+    .kpi-scroll {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .quick-actions { display: none; }
+    .section-label { margin-bottom: 16px; }
+  }
+
+  /* ── Separator ───────────────────── */
+  .prototype-header {
+    text-align: center;
+    padding: 32px 16px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 24px;
+  }
+  .prototype-header h1 { font-size: 20px; font-weight: 700; }
+  .prototype-header p { font-size: 13px; color: #888; margin-top: 4px; }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(168,85,247,0.15);
+    color: #c084fc;
+    margin-bottom: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="prototype-header">
+  <div class="badge">Mobile-first concept</div>
+  <h1>Dashboard — Mid Section</h1>
+  <p>Progress · KPI · Review — reflowed per breakpoint</p>
+</div>
+
+<div class="shell">
+
+  <!-- ═══ MID ROW (mobile-first) ═══ -->
+  <div class="mid-row">
+
+    <!-- ── Progress ── -->
+    <div class="card progress-block">
+      <div class="section-label" style="margin-bottom:0">Your Progress</div>
+      <div class="progress-ring-wrap">
+        <div class="progress-ring">
+          <div class="progress-ring-inner">35%</div>
+        </div>
+        <div class="progress-text">
+          <h3>35% complete</h3>
+          <p>Keep going — halfway to A2!</p>
+          <button>View Roadmap →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── KPI + Review (combined for tablet+) ── -->
+    <div class="card" style="padding:16px; display:flex; flex-direction:column; gap:14px;">
+
+      <!-- KPI chips (horizontal scroll) -->
+      <div>
+        <div class="section-label">Today's Stats</div>
+        <div class="kpi-scroll">
+          <div class="kpi-chip">
+            <div class="kpi-chip-icon" style="background:rgba(59,130,246,.14);color:#3B82F6">📘</div>
+            <div class="kpi-chip-text">
+              <div class="kpi-chip-value">35%</div>
+              <div class="kpi-chip-label">Level Progress</div>
+            </div>
+          </div>
+          <div class="kpi-chip">
+            <div class="kpi-chip-icon" style="background:rgba(34,197,94,.14);color:#22C55E">🌿</div>
+            <div class="kpi-chip-text">
+              <div class="kpi-chip-value">2</div>
+              <div class="kpi-chip-label">Words in Review</div>
+            </div>
+          </div>
+          <div class="kpi-chip">
+            <div class="kpi-chip-icon" style="background:rgba(168,85,247,.14);color:#A855F7">🧩</div>
+            <div class="kpi-chip-text">
+              <div class="kpi-chip-value">✓</div>
+              <div class="kpi-chip-label">Grammar Topics</div>
+            </div>
+          </div>
+          <div class="kpi-chip">
+            <div class="kpi-chip-icon" style="background:rgba(245,158,11,.14);color:#F59E0B">🎯</div>
+            <div class="kpi-chip-text">
+              <div class="kpi-chip-value">72%</div>
+              <div class="kpi-chip-label">Quiz Accuracy</div>
+            </div>
+          </div>
+          <div class="kpi-chip">
+            <div class="kpi-chip-icon" style="background:rgba(59,130,246,.14);color:#3B82F6">🕒</div>
+            <div class="kpi-chip-text">
+              <div class="kpi-chip-value">5</div>
+              <div class="kpi-chip-label">Cards to Review</div>
+            </div>
+          </div>
+          <div class="kpi-chip">
+            <div class="kpi-chip-icon" style="background:rgba(56,189,248,.14);color:#38BDF8">⏱</div>
+            <div class="kpi-chip-text">
+              <div class="kpi-chip-value">L1</div>
+              <div class="kpi-chip-label">Current Unit</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review items (side-by-side on tablet+) -->
+      <div>
+        <div class="section-label">Review &amp; Practice</div>
+        <div class="review-row" style="display:flex; flex-direction:column; gap:10px;">
+          <a class="review-item">
+            <div class="review-icon" style="background:rgba(245,158,11,.14);color:#F59E0B">🃏</div>
+            <div class="review-body">
+              <div class="review-title">Flashcards</div>
+              <div class="review-desc">Nothing due — great work!</div>
+            </div>
+            <span class="review-arrow">›</span>
+          </a>
+          <a class="review-item">
+            <div class="review-icon" style="background:rgba(168,85,247,.14);color:#A855F7">🎯</div>
+            <div class="review-body">
+              <div class="review-title">Discover Your Level</div>
+              <div class="review-desc">Find out what you know</div>
+            </div>
+            <span class="review-arrow">›</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Quick action bar (mobile only, hidden at lg) ── -->
+  <div class="quick-actions">
+    <button class="quick-action-btn">📖 Study</button>
+    <button class="quick-action-btn primary">▶️ Continue Lesson</button>
+    <button class="quick-action-btn">🎤 Practice</button>
+  </div>
+
+  <!-- ═══ Comparison note ═══ -->
+  <div style="margin-top:48px; padding:20px; border-radius:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);">
+    <p style="font-size:13px; color:#888; line-height:1.6;">
+      <strong style="color:#c084fc">Resize your browser</strong> to see the layout adapt:<br>
+      · <strong>&lt; 640px</strong> — single column, horizontally scrollable KPI chips, round progress side-by-side with text<br>
+      · <strong>640–1023px (tablet)</strong> — 2-column grid, KPI grid, review items side-by-side<br>
+      · <strong>≥ 1024px (desktop)</strong> — 3-column layout with progress ring, KPI grid, and review panel, quick action bar hides
+    </p>
+    <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+      <span style="padding:4px 12px; border-radius:20px; font-size:11px; background:rgba(168,85,247,0.12); color:#c084fc;">✓ No duplicate DOM</span>
+      <span style="padding:4px 12px; border-radius:20px; font-size:11px; background:rgba(168,85,247,0.12); color:#c084fc;">✓ Single source of truth</span>
+      <span style="padding:4px 12px; border-radius:20px; font-size:11px; background:rgba(168,85,247,0.12); color:#c084fc;">✓ 44px+ touch targets</span>
+      <span style="padding:4px 12px; border-radius:20px; font-size:11px; background:rgba(168,85,247,0.12); color:#c084fc;">✓ Horizontal scroll KPI on mobile</span>
+      <span style="padding:4px 12px; border-radius:20px; font-size:11px; background:rgba(168,85,247,0.12); color:#c084fc;">✓ Desktop mode at 980px shows tablet layout</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

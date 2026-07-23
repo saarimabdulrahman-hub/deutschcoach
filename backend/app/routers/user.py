@@ -81,6 +81,31 @@ def change_password(
     return {"message": "Password changed"}
 
 
+@router.get("/bookmarks")
+def get_bookmarks(
+    db: Session = Depends(get_db),
+    user: User = Depends(require_auth),
+):
+    """Return all saved vocabulary notes for the authenticated user."""
+    notes = (
+        db.query(UserVocabNote)
+        .filter(UserVocabNote.user_id == user.id)
+        .order_by(UserVocabNote.updated_at.desc())
+        .all()
+    )
+    return [
+        {
+            "id": n.id,
+            "german": n.german,
+            "english": n.english,
+            "notes": n.notes,
+            "created_at": n.created_at.isoformat() if n.created_at else "",
+            "updated_at": n.updated_at.isoformat() if n.updated_at else "",
+        }
+        for n in notes
+    ]
+
+
 @router.post("/delete-account")
 def delete_account(
     db: Session = Depends(get_db),
@@ -103,3 +128,22 @@ def delete_account(
     db.delete(user)
     db.commit()
     return {"message": "Account deleted"}
+
+
+@router.get("/admin/users")
+def list_users(
+    db: Session = Depends(get_db),
+    admin: User = Depends(require_auth),
+):
+    """Admin: list all users. Basic endpoint for admin dashboard."""
+    users = db.query(User).order_by(User.created_at.desc()).limit(100).all()
+    return [
+        {
+            "id": u.id,
+            "name": u.name,
+            "email": u.email,
+            "subscription_tier": u.subscription_tier,
+            "created_at": u.created_at.isoformat() if u.created_at else None,
+        }
+        for u in users
+    ]

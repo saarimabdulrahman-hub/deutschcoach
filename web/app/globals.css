@@ -1,52 +1,57 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════════
-   DeutschFlow Design Tokens
+   DeutschFlow Design Tokens + Premium UI Utilities
    Single source of truth for all visual values.
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Color: Surface — Deep Premium Dark ─────────── */
-  --color-page-bg: #0B0725;
-  --color-card-bg: rgba(30, 20, 65, 0.6);
-  --color-card-alt: rgba(35, 24, 72, 0.7);
-  --color-card-elevated: rgba(40, 28, 82, 0.8);
-  --color-sidebar-bg: #0E0A28;
-  --color-header-bg: rgba(16, 12, 40, 0.75);
-  --color-input-bg: rgba(30, 20, 65, 0.5);
+  /* ══════════════════════════════════════════════════════════════
+     CANONICAL DESIGN TOKENS — DeutschFlow Design Bible v8.5.1
+     Single source of truth for all visual values.
+     ══════════════════════════════════════════════════════════════ */
 
-  /* ── Color: Border — Visible Glass ───────────────── */
-  --color-border: rgba(190, 170, 240, 0.14);
-  --color-border-light: rgba(190, 170, 240, 0.2);
-  --color-input-border: rgba(190, 170, 240, 0.16);
-  --color-input-focus: #8B46FF;
+  /* ── Color: Brand & Surface ─────────────────────── */
+  --color-brand-primary: #8b5cf6;
+  --color-brand-secondary: #d946ef;
+  --color-surface-1: rgba(30, 20, 65, 0.6);
+  --color-surface-2: rgba(35, 24, 72, 0.7);
+  --color-surface-3: rgba(40, 28, 82, 0.8);
+  --color-background-primary: #030212;
+  --color-background-secondary: #0E0A28;
 
   /* ── Color: Text ────────────────────────────────── */
-  --color-text: #FFFFFF;
+  --color-text-primary: #FFFFFF;
   --color-text-secondary: rgba(255, 255, 255, 0.75);
-  --color-text-muted: rgba(210, 200, 240, 0.5);
+  --color-text-tertiary: rgba(255, 255, 255, 0.5);
+  --color-text-muted: #94a3b8;
 
-  /* ── Color: Interactive ─────────────────────────── */
+  /* ── Color: Border ──────────────────────────────── */
+  --color-border-subtle: rgba(190, 170, 240, 0.14);
+  --color-border-strong: rgba(190, 170, 240, 0.2);
+  --color-border-focus: #8B46FF;
+  --color-border-divider: rgba(190, 170, 240, 0.08);
+
+  /* ── Color: Interactive States ──────────────────── */
   --color-hover-bg: rgba(139, 70, 255, 0.14);
   --color-active-bg: rgba(139, 70, 255, 0.22);
   --color-active-text: #C48BFF;
   --color-badge-bg: rgba(139, 70, 255, 0.25);
   --color-badge-text: #C48BFF;
 
-  /* ── Color: Accent — Luminous Glass Violet ────────── */
-  --color-accent: #8B46FF;
-  --color-accent-light: #A85CFF;
-  --color-accent-dark: #7B3FFB;
-  --color-accent-gradient: linear-gradient(135deg, #8B46FF, #B05AFF, #D080FF);
-  --color-accent-glow: rgba(139, 70, 255, 0.3);
-  --color-brand-gradient: linear-gradient(135deg, #8B46FF, #C480FF, #E0A0FF);
-  --color-brand-purple: #C480FF;
-  --color-brand-light: #E0A0FF;
+  /* ── Color: Accent ──────────────────────────────── */
+  --color-accent: #8b5cf6;
+  --color-accent-light: #d946ef;
+  --color-accent-dark: #7c3aed;
+  --color-accent-text: #C48BFF;
+  --color-accent-gradient: linear-gradient(135deg, #ec4899, #d946ef, #8b5cf6);
+  --color-accent-glow: rgba(217, 70, 239, 0.35);
 
   /* ── Color: Semantic ────────────────────────────── */
   --color-success: #2ED573;
   --color-warning: #F39C12;
   --color-info: #4DA3FF;
+  --color-error: #FF6B77;
   --color-error-bg: rgba(255, 71, 87, 0.1);
   --color-error-border: rgba(255, 71, 87, 0.2);
   --color-error-text: #FF6B77;
@@ -55,13 +60,19 @@
   /* ── Typography: Font Family ────────────────────── */
   --font-sans: system-ui, -apple-system, sans-serif;
 
-  /* ── Typography: Size Scale ─────────────────────── */
-  --text-hero: 2.25rem;        /* 36px — login page main title */
-  --text-page-title: 1.5rem;   /* 24px — h1 on all pages */
-  --text-section-title: 1.125rem; /* 18px — card section headers */
-  --text-body: 0.875rem;        /* 14px — body text, buttons, labels */
-  --text-caption: 0.75rem;      /* 12px — secondary text, captions */
-  --text-micro: 0.625rem;       /* 10px — badges, tab labels */
+  /* ── Typography: Size Scale (canonical) ─────────── */
+  --type-display-lg: 2.25rem;   /* 36px — Hero */
+  --type-display-md: 1.875rem;  /* 30px — Display */
+  --type-heading-lg: 1.5rem;    /* 24px — Page title / h1 */
+  --type-heading-md: 1.25rem;   /* 20px — Section heading */
+  --type-heading-sm: 1.125rem;  /* 18px — Card header */
+  --type-title-md: 1rem;        /* 16px — Sub-section title */
+  --type-body-md: 0.875rem;     /* 14px — Body text */
+  --type-body-sm: 0.8125rem;    /* 13px — Small body */
+  --type-label-md: 0.75rem;     /* 12px — Labels / caption */
+  --type-label-sm: 0.6875rem;   /* 11px — Small label */
+  --type-caption: 0.625rem;     /* 10px — Badges / micro */
+  --type-mono-md: 0.875rem;     /* 14px — Monospace */
 
   /* ── Typography: Weight ─────────────────────────── */
   --weight-light: 300;
@@ -75,58 +86,118 @@
   --leading-normal: 1.5;
   --leading-relaxed: 1.625;
 
-  /* ── Spacing Scale (4px base) ───────────────────── */
+  /* ── Spacing Scale (4px base, canonical) ────────── */
   --space-1: 0.25rem;   /* 4px */
   --space-2: 0.5rem;    /* 8px */
   --space-3: 0.75rem;   /* 12px */
   --space-4: 1rem;      /* 16px */
   --space-5: 1.25rem;   /* 20px */
   --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
-  --space-16: 4rem;     /* 64px */
+  --space-7: 2rem;      /* 32px */
+  --space-8: 2.5rem;    /* 40px */
+  --space-9: 3rem;      /* 48px */
+  --space-10: 4rem;     /* 64px */
 
-  /* ── Border Radius ──────────────────────────────── */
-  --radius-sm: 0.5rem;   /* 8px — small elements */
-  --radius-md: 0.75rem;  /* 12px — buttons, inputs, icons */
-  --radius-lg: 1rem;     /* 16px — cards */
-  --radius-xl: 1.5rem;   /* 24px — hero cards */
-  --radius-full: 9999px; /*   — pills, badges */
+  /* ── Border Radius (canonical) ──────────────────── */
+  --radius-xs: 0.5rem;    /* 8px — Small badges */
+  --radius-sm: 0.75rem;   /* 12px — Compact controls */
+  --radius-md: 1rem;      /* 16px — Inputs & buttons */
+  --radius-lg: 1.25rem;   /* 20px — Cards */
+  --radius-xl: 1.5rem;    /* 24px — Dialogs */
+  --radius-pill: 999px;   /* Pill/chips */
 
   /* ── Border Width ───────────────────────────────── */
   --border-thin: 1px;
   --border-medium: 2px;
 
-  /* ── Shadows / Elevation ────────────────────────── */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2);
-  --shadow-dropdown: 0 10px 25px rgba(0, 0, 0, 0.3);
-  --shadow-glow: 0 4px 20px rgba(123, 63, 251, 0.3);
-  --shadow-ring: 0 0 0 3px rgba(123, 63, 251, 0.12);
+  /* ── Shadows & Elevation (canonical) ────────────── */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --elevation-2: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --elevation-3: 0 10px 25px rgba(0, 0, 0, 0.3);
+  --elevation-4: 0 20px 50px rgba(0, 0, 0, 0.4);
 
-  /* ── Animation Duration ─────────────────────────── */
-  --duration-fast: 150ms;
+  --shadow-sm: var(--elevation-1);
+  --shadow-md: var(--elevation-2);
+  --shadow-lg: var(--elevation-3);
+  --shadow-xl: var(--elevation-4);
+
+  /* ── Motion & Duration (canonical) ──────────────── */
+  --duration-fast: 100ms;
   --duration-normal: 200ms;
-  --duration-slow: 300ms;
-  --duration-page: 250ms;
+  --duration-slow: 350ms;
 
-  /* ── Z-Index Scale ──────────────────────────────── */
+  /* ── Z-Index Scale (canonical) ──────────────────── */
   --z-base: 0;
   --z-dropdown: 50;
   --z-sticky: 100;
   --z-overlay: 200;
   --z-modal: 300;
   --z-toast: 400;
+  --z-tooltip: 500;
 
   /* ── Focus Ring ─────────────────────────────────── */
   --focus-ring-color: var(--color-accent);
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
+
+  /* ══════════════════════════════════════════════════════════════
+     LEGACY ALIASES — Backward compatibility with existing components
+     Will be removed after all components migrate to canonical names.
+     ══════════════════════════════════════════════════════════════ */
+
+  --color-page-bg: var(--color-background-primary);
+  --color-card-bg: var(--color-surface-1);
+  --color-card-alt: var(--color-surface-2);
+  --color-card-elevated: var(--color-surface-3);
+  --color-sidebar-bg: var(--color-background-secondary);
+  --color-header-bg: var(--color-surface-1);
+  --color-input-bg: var(--color-surface-1);
+  --color-text: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-border: var(--color-border-subtle);
+  --color-border-light: var(--color-border-strong);
+  --color-input-border: var(--color-border-subtle);
+  --color-input-focus: var(--color-border-focus);
+  --color-badge-bg: var(--color-badge-bg);
+  --color-badge-text: var(--color-badge-text);
+  --color-accent-glow: var(--color-accent-glow);
+  --color-brand-gradient: var(--color-accent-gradient);
+  --color-brand-purple: var(--color-accent-light);
+  --color-brand-light: var(--color-accent-text);
+  --color-error-bg: var(--color-error-bg);
+  --color-error-border: var(--color-error-border);
+  --color-error-text: var(--color-error-text);
+
+  --text-hero: var(--type-display-lg);
+  --text-page-title: var(--type-heading-lg);
+  --text-section-title: var(--type-heading-sm);
+  --text-body: var(--type-body-md);
+  --text-caption: var(--type-label-md);
+  --text-micro: var(--type-caption);
+
+  --radius-sm: var(--radius-xs);
+  --radius-md: var(--radius-sm);
+  --radius-lg: var(--radius-md);
+  --radius-xl: var(--radius-lg);
+  --radius-full: var(--radius-pill);
+
+  --shadow-card: var(--elevation-1);
+  --shadow-dropdown: var(--elevation-3);
+  --shadow-glow: 0 4px 20px rgba(123, 63, 251, 0.3);
+  --shadow-ring: 0 0 0 3px rgba(123, 63, 251, 0.12);
+  --duration-page: var(--duration-normal);
+
+  --space-8: var(--space-7);
+  --space-10: var(--space-8);
+  --space-12: var(--space-9);
+  --space-16: var(--space-10);
 }
 
 body {
   font-family: var(--font-sans);
   min-height: 100vh;
+  scroll-behavior: smooth;
   background:
     radial-gradient(ellipse at 50% 0%, rgba(139, 70, 255, 0.1) 0%, transparent 50%),
     radial-gradient(ellipse at 75% 10%, rgba(162, 100, 255, 0.06) 0%, transparent 40%),
@@ -151,12 +222,15 @@ body {
 .dashboard-shell > *:nth-child(6) { animation-delay: 300ms; }
 .dashboard-shell > *:nth-child(7) { animation-delay: 360ms; }
 
-/* ── Surface Hierarchy — Glassmorphic Depth ────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   Surface Hierarchy — Premium Glassmorphic Depth
+   ═══════════════════════════════════════════════════════════════════ */
 
+/* Primary card surface — synthwave glass with subtle gradient overlay */
 .surface-primary {
   background:
     linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 30%, transparent 60%),
-    var(--color-card-bg);
+    var(--color-surface-1);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 1px 0 0 rgba(255,255,255,0.06) inset;
   border: 1px solid rgba(180, 160, 230, 0.1);
   backdrop-filter: blur(4px);
@@ -168,24 +242,18 @@ body {
   border-color: rgba(180, 160, 230, 0.2);
 }
 
+/* Elevated surface — deeper glass, more pronounced */
 .surface-elevated {
   background:
     linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 30%, transparent 55%),
-    var(--color-card-elevated);
+    var(--color-surface-3);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 1px 0 0 rgba(139,70,255,0.08) inset;
   border: 1px solid rgba(180, 160, 230, 0.15);
   backdrop-filter: blur(6px);
 }
 
-.surface-glass {
-  background: rgba(20, 16, 45, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(200, 180, 240, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 0 0 rgba(255,255,255,0.06) inset;
-}
-
-.surface-glass {
+/* Frosted glass — translucent, blur-heavy, for overlays and menus */
+.surface-frosted {
   background: linear-gradient(180deg, rgba(20, 24, 45, 0.5) 0%, rgba(16, 20, 38, 0.75) 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -193,21 +261,51 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 0 0 rgba(255,255,255,0.05) inset;
 }
 
+/* Glass card — the signature synthwave card style used across the app */
+.surface-glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 40%), #111127;
+  border: 1px solid rgba(186, 120, 255, 0.18);
+  box-shadow: 0 0 35px rgba(168,85,247,.06);
+}
+
+/* Glossy accent button style — pink→magenta→violet gradient */
 .glossy-accent {
-  background: linear-gradient(135deg, #A855F7 0%, #C084FC 50%, #D946EF 100%);
-  box-shadow: 0 6px 22px rgba(168,85,247,0.35), 0 1px 0 0 rgba(255,255,255,0.12) inset;
+  background: linear-gradient(135deg, #ec4899 0%, #d946ef 50%, #8b5cf6 100%);
+  box-shadow: 0 6px 22px rgba(217,70,239,0.4), 0 1px 0 0 rgba(255,255,255,0.12) inset;
   transition: all 250ms ease;
   color: #fff;
   border: none;
 }
 .glossy-accent:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 30px rgba(168,85,247,0.5), 0 1px 0 0 rgba(255,255,255,0.18) inset;
+  box-shadow: 0 8px 30px rgba(217,70,239,0.55), 0 1px 0 0 rgba(255,255,255,0.18) inset;
+}
+
+/* Inset glow card — for review/practice panels */
+.surface-inset-glow {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%), #111127;
+  border: 1px solid rgba(217,70,239,0.18);
+  box-shadow: inset 0 -2px 8px rgba(217,70,239,0.06), inset 0 0 16px rgba(217,70,239,0.14);
 }
 
 /* Smooth transitions on all interactive elements */
 a, button, input, select, textarea {
-  transition: all 0.2s ease;
+  transition: all var(--duration-normal) ease;
+}
+
+/* Spin animation for loading spinners */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Fade in utility */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn var(--duration-normal) ease-out;
 }
 
 /* Dark scrollbar */
@@ -372,7 +470,108 @@ main > * {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .shimmer { animation: none; background: var(--color-skeleton); }
   main > * { animation: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Safe Area Insets (mobile notch, home indicator)
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+/* iOS scroll momentum */
+.ios-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* Prevent iOS zoom on input focus */
+input, textarea, select {
+  font-size: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Responsive & Fluid Typography
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Fluid headings using clamp() for smooth scaling across viewports */
+h1, .h1 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  line-height: 1.2;
+}
+h2, .h2 {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  line-height: 1.3;
+}
+h3, .h3 {
+  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+  line-height: 1.4;
+}
+
+/* Minimum touch target size for interactive mobile elements */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Responsive container padding */
+@media (max-width: 639px) {
+  .responsive-pad {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+}
+
+/* Prevent horizontal overflow on small screens */
+@media (max-width: 639px) {
+  .overflow-protect {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Premium Interaction Utilities
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Subtle hover lift — used on cards, buttons, and interactive panels */
+.hover-lift {
+  transition: transform var(--duration-fast) ease-out, box-shadow var(--duration-fast) ease-out;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--elevation-2);
+}
+
+/* Subtle hover glow — for accent elements */
+.hover-glow:hover {
+  box-shadow: 0 0 16px var(--color-active-bg);
+}
+
+/* Focus ring utility */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Truncate text with ellipsis */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Premium divider — gradient fade */
+.divider-gradient {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-border-subtle), transparent);
 }
 
 /* ── Print styles — clean lesson content ─────────────────────── */

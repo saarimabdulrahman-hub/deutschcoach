@@ -1,0 +1,17 @@
+{
+  "services": {
+    "deutschcoach-api": {
+      "root": "backend",
+      "entrypoint": "main:app"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": {
+        "type": "service",
+        "service": "deutschcoach-api"
+      }
+    }
+  ]
+}

@@ -2,21 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-interface QuizResultItem {
-  question_id: string;
-  correct: boolean;
-  your_answer: string;
-  correct_answer: string;
-  feedback?: string | null;
-}
-
-interface QuizResultOut {
-  score_pct: number;
-  questions_total: number;
-  questions_correct: number;
-  results: QuizResultItem[];
-}
+import type { QuizResultOut } from "@/types";
 
 interface QuizResultsProps {
   results: QuizResultOut;
