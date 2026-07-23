@@ -6,35 +6,11 @@ import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import type { LessonDetail, LessonListItem } from "@/types";
 import { LessonViewer } from "@/components/curriculum/LessonViewer";
-import { VocabCard } from "@/components/curriculum/VocabCard";
+import { VocabPanel } from "@/components/curriculum/VocabPanel";
 import { ReadAloudBar } from "@/components/curriculum/ReadAloudBar";
-import { useSentenceSpeech, useWordSpeech, splitSentences } from "@/hooks/useSpeech";
-import { SpeakIcon } from "@/components/ui/SpeakIcon";
+import { useSentenceSpeech, splitSentences } from "@/hooks/useSpeech";
 
 // ── Sub-components ────────────────────────────────────────────────────
-
-function VocabSectionHeader({ vocabulary }: { vocabulary: Array<{ german: string }> }) {
-  const { speak, speaking } = useWordSpeech();
-  const readAll = () => speak(vocabulary.map(v => v.german).join(". "), "de-DE");
-
-  return (
-    <div className="flex items-center justify-between mb-4">
-      <h2 className="text-lg font-semibold flex items-center gap-2" style={{ color: "var(--color-text)" }}>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" style={{ color: "var(--color-active-text)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-        </svg>
-        Vocabulary
-        <span className="text-xs font-normal" style={{ color: "var(--color-text-muted)" }}>{vocabulary.length} words</span>
-      </h2>
-      <span onClick={() => !speaking && readAll()} role="button" tabIndex={0}
-        onKeyDown={(e) => { if (e.key === "Enter") readAll(); }}
-        title="Read all words aloud"
-        style={{ color: "var(--color-text-muted)", cursor: "pointer", opacity: speaking ? 0.3 : 0.6, fontSize: "16px", userSelect: "none" }}>
-        <SpeakIcon size={22} />
-      </span>
-    </div>
-  );
-}
 
 function ExerciseCard({ index, question, answer, type }: { index: number; question: string; answer: string; type: string }) {
   const [revealed, setRevealed] = useState(false);
@@ -300,23 +276,7 @@ export default function LessonPage() {
 
         {/* Vocabulary sidebar */}
         <div>
-          <div className="rounded-2xl p-5 sm:p-6 sticky top-24"
-            style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-            <VocabSectionHeader vocabulary={vocabulary} />
-            {vocabulary.length === 0 ? (
-              <div className="text-center py-6">
-                <span className="text-2xl">📝</span>
-                <p className="text-xs mt-2" style={{ color: "var(--color-text-muted)" }}>No vocabulary for this lesson</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {vocabulary.map((v) => (
-                  <VocabCard key={v.id} german={v.german} english={v.english}
-                    example={v.example_sentence || undefined} pos={v.part_of_speech || undefined} />
-                ))}
-              </div>
-            )}
-          </div>
+          <VocabPanel vocabulary={vocabulary} />
         </div>
       </div>
 

@@ -1,91 +1,277 @@
+/**
+ * VocabCard — Interactive pronunciation and vocabulary card
+ *
+ * Displays German word with IPA, beginner pronunciation, English meaning,
+ * category badge, audio playback with waveform, speaking practice button,
+ * card status, and bookmark.
+ *
+ * Progressive disclosure: primary focus is German word → pronunciation →
+ * meaning → Listen → Practice. Everything else is visually secondary.
+ *
+ * Reference: DeutschFlow Design Bible — Vocabulary Card Redesign
+ */
+
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useWordSpeech } from "@/hooks/useSpeech";
-import { SpeakIcon } from "@/components/ui/SpeakIcon";
 
-interface VocabCardProps {
+// ── Types ─────────────────────────────────────────────────────────────────
+
+export type CardStatus = "new" | "learning" | "mastered";
+
+export interface VocabCardProps {
   german: string;
   english: string;
-  example?: string;
-  pos?: string;
+  ipa?: string;
+  beginnerPron?: string;
+  category?: string;
+  status?: CardStatus;
+  bookmarked?: boolean;
+  onBookmarkToggle?: () => void;
+  onPractice?: (word: string) => void;
 }
 
-export function VocabCard({ german, english, example, pos }: VocabCardProps) {
-  const [flipped, setFlipped] = useState(false);
+// ── Status config ──────────────────────────────────────────────────────────
+
+const STATUS_STYLE: Record<CardStatus, { label: string; bg: string; color: string }> = {
+  new:       { label: "NEW",       bg: "rgba(59,130,246,0.12)", color: "#60A5FA" },
+  learning:  { label: "LEARNING",  bg: "rgba(168,85,247,0.12)", color: "#C084FC" },
+  mastered:  { label: "MASTERED",  bg: "rgba(34,197,94,0.12)",  color: "#4ADE80" },
+};
+
+// ── Waveform animation ─────────────────────────────────────────────────────
+
+function Waveform({ active }: { active: boolean }) {
+  return (
+    <span className="inline-flex items-center gap-[2px]" aria-hidden>
+      {[1, 2, 3, 4].map((i) => (
+        <span
+          key={i}
+          className="rounded-full"
+          style={{
+            width: 3,
+            height: active ? `${Math.max(4, i * 3)}px` : 4,
+            background: active ? "var(--color-accent)" : "currentColor",
+            opacity: active ? 1 : 0.35,
+            transition: "height 0.15s ease, background 0.2s ease, opacity 0.2s ease",
+            animation: active ? `waveform-pulse ${0.3 + i * 0.08}s ease-in-out infinite alternate` : "none",
+            animationDelay: `${i * 0.08}s`,
+          }}
+        />
+      ))}
+    </span>
+  );
+}
+
+// ── IPA display ────────────────────────────────────────────────────────────
+
+function IpaDisplay({ ipa }: { ipa: string }) {
+  return (
+    <p className="text-sm font-medium tracking-wide" style={{ color: "#C4B5FD" }}>
+      {ipa}
+    </p>
+  );
+}
+
+// ── Beginner pronunciation ────────────────────────────────────────────────
+
+function BeginnerPron({ text }: { text: string }) {
+  return (
+    <p className="text-xs leading-relaxed" style={{ color: "#A78BFA" }}>
+      {text}
+    </p>
+  );
+}
+
+// ── Main Card ─────────────────────────────────────────────────────────────
+
+export function VocabCard({
+  german,
+  english,
+  ipa,
+  beginnerPron,
+  category,
+  status,
+  bookmarked = false,
+  onBookmarkToggle,
+  onPractice,
+}: VocabCardProps) {
+  const [hovered, setHovered] = useState(false);
+  const [audioPlaying, setAudioPlaying] = useState(false);
   const { speak, speaking } = useWordSpeech();
+  const audioTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleListen = useCallback((e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation();
+    if (speaking || audioPlaying) return;
+    setAudioPlaying(true);
+    speak(german, "de-DE");
+    // Auto-reset after typical playback duration
+    if (audioTimerRef.current) clearTimeout(audioTimerRef.current);
+    audioTimerRef.current = setTimeout(() => setAudioPlaying(false), 2000);
+  }, [german, speak, speaking, audioPlaying]);
+
+  const handlePractice = useCallback((e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation();
+    onPractice?.(german);
+  }, [german, onPractice]);
+
+  const st = status ? STATUS_STYLE[status] : null;
 
   return (
     <div
-      className="cursor-pointer select-none perspective-500"
-      style={{ minHeight: flipped ? "auto" : "56px" }}
+      className="rounded-2xl transition-all duration-200"
+      style={{
+        background: "var(--color-card-bg)",
+        border: `1px solid ${hovered ? "rgba(168,85,247,0.35)" : "var(--color-border)"}`,
+        boxShadow: hovered
+          ? "0 8px 32px rgba(168,85,247,0.12), 0 0 0 rgba(0,0,0,0)"
+          : "0 1px 3px rgba(0,0,0,0.08)",
+        transform: hovered ? "translateY(-2px)" : "translateY(0)",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <div
-        className="relative transition-all duration-500 preserve-3d"
-        style={{
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-          transformStyle: "preserve-3d",
-        }}
-      >
-        {/* Front */}
-        <div
-          className="p-3 rounded-lg backface-hidden"
-          style={{
-            background: "var(--color-page-bg)",
-            border: "1px solid var(--color-border)",
-          }}
-        >
-          <div className="flex items-center justify-between gap-2">
-            <span
-              onClick={(e) => { e.stopPropagation(); if (!speaking) speak(german, "de-DE"); }}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); speak(german, "de-DE"); } }}
-              title="Listen"
-              style={{ color: "var(--color-text-muted)", cursor: "pointer", opacity: speaking ? 0.3 : 0.5, fontSize: "14px", userSelect: "none", flexShrink: 0 }}
-            ><SpeakIcon size={22} /></span>
-            <div className="flex-1 min-w-0" onClick={() => setFlipped(!flipped)}>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold truncate" style={{ color: "var(--color-text)" }}>{german}</span>
-                {pos && (
-                  <span className="text-[10px] uppercase tracking-wider flex-shrink-0 ml-2" style={{ color: "var(--color-text-muted)" }}>
-                    {pos}
-                  </span>
+      <div className="p-4 sm:p-5">
+
+        {/* ── Top row: audio + bookmark ── */}
+        <div className="flex items-center justify-between mb-3">
+          {/* Audio listen button */}
+          <button
+            onClick={handleListen}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleListen(e); }}
+            aria-label={`Listen to ${german}`}
+            title="Listen"
+            className="relative flex items-center gap-2 min-h-[44px] px-3 rounded-xl transition-all duration-200 border-none cursor-pointer"
+            style={{
+              background: audioPlaying ? "rgba(168,85,247,0.1)" : "transparent",
+              color: audioPlaying ? "var(--color-accent)" : "var(--color-text-muted)",
+              border: "none",
+            }}
+          >
+            {audioPlaying ? (
+              <span className="relative flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M11 5L6 9H2v6h4l5 4V5z" fill="currentColor" opacity={0.6} />
+                  <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                {audioPlaying && (
+                  <span className="absolute -inset-1 rounded-full animate-ping" style={{ background: "var(--color-accent)", opacity: 0.15 }} />
                 )}
-              </div>
-            </div>
+              </span>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M11 5L6 9H2v6h4l5 4V5z" fill="currentColor" opacity={0.6} />
+                <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            )}
+            <Waveform active={audioPlaying} />
+          </button>
+
+          {/* Status badge */}
+          <div className="flex items-center gap-2">
+            {st && (
+              <span
+                className="text-[9px] font-bold uppercase tracking-[0.12em] px-2 py-0.5 rounded-full"
+                style={{ background: st.bg, color: st.color }}
+              >
+                {st.label}
+              </span>
+            )}
+            {/* Bookmark */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onBookmarkToggle?.(); }}
+              onKeyDown={(e) => { if (e.key === "Enter") onBookmarkToggle?.(); }}
+              aria-label={bookmarked ? "Remove bookmark" : "Bookmark this word"}
+              title={bookmarked ? "Remove bookmark" : "Bookmark"}
+              className="flex items-center justify-center w-[36px] h-[36px] rounded-lg border-none cursor-pointer transition-colors"
+              style={{
+                background: "transparent",
+                color: bookmarked ? "var(--color-accent)" : "var(--color-text-muted)",
+                opacity: bookmarked ? 1 : 0.4,
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill={bookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2} aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+            </button>
           </div>
-          {!flipped && (
-            <p className="text-[10px] mt-1 ml-9" style={{ color: "var(--color-text-muted)" }}>Tap card to reveal</p>
-          )}
         </div>
 
-        {/* Back */}
-        <div
-          className="absolute inset-0 p-3 rounded-lg backface-hidden rotate-y-180"
-          style={{
-            background: "var(--color-hover-bg)",
-            border: "1px solid var(--color-badge-bg)",
-            transform: "rotateY(180deg)",
-          }}
+        {/* ── German word ── */}
+        <h3
+          className="font-semibold leading-tight"
+          style={{ fontSize: "28px", color: "var(--color-text)", letterSpacing: "-0.01em" }}
         >
-          <div className="font-semibold text-sm" style={{ color: "var(--color-active-text)" }}>{english}</div>
-          {example && (
-            <div className="text-xs mt-1.5 leading-snug flex items-start gap-1.5" style={{ color: "var(--color-text-muted)" }}>
-              <span className="italic">{example}</span>
-              <span
-                onClick={(e) => { e.stopPropagation(); if (!speaking) speak(example, "de-DE"); }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); speak(example, "de-DE"); } }}
-                title="Listen"
-                style={{ color: "var(--color-text-muted)", cursor: "pointer", opacity: speaking ? 0.3 : 0.5, fontSize: "12px", userSelect: "none", flexShrink: 0 }}
-              ><SpeakIcon size={22} /></span>
-            </div>
+          {german}
+        </h3>
+
+        {/* ── IPA pronunciation ── */}
+        {ipa && <div className="mt-1"><IpaDisplay ipa={ipa} /></div>}
+
+        {/* ── Beginner pronunciation ── */}
+        {beginnerPron && <div className="mt-0.5"><BeginnerPron text={beginnerPron} /></div>}
+
+        {/* ── English meaning ── */}
+        <p
+          className="mt-2 font-medium"
+          style={{ fontSize: "15px", color: "rgba(255,255,255,0.65)" }}
+        >
+          {english}
+        </p>
+
+        {/* ── Bottom row: category + actions ── */}
+        <div className="flex items-center justify-between mt-4 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+
+          {/* Category badge */}
+          {category && (
+            <span
+              className="text-[10px] font-semibold uppercase tracking-[0.08em] px-2.5 py-1 rounded-full"
+              style={{
+                background: "rgba(168,85,247,0.08)",
+                color: "var(--color-accent-light)",
+                border: "1px solid rgba(168,85,247,0.12)",
+              }}
+            >
+              {category}
+            </span>
           )}
-          <p className="text-[10px] mt-1.5" style={{ color: "var(--color-text-muted)" }}>Tap to hide</p>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-2">
+            {/* Practice button */}
+            <button
+              onClick={handlePractice}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handlePractice(e); }}
+              aria-label={`Practice saying ${german}`}
+              title="Practice"
+              className="min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 border cursor-pointer flex items-center gap-1.5"
+              style={{
+                background: "transparent",
+                color: "var(--color-accent-light)",
+                borderColor: "rgba(168,85,247,0.2)",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(168,85,247,0.08)"; e.currentTarget.style.borderColor = "rgba(168,85,247,0.4)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(168,85,247,0.2)"; }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m-4 0h8" />
+                <path d="M12 4a4 4 0 00-4 4v3a4 4 0 008 0V8a4 4 0 00-4-4z" strokeWidth={2} />
+              </svg>
+              Practice
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* ── Keyframes injected once ── */}
+      <style>{`
+        @keyframes waveform-pulse {
+          0% { transform: scaleY(0.6); }
+          100% { transform: scaleY(1.2); }
+        }
+      `}</style>
     </div>
   );
 }
