@@ -55,7 +55,11 @@ function Waveform({ active }: { active: boolean }) {
             background: active ? "var(--color-accent)" : "currentColor",
             opacity: active ? 1 : 0.35,
             transition: "height 0.15s ease, background 0.2s ease, opacity 0.2s ease",
-            animation: active ? `waveform-pulse ${0.3 + i * 0.08}s ease-in-out infinite alternate` : "none",
+            animationName: active ? "waveform-pulse" : undefined,
+            animationDuration: active ? `${0.3 + i * 0.08}s` : undefined,
+            animationTimingFunction: active ? "ease-in-out" : undefined,
+            animationIterationCount: active ? "infinite" : undefined,
+            animationDirection: active ? "alternate" : undefined,
             animationDelay: `${i * 0.08}s`,
           }}
         />
