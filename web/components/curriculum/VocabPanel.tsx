@@ -203,6 +203,7 @@ export function VocabPanel({ vocabulary, onPractice }: VocabPanelProps) {
         style={{
           background: "var(--color-card-bg)",
           border: "1px solid var(--color-border)",
+          maxHeight: "calc(100vh - 180px)",
         }}
       >
         <VocabPanelHeader count={0} onReadAll={handleReadAll} speaking={speaking} />
@@ -218,10 +219,11 @@ export function VocabPanel({ vocabulary, onPractice }: VocabPanelProps) {
 
   return (
     <div
-      className="rounded-2xl p-5 sm:p-6 sticky top-24"
+      className="rounded-2xl p-5 sm:p-6 sticky top-24 flex flex-col"
       style={{
         background: "var(--color-card-bg)",
         border: "1px solid var(--color-border)",
+        maxHeight: "calc(100vh - 180px)",
       }}
     >
       <VocabPanelHeader
@@ -229,7 +231,7 @@ export function VocabPanel({ vocabulary, onPractice }: VocabPanelProps) {
         onReadAll={handleReadAll}
         speaking={speaking}
       />
-      <div className="space-y-3">
+      <div className="space-y-3 overflow-y-auto -mx-1 px-1" style={{ scrollbarWidth: "thin" }}>
         {vocabulary.map((v) => (
           <VocabCard
             key={v.id}
