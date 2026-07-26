@@ -218,7 +218,7 @@ export function VocabPanel({ vocabulary, onPractice }: VocabPanelProps) {
 
   return (
     <div
-      className="rounded-2xl p-5 sm:p-6 sticky top-24"
+      className="rounded-2xl p-4 sm:p-5 sticky top-24"
       style={{
         background: "var(--color-card-bg)",
         border: "1px solid var(--color-border)",
@@ -229,7 +229,7 @@ export function VocabPanel({ vocabulary, onPractice }: VocabPanelProps) {
         onReadAll={handleReadAll}
         speaking={speaking}
       />
-      <div className="space-y-3">
+      <div className="space-y-2">
         {vocabulary.map((v) => (
           <VocabCard
             key={v.id}

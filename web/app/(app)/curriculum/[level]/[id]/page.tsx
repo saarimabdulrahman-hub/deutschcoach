@@ -259,7 +259,7 @@ export default function LessonPage() {
       {/* ── Main content + Vocab ────────────────── */}
       <div className="grid lg:grid-cols-[1fr_320px] gap-8">
         <div className="space-y-6">
-          {/* Hero section (moved inside grid so vocab sidebar aligns from top) */}
+          {/* Hero section */}
           {lesson && (
             <div className="rounded-2xl overflow-hidden" style={{
               background: "linear-gradient(135deg, rgba(168,85,247,0.06) 0%, rgba(236,72,153,0.04) 50%, rgba(15,12,30,1) 100%)",
@@ -267,57 +267,106 @@ export default function LessonPage() {
             }}>
               <div className="flex flex-col lg:flex-row">
                 <div className="flex-1 p-6 sm:p-8">
+                  {/* Level badge + topic + lesson number */}
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-xs font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider"
                       style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
                       {lesson.level}
                     </span>
-                    {lesson.topics?.slice(0, 1).map((topic: string) => {
-                      const icon = TOPIC_ICONS[topic.toLowerCase()] ?? "📖";
-                      return (
-                        <span key={topic} className="text-xs font-medium px-2.5 py-1 rounded-lg flex items-center gap-1.5"
-                          style={{ background: "var(--color-card-bg)", color: "var(--color-text-muted)", border: "1px solid var(--color-border)" }}>
-                          <span aria-hidden>{icon}</span>
-                          {topic.charAt(0).toUpperCase() + topic.slice(1).replace("-", " ")}
-                        </span>
-                      );
-                    })}
+                    <span className="text-xs font-medium px-2.5 py-1 rounded-lg flex items-center gap-1.5"
+                      style={{ background: "var(--color-card-bg)", color: "var(--color-text-muted)", border: "1px solid var(--color-border)" }}>
+                      Lesson {currentIdx + 1}
+                    </span>
                   </div>
+
+                  {/* Title */}
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight" style={{ color: "var(--color-text)" }}>
                     {lesson.title}
                   </h1>
-                  <p className="text-sm sm:text-base mt-1.5 font-medium" style={{ color: "var(--color-text-muted)" }}>
+                  <p className="text-sm sm:text-base mt-1 font-medium" style={{ color: "var(--color-text-muted)" }}>
                     {getLessonTranslation(lesson.title, lesson.topics)}
                   </p>
                   {lesson.description && (
-                    <p className="mt-3 text-sm sm:text-base leading-relaxed max-w-[480px]" style={{ color: "var(--color-text-secondary)" }}>
+                    <p className="mt-2 text-sm sm:text-base leading-relaxed max-w-[480px]" style={{ color: "var(--color-text-secondary)" }}>
                       {lesson.description}
                     </p>
                   )}
-                  <div className="flex flex-wrap gap-3 mt-5">
-                    <StatChip icon="📚" label={`${vocabulary.length} ${vocabulary.length === 1 ? "Word" : "Words"}`} />
-                    <StatChip icon="📝" label={`${exercises.length} ${exercises.length === 1 ? "Exercise" : "Exercises"}`} />
-                    <StatChip icon="💬" label="1 Dialogue" />
+
+                  {/* Stats row — visual cards */}
+                  <div className="flex flex-wrap gap-2 mt-5">
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+                      <span aria-hidden style={{ fontSize: "14px" }}>📚</span>
+                      <span style={{ color: "var(--color-text)" }}>{vocabulary.length}</span>
+                      <span style={{ color: "var(--color-text-muted)" }}>words</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+                      <span aria-hidden style={{ fontSize: "14px" }}>📝</span>
+                      <span style={{ color: "var(--color-text)" }}>{exercises.length}</span>
+                      <span style={{ color: "var(--color-text-muted)" }}>exercises</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+                      <span aria-hidden style={{ fontSize: "14px" }}>💬</span>
+                      <span style={{ color: "var(--color-text)" }}>1</span>
+                      <span style={{ color: "var(--color-text-muted)" }}>dialogue</span>
+                    </div>
                     {data?.grammar_topics && data.grammar_topics.length > 0 && (
-                      <StatChip icon="📐" label={`${data.grammar_topics.length} Grammar`} />
+                      <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+                        <span aria-hidden style={{ fontSize: "14px" }}>📐</span>
+                        <span style={{ color: "var(--color-text)" }}>{data.grammar_topics.length}</span>
+                        <span style={{ color: "var(--color-text-muted)" }}>grammar</span>
+                      </div>
                     )}
-                    <StatChip icon="⏱" label={`~${Math.max(5, vocabulary.length * 2 + exercises.length * 2)} min`} />
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+                      <span aria-hidden style={{ fontSize: "14px" }}>⏱</span>
+                      <span style={{ color: "var(--color-text)" }}>{Math.max(5, vocabulary.length * 2 + exercises.length * 2)}</span>
+                      <span style={{ color: "var(--color-text-muted)" }}>min</span>
+                    </div>
                   </div>
-                  <button onClick={() => {
-                    document.getElementById("lesson-content")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                    className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 border-none cursor-pointer"
-                    style={{
-                      background: "var(--color-accent-gradient)",
-                      color: "#fff",
-                      boxShadow: "0 4px 20px rgba(168,85,247,0.3)",
-                    }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Begin Lesson
-                  </button>
+
+                  {/* CTA row */}
+                  <div className="flex items-center gap-3 mt-6">
+                    <button onClick={() => {
+                      document.getElementById("lesson-content")?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 border-none cursor-pointer"
+                      style={{
+                        background: "var(--color-accent-gradient)",
+                        color: "#fff",
+                        boxShadow: "0 4px 20px rgba(168,85,247,0.3)",
+                      }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Begin Lesson
+                    </button>
+                    <button className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all duration-200 border cursor-pointer"
+                      style={{
+                        background: "transparent",
+                        color: "var(--color-accent-light)",
+                        borderColor: "rgba(168,85,247,0.2)",
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(168,85,247,0.06)"; e.currentTarget.style.borderColor = "rgba(168,85,247,0.35)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(168,85,247,0.2)"; }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      </svg>
+                      Preview
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right: Illustration */}
+                <div className="hidden lg:flex w-[200px] flex-shrink-0 items-center justify-center p-6">
+                  <div className="w-full rounded-2xl flex flex-col items-center justify-center gap-3" style={{
+                    background: "radial-gradient(ellipse at center, rgba(168,85,247,0.08) 0%, transparent 70%)",
+                    minHeight: "180px",
+                  }}>
+                    <div className="text-6xl" aria-hidden>{getLessonEmoji(lesson.title, lesson.topics)}</div>
+                    <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>
+                      {lesson.level} · Unit {lesson.unit}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -329,21 +378,20 @@ export default function LessonPage() {
               background: "var(--color-card-bg)",
               border: "1px solid var(--color-border)",
             }}>
-              <h2 className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+              <h2 className="text-xs font-semibold uppercase tracking-wider mb-4 flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
                 Today's Objectives
               </h2>
-              <div className="space-y-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
                 {lesson.topics.map((topic: string) => {
                   const obj = OBJECTIVE_LABELS[topic.toLowerCase()] ?? `Learn ${topic}`;
+                  const icon = TOPIC_ICONS[topic.toLowerCase()] ?? "🎯";
                   return (
-                    <div key={topic} className="flex items-start gap-3">
-                      <span className="flex-shrink-0 mt-0.5" style={{ color: "var(--color-accent)" }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                    <div key={topic} className="flex items-center gap-3">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0" style={{ background: "rgba(168,85,247,0.08)" }}>
+                        <span className="text-sm" aria-hidden>{icon}</span>
                       </span>
                       <span className="text-sm" style={{ color: "var(--color-text-secondary)" }}>{obj}</span>
                     </div>

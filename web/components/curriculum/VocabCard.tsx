@@ -171,29 +171,29 @@ export function VocabCard({
 
   return (
     <div
-      className="rounded-2xl transition-all duration-200"
+      className="rounded-xl transition-all duration-200"
       style={{
         background: "var(--color-card-bg)",
         border: `1px solid ${hovered ? "rgba(168,85,247,0.35)" : "var(--color-border)"}`,
         boxShadow: hovered
-          ? "0 8px 32px rgba(168,85,247,0.12), 0 0 0 rgba(0,0,0,0)"
-          : "0 1px 3px rgba(0,0,0,0.08)",
-        transform: hovered ? "translateY(-2px)" : "translateY(0)",
+          ? "0 4px 20px rgba(168,85,247,0.1)"
+          : "none",
+        transform: hovered ? "translateY(-1px)" : "translateY(0)",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className="p-4 sm:p-5">
+      <div className="p-3 sm:p-4">
 
         {/* ── Top row: audio + bookmark ── */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2">
           {/* Audio listen button */}
           <button
             onClick={handleListen}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleListen(e); }}
             aria-label={`Listen to ${german}`}
             title="Listen"
-            className="relative flex items-center gap-2 min-h-[44px] px-3 rounded-xl transition-all duration-200 border-none cursor-pointer"
+            className="relative flex items-center gap-1.5 min-h-[36px] px-2.5 rounded-lg transition-all duration-200 border-none cursor-pointer"
             style={{
               background: audioPlaying ? "rgba(168,85,247,0.1)" : "transparent",
               color: audioPlaying ? "var(--color-accent)" : "var(--color-text-muted)",
@@ -235,7 +235,7 @@ export function VocabCard({
               onKeyDown={(e) => { if (e.key === "Enter") onBookmarkToggle?.(); }}
               aria-label={bookmarked ? "Remove bookmark" : "Bookmark this word"}
               title={bookmarked ? "Remove bookmark" : "Bookmark"}
-              className="flex items-center justify-center w-[36px] h-[36px] rounded-lg border-none cursor-pointer transition-colors"
+              className="flex items-center justify-center w-[28px] h-[28px] rounded-lg border-none cursor-pointer transition-colors"
               style={{
                 background: "transparent",
                 color: bookmarked ? "var(--color-accent)" : "var(--color-text-muted)",
@@ -252,27 +252,27 @@ export function VocabCard({
         {/* ── German word ── */}
         <h3
           className="font-semibold leading-tight"
-          style={{ fontSize: "28px", color: "var(--color-text)", letterSpacing: "-0.01em" }}
+          style={{ fontSize: "24px", color: "var(--color-text)", letterSpacing: "-0.01em" }}
         >
           {german}
         </h3>
 
         {/* ── IPA pronunciation ── */}
-        {ipa && <div className="mt-1"><IpaDisplay ipa={ipa} /></div>}
+        {ipa && <div className="mt-0.5"><IpaDisplay ipa={ipa} /></div>}
 
         {/* ── Beginner pronunciation ── */}
-        {beginnerPron && <div className="mt-0.5"><BeginnerPron text={beginnerPron} /></div>}
+        {beginnerPron && <div className="mt-0"><BeginnerPron text={beginnerPron} /></div>}
 
         {/* ── English meaning ── */}
         <p
-          className="mt-2 font-medium"
-          style={{ fontSize: "15px", color: "rgba(255,255,255,0.65)" }}
+          className="mt-1.5 font-medium"
+          style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)" }}
         >
           {english}
         </p>
 
         {/* ── Bottom row: category + actions ── */}
-        <div className="flex items-center justify-between mt-4 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+        <div className="flex items-center justify-between mt-3 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
 
           {/* Category badge */}
           {category && (
