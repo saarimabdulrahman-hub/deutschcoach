@@ -87,6 +87,51 @@ function renderInline(text: string): React.ReactNode {
   return parts.length > 0 ? parts : text;
 }
 
+function isTable(text: string): boolean {
+  const lines = text.trim().split("\n");
+  return lines.length >= 2 && lines[0].includes("|") && lines[1].includes("|") && lines[1].includes("-");
+}
+
+function parseTable(text: string): { headers: string[]; rows: string[][] } {
+  const lines = text.trim().split("\n").filter(l => l.includes("|"));
+  const parseRow = (line: string) => line.split("|").map(c => c.trim()).filter(Boolean);
+  const headers = parseRow(lines[0]);
+  const dataLines = lines.filter((_, i) => i === 0 || !lines[i].includes("---"));
+  const rows = dataLines.slice(1).map(parseRow);
+  return { headers, rows };
+}
+
+function TableBlock({ text }: { text: string }) {
+  const { headers, rows } = useMemo(() => parseTable(text), [text]);
+
+  return (
+    <div className="my-4 rounded-xl overflow-hidden" style={{ border: "1px solid var(--color-border)" }}>
+      <table className="w-full text-sm">
+        <thead>
+          <tr style={{ background: "var(--color-page-bg)" }}>
+            {headers.map((h, i) => (
+              <th key={i} className="text-left px-4 py-2.5 font-semibold text-xs uppercase tracking-wider" style={{ color: "var(--color-text-muted)", borderBottom: "1px solid var(--color-border)" }}>
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, ri) => (
+            <tr key={ri} style={{ borderTop: "1px solid var(--color-border)" }}>
+              {row.map((cell, ci) => (
+                <td key={ci} className="px-4 py-2" style={{ color: "var(--color-text-secondary)" }}>
+                  {renderInline(cell)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function isDialogue(text: string): boolean {
   const lines = text.split("\n");
   const dialogueLines = lines.filter(
@@ -98,25 +143,102 @@ function isDialogue(text: string): boolean {
 function DialogueBlock({ text }: { text: string }) {
   const { speak, speaking } = useWordSpeech();
 
+  // Parse dialogue lines: "Speaker: text" or "— text" or "- text"
+  const lines = text.split("\n").filter(l => l.trim());
+  const parsed = lines.map((line, i) => {
+    const speakerMatch = line.match(/^(\w[\w\s]*?):\s*(.+)/);
+    if (speakerMatch) {
+      return { id: i, speaker: speakerMatch[1].trim(), text: speakerMatch[2].trim(), type: "spoken" as const };
+    }
+    // Stage direction or narration
+    return { id: i, speaker: "", text: line.replace(/^[—–-]\s*/, "").trim(), type: "narrative" as const };
+  });
+
+  // Determine unique speakers for tone assignment
+  const uniqueSpeakers = [...new Set(parsed.filter(l => l.type === "spoken").map(l => l.speaker))];
+  const isSpeakerA = (speaker: string) => uniqueSpeakers.indexOf(speaker) === 0 || uniqueSpeakers.indexOf(speaker) % 2 === 0;
+
   return (
-    <div className="my-4 rounded-xl overflow-hidden" style={{ background: "var(--color-hover-bg)", border: "1px solid var(--color-border)" }}>
-      <div className="flex items-center justify-between px-4 py-2" style={{ background: "var(--color-page-bg)", borderBottom: "1px solid var(--color-border)" }}>
-        <span className="text-xs font-medium uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>Dialogue</span>
-        <span
-          onClick={() => !speaking && speak(text, "de-DE")}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => { if (e.key === "Enter") speak(text, "de-DE"); }}
-          title="Read aloud"
-          style={{ color: "var(--color-text-muted)", cursor: "pointer", opacity: speaking ? 0.3 : 0.6, userSelect: "none" }}
-        ><SpeakIcon size={22} /></span>
+    <div className="my-6 rounded-2xl overflow-hidden" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
+      {/* Header */}
+      <div className="flex items-center gap-3 px-5 py-3" style={{ background: "var(--color-page-bg)", borderBottom: "1px solid var(--color-border)" }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden style={{ color: "var(--color-accent)" }}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>Dialogue</span>
+        <div className="flex-1" />
+        <button
+          onClick={() => !speaking && speak(parsed.filter(l => l.type === "spoken").map(l => `${l.speaker}: ${l.text}`).join(". "), "de-DE")}
+          disabled={speaking}
+          className="text-xs font-medium px-2.5 py-1 rounded-lg border-none cursor-pointer flex items-center gap-1.5 transition-all disabled:opacity-30"
+          style={{ background: "rgba(168,85,247,0.08)", color: "var(--color-accent-light)" }}
+          title="Read entire dialogue"
+        >
+          <SpeakIcon size={16} />
+          Play all
+        </button>
       </div>
-      <div className="p-4 italic leading-relaxed" style={{ borderLeft: "3px solid var(--color-accent)" }}>
-        {text.split("\n").map((line, i) => (
-          <p key={i} className="mb-1 last:mb-0" style={{ color: "var(--color-text-secondary)" }}>
-            {renderInline(line)}
+
+      {/* Dialogue lines */}
+      <div className="p-4 sm:p-5 space-y-3">
+        {parsed.map((line) => {
+          if (line.type === "narrative") {
+            return (
+              <p key={line.id} className="text-xs italic leading-relaxed text-center" style={{ color: "var(--color-text-muted)" }}>
+                {line.text}
+              </p>
+            );
+          }
+          const isA = isSpeakerA(line.speaker);
+          return (
+            <DialogueLineItem
+              key={line.id}
+              speaker={line.speaker}
+              text={line.text}
+              align={isA ? "left" : "right"}
+              accentColor={isA ? "#A855F7" : "#EC4899"}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function DialogueLineItem({ speaker, text, align, accentColor }: { speaker: string; text: string; align: "left" | "right"; accentColor: string }) {
+  const { speak, speaking } = useWordSpeech();
+  const isLeft = align === "left";
+
+  return (
+    <div className={`flex ${isLeft ? "justify-start" : "justify-end"}`}>
+      <div className={`max-w-[85%] ${isLeft ? "" : "text-right"}`}>
+        {/* Speaker name */}
+        <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: accentColor }}>
+          {speaker}
+        </p>
+        {/* Bubble */}
+        <div
+          className="rounded-2xl px-4 py-2.5 inline-block text-left"
+          style={{
+            background: isLeft ? "rgba(168,85,247,0.08)" : "rgba(236,72,153,0.08)",
+            border: `1px solid ${isLeft ? "rgba(168,85,247,0.15)" : "rgba(236,72,153,0.15)"}`,
+          }}
+        >
+          <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
+            {renderInline(text)}
           </p>
-        ))}
+        </div>
+        {/* Audio button */}
+        <button
+          onClick={() => !speaking && speak(text, "de-DE")}
+          disabled={speaking}
+          className="mt-1 text-xs font-medium flex items-center gap-1 px-2 py-0.5 rounded-md border-none cursor-pointer disabled:opacity-30"
+          style={{ color: "var(--color-text-muted)", background: "transparent" }}
+          title={`Listen to ${speaker}`}
+        >
+          <SpeakIcon size={14} />
+          Listen
+        </button>
       </div>
     </div>
   );
@@ -130,29 +252,59 @@ function renderParagraphs(text: string): React.ReactNode {
   return text
     .split("\n\n")
     .filter((p) => p.trim())
-    .map((p, i) => (
-      <p key={i} className="leading-relaxed mb-4 last:mb-0" style={{ color: "var(--color-text-secondary)" }}>
-        {renderInline(p)}
-      </p>
-    ));
+    .map((p, i) => {
+      if (isTable(p)) {
+        return <TableBlock key={i} text={p} />;
+      }
+      return (
+        <p key={i} className="leading-relaxed mb-4 last:mb-0" style={{ color: "var(--color-text-secondary)" }}>
+          {renderInline(p)}
+        </p>
+      );
+    });
+}
+
+const SECTION_EMOJI: Record<string, string> = {
+  introduction: "👋",
+  dialogue: "💬",
+  vocabulary: "📚",
+  grammar: "📐",
+  exercise: "✍️",
+  practice: "🎯",
+  pronunciation: "🎤",
+  summary: "📝",
+};
+
+function getSectionEmoji(title: string): string {
+  for (const [key, emoji] of Object.entries(SECTION_EMOJI)) {
+    if (title.toLowerCase().includes(key)) return emoji;
+  }
+  return "📖";
 }
 
 function SectionHeader({ title, sectionText }: { title: string; sectionText: string }) {
   const { speak, speaking } = useWordSpeech();
+  const emoji = getSectionEmoji(title);
 
   return (
-    <div className="flex items-center justify-between mb-4 pb-2" style={{ borderBottom: "1px solid var(--color-border)" }}>
-      <h2 className="text-xl font-bold" style={{ color: "var(--color-text)" }}>
+    <div className="flex items-center gap-3 mb-5 pb-3" style={{ borderBottom: "1px solid var(--color-border)" }}>
+      <span className="flex items-center justify-center w-9 h-9 rounded-xl flex-shrink-0" style={{ background: "rgba(168,85,247,0.08)" }}>
+        <span className="text-base" aria-hidden>{emoji}</span>
+      </span>
+      <h2 className="text-lg font-bold" style={{ color: "var(--color-text)" }}>
         {title}
       </h2>
-      <span
+      <div className="flex-1" />
+      <button
         onClick={() => !speaking && speak(sectionText, "de-DE")}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === "Enter") speak(sectionText, "de-DE"); }}
+        disabled={speaking}
+        className="text-xs font-medium px-2.5 py-1.5 rounded-lg border-none cursor-pointer flex items-center gap-1.5 transition-all disabled:opacity-30"
+        style={{ background: "rgba(168,85,247,0.08)", color: "var(--color-accent-light)" }}
         title="Read section aloud"
-        style={{ color: "var(--color-text-muted)", cursor: "pointer", opacity: speaking ? 0.3 : 0.6, fontSize: "16px", userSelect: "none" }}
-      ><SpeakIcon size={22} /></span>
+      >
+        <SpeakIcon size={16} />
+        Listen
+      </button>
     </div>
   );
 }
