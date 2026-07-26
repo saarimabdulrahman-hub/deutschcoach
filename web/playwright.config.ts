@@ -14,14 +14,14 @@ export default defineConfig({
   reporter: "html",
   timeout: 30000,
   use: {
-    baseURL: process.env.BASE_URL || "http://localhost:3457",
+    baseURL: process.env.BASE_URL || "http://localhost:3456",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
   // Auto-start Next.js dev server when running tests
   webServer: {
     command: "npm run dev",
-    url: "http://localhost:3457",
+    url: "http://localhost:3456",
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
     cwd: ".",

@@ -70,6 +70,95 @@ function LessonSkeleton() {
   );
 }
 
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function StatChip({ icon, label }: { icon: string; label: string }) {
+  return (
+    <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "var(--color-text-muted)" }}>
+      <span aria-hidden style={{ fontSize: "14px" }}>{icon}</span>
+      {label}
+    </div>
+  );
+}
+
+const TOPIC_ICONS: Record<string, string> = {
+  greetings: "👋",
+  introductions: "🤝",
+  "personal-pronouns": "👤",
+  numbers: "🔢",
+  colors: "🎨",
+  adjectives: "✨",
+  verbs: "🏃",
+  nouns: "📦",
+  grammar: "📐",
+  culture: "🌍",
+  travel: "✈️",
+  food: "🍽️",
+  family: "👨‍👩‍👧‍👦",
+  shopping: "🛍️",
+  directions: "🧭",
+  time: "⏰",
+  weather: "🌤️",
+  hobbies: "🎯",
+  work: "💼",
+  school: "🎓",
+};
+
+const OBJECTIVE_LABELS: Record<string, string> = {
+  greetings: "Greet someone in German",
+  introductions: "Introduce yourself and others",
+  "personal-pronouns": "Use personal pronouns correctly",
+  numbers: "Count and use numbers",
+  colors: "Describe colors",
+  adjectives: "Use adjectives in sentences",
+  verbs: "Conjugate basic verbs",
+  nouns: "Identify noun genders",
+  grammar: "Understand grammar patterns",
+  culture: "Learn cultural context",
+  travel: "Handle travel situations",
+  food: "Order food and drinks",
+  family: "Talk about your family",
+  shopping: "Shop and ask for prices",
+  directions: "Ask for and give directions",
+  time: "Tell time and discuss schedules",
+  weather: "Describe the weather",
+  hobbies: "Talk about your hobbies",
+  work: "Discuss your profession",
+  school: "Talk about education",
+};
+
+function getLessonEmoji(title: string, topics: string[] | null): string {
+  if (!topics || topics.length === 0) return "📖";
+  const t = topics[0].toLowerCase();
+  return TOPIC_ICONS[t] ?? "📖";
+}
+
+function getLessonTranslation(title: string, topics: string[] | null): string {
+  const translations: Record<string, string> = {
+    "Erste Begegnungen": "First Encounters",
+    "Wer bist du?": "Who Are You?",
+    "Im Unterricht": "In the Classroom",
+    "Meine Familie": "My Family",
+    "Essen und Trinken": "Food and Drink",
+    "Einkaufen gehen": "Going Shopping",
+    "Mein Zuhause": "My Home",
+    "Freizeit und Hobbys": "Free Time and Hobbies",
+    "Unterwegs": "On the Go",
+    "Körper und Gesundheit": "Body and Health",
+    "Ich lerne Deutsch": "I'm Learning German",
+    "Mein Tag": "My Day",
+    "Wetter und Jahreszeiten": "Weather and Seasons",
+    "Reisen und Urlaub": "Travel and Vacation",
+    "Arbeit und Beruf": "Work and Profession",
+    "Feste und Feiern": "Celebrations and Parties",
+    "Deutschland entdecken": "Discovering Germany",
+    "Medien und Technik": "Media and Technology",
+    "Umwelt und Natur": "Environment and Nature",
+    "Zukunft und Pläne": "Future and Plans",
+  };
+  return translations[title] ?? `Learn ${topics?.join(", ").replace(/-/g, " ") ?? "German"}`;
+}
+
 // ── Main Component ─────────────────────────────────────────────────────
 
 export default function LessonPage() {
@@ -157,71 +246,145 @@ export default function LessonPage() {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            Learning Path
+            Back to Roadmap
           </button>
+          <span className="text-xs font-medium hidden sm:inline" style={{ color: "var(--color-text-muted)" }}>
+            Unit {lesson.unit} · Lesson {currentIdx + 1} of {allLessons?.length ?? "—"}
+          </span>
           <div className="flex-1" />
           {prevLesson && (
             <button onClick={() => router.push(`/curriculum/${level}/${prevLesson.id}`)}
-              className="text-xs font-medium hover:text-slate-200 transition-colors flex-shrink-0"
+              className="text-xs font-medium hover:text-slate-200 transition-colors flex-shrink-0 flex items-center gap-1"
               style={{ color: "var(--color-text-muted)" }}>
-              ← Prev
+              <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+              Prev
             </button>
           )}
           {nextLesson && (
             <button onClick={() => router.push(`/curriculum/${level}/${nextLesson.id}`)}
-              className="text-xs font-medium hover:text-slate-200 transition-colors flex-shrink-0"
+              className="text-xs font-medium hover:text-slate-200 transition-colors flex-shrink-0 flex items-center gap-1"
               style={{ color: "var(--color-text-muted)" }}>
-              Next →
+              Next
+              <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
             </button>
           )}
         </div>
       </div>
 
-      {/* ── Header ──────────────────────────────── */}
-      <div>
-        <div className="flex flex-wrap items-center gap-2 mb-3">
-          <span className="text-xs font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider"
-            style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
-            {lesson.level}
-          </span>
-          <span className="text-xs font-medium px-2.5 py-1 rounded-lg"
-            style={{ background: "var(--color-card-bg)", color: "var(--color-text-muted)", border: "1px solid var(--color-border)" }}>
-            Unit {lesson.unit}
-          </span>
-          <span className="text-xs font-medium px-2.5 py-1 rounded-lg"
-            style={{ background: "var(--color-card-bg)", color: "var(--color-text-muted)", border: "1px solid var(--color-border)" }}>
-            ~10 min
-          </span>
-          {lesson.topics?.slice(0, 3).map((topic: string) => (
-            <span key={topic} className="text-[10px] px-2 py-1 rounded-lg"
-              style={{ background: "var(--color-page-bg)", color: "var(--color-text-muted)", border: "1px solid var(--color-border)" }}>
-              {topic}
-            </span>
-          ))}
+      {/* ── Hero Section ─────────────────────────── */}
+      <div className="rounded-2xl overflow-hidden" style={{
+        background: "linear-gradient(135deg, rgba(168,85,247,0.06) 0%, rgba(236,72,153,0.04) 50%, rgba(15,12,30,1) 100%)",
+        border: "1px solid rgba(168,85,247,0.12)",
+      }}>
+        <div className="flex flex-col lg:flex-row">
+          {/* ── Left: Text content ── */}
+          <div className="flex-1 p-6 sm:p-8">
+            {/* Level badge */}
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider"
+                style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
+                {lesson.level}
+              </span>
+              {lesson.topics?.slice(0, 1).map((topic: string) => {
+                const icon = TOPIC_ICONS[topic.toLowerCase()] ?? "📖";
+                return (
+                  <span key={topic} className="text-xs font-medium px-2.5 py-1 rounded-lg flex items-center gap-1.5"
+                    style={{ background: "var(--color-card-bg)", color: "var(--color-text-muted)", border: "1px solid var(--color-border)" }}>
+                    <span aria-hidden>{icon}</span>
+                    {topic.charAt(0).toUpperCase() + topic.slice(1).replace("-", " ")}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* Title + translation */}
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight" style={{ color: "var(--color-text)" }}>
+              {lesson.title}
+            </h1>
+            <p className="text-sm sm:text-base mt-1.5 font-medium" style={{ color: "var(--color-text-muted)" }}>
+              {/* Generate a contextual translation from the topics */}
+              {getLessonTranslation(lesson.title, lesson.topics)}
+            </p>
+
+            {/* Description */}
+            {lesson.description && (
+              <p className="mt-3 text-sm sm:text-base leading-relaxed max-w-[480px]" style={{ color: "var(--color-text-secondary)" }}>
+                {lesson.description}
+              </p>
+            )}
+
+            {/* Stats row */}
+            <div className="flex flex-wrap gap-3 mt-5">
+              <StatChip icon="📚" label={`${vocabulary.length} ${vocabulary.length === 1 ? "Word" : "Words"}`} />
+              <StatChip icon="📝" label={`${exercises.length} ${exercises.length === 1 ? "Exercise" : "Exercises"}`} />
+              <StatChip icon="💬" label="1 Dialogue" />
+              {data?.grammar_topics && data.grammar_topics.length > 0 && (
+                <StatChip icon="📐" label={`${data.grammar_topics.length} Grammar`} />
+              )}
+              <StatChip icon="⏱" label={`~${Math.max(5, vocabulary.length * 2 + exercises.length * 2)} min`} />
+            </div>
+
+            {/* CTA */}
+            <button onClick={() => {
+              // Scroll to lesson content — the page starts with the hero
+              document.getElementById("lesson-content")?.scrollIntoView({ behavior: "smooth" });
+            }}
+              className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 border-none cursor-pointer"
+              style={{
+                background: "var(--color-accent-gradient)",
+                color: "#fff",
+                boxShadow: "0 4px 20px rgba(168,85,247,0.3)",
+              }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Begin Lesson
+            </button>
+          </div>
+
+          {/* ── Right: Illustration ── */}
+          <div className="hidden lg:flex w-[260px] flex-shrink-0 items-center justify-center p-6">
+            <div className="w-full h-full rounded-2xl flex items-center justify-center" style={{
+              background: "radial-gradient(ellipse at center, rgba(168,85,247,0.08) 0%, transparent 70%)",
+            }}>
+              <div className="text-center">
+                <div className="text-7xl mb-3" aria-hidden>{getLessonEmoji(lesson.title, lesson.topics)}</div>
+                <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>
+                  {lesson.level} · Unit {lesson.unit}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: "var(--color-text)" }}>{lesson.title}</h1>
-        {lesson.description && (
-          <p className="mt-3 text-sm sm:text-base leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>{lesson.description}</p>
-        )}
       </div>
 
-      {/* ── Learning objectives ─────────────────── */}
+      {/* ── Today's Objectives ──────────────────── */}
       {lesson.topics && lesson.topics.length > 0 && (
-        <div className="rounded-2xl p-5 flex items-start gap-4"
-          style={{ background: "rgba(124,58,237,0.05)", border: "1px solid rgba(124,58,237,0.1)" }}>
-          <span className="text-xl flex-shrink-0">🎯</span>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--color-brand-purple)" }}>
-              You'll learn to
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {lesson.topics.map((topic: string) => (
-                <span key={topic} className="text-xs px-2.5 py-1 rounded-full"
-                  style={{ background: "rgba(124,58,237,0.1)", color: "var(--color-text-secondary)", border: "1px solid rgba(124,58,237,0.15)" }}>
-                  {topic}
-                </span>
-              ))}
-            </div>
+        <div className="rounded-2xl p-5 sm:p-6" style={{
+          background: "var(--color-card-bg)",
+          border: "1px solid var(--color-border)",
+        }}>
+          <h2 className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Today's Objectives
+          </h2>
+          <div className="space-y-2.5">
+            {lesson.topics.map((topic: string) => {
+              const obj = OBJECTIVE_LABELS[topic.toLowerCase()] ?? `Learn ${topic}`;
+              return (
+                <div key={topic} className="flex items-start gap-3">
+                  <span className="flex-shrink-0 mt-0.5" style={{ color: "var(--color-accent)" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </span>
+                  <span className="text-sm" style={{ color: "var(--color-text-secondary)" }}>{obj}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -244,7 +407,7 @@ export default function LessonPage() {
       <div className="grid lg:grid-cols-[1fr_320px] gap-8">
         <div className="space-y-6">
           {/* Lesson content */}
-          <div className="rounded-2xl p-5 sm:p-6"
+          <div id="lesson-content" className="rounded-2xl p-5 sm:p-6"
             style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
             <LessonViewer content={lesson.content || ""} />
           </div>
