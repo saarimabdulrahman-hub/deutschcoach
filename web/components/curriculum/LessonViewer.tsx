@@ -303,7 +303,7 @@ function SectionHeader({ title, sectionText }: { title: string; sectionText: str
   const emoji = getSectionEmoji(title);
 
   return (
-    <div className="flex items-center gap-3 mb-5 pb-3" style={{ borderBottom: "1px solid var(--color-border)" }}>
+    <div className="flex items-center gap-3 mb-4 pb-3" style={{ borderBottom: "1px solid var(--color-border)" }}>
       <span className="flex items-center justify-center w-9 h-9 rounded-xl flex-shrink-0" style={{ background: "rgba(168,85,247,0.08)" }}>
         <span className="text-base" aria-hidden>{emoji}</span>
       </span>
@@ -337,7 +337,7 @@ export function LessonViewer({ content }: LessonViewerProps) {
   return (
     <div className="max-w-none prose prose-invert">
       {sections.map((section, i) => (
-        <div key={i} className="mb-8 last:mb-0">
+        <div key={i} className="p-5 mb-6 last:mb-0 rounded-xl" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
           {section.title ? (
             <SectionHeader title={section.title} sectionText={section.body} />
           ) : null}
