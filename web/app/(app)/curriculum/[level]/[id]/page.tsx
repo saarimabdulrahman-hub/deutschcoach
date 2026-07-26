@@ -272,7 +272,7 @@ export default function LessonPage() {
       </div>
 
       {/* ── Hero Section ─────────────────────────── */}
-      <div className="rounded-2xl overflow-hidden" style={{
+      <div className="rounded-2xl overflow-hidden mb-6" style={{
         background: "linear-gradient(135deg, rgba(168,85,247,0.06) 0%, rgba(236,72,153,0.04) 50%, rgba(15,12,30,1) 100%)",
         border: "1px solid rgba(168,85,247,0.12)",
       }}>
@@ -361,7 +361,7 @@ export default function LessonPage() {
 
       {/* ── Today's Objectives ──────────────────── */}
       {lesson.topics && lesson.topics.length > 0 && (
-        <div className="rounded-2xl p-5 sm:p-6" style={{
+        <div className="rounded-2xl p-5 sm:p-6 mb-6" style={{
           background: "var(--color-card-bg)",
           border: "1px solid var(--color-border)",
         }}>

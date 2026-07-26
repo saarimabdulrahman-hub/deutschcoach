@@ -28,6 +28,8 @@ export interface VocabCardProps {
   category?: string;
   status?: CardStatus;
   bookmarked?: boolean;
+  /** Pronunciation confidence 0–100, or undefined when unavailable */
+  mastery?: number;
   onBookmarkToggle?: () => void;
   onPractice?: (word: string) => void;
 }
@@ -88,6 +90,49 @@ function BeginnerPron({ text }: { text: string }) {
   );
 }
 
+// ── Mastery ring ─────────────────────────────────────────────────
+//
+// 24px circular progress ring showing pronunciation confidence.
+// Defaults to "—" when no data is available (not yet wired to backend).
+
+function MasteryRing({ value }: { value?: number }) {
+  const r = 10;
+  const circumference = 2 * Math.PI * r;
+  const dashOffset = value != null
+    ? circumference - (Math.min(100, Math.max(0, value)) / 100) * circumference
+    : circumference;
+
+  return (
+    <span
+      className="relative inline-flex items-center justify-center"
+      style={{ width: 24, height: 24 }}
+      title={value != null ? `Pronunciation: ${value}%` : "Pronunciation confidence — coming soon"}
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+        {/* Background track */}
+        <circle cx="12" cy="12" r={r} stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
+        {/* Progress arc */}
+        <circle
+          cx="12" cy="12" r={r}
+          stroke="var(--color-accent)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={dashOffset}
+          transform="rotate(-90 12 12)"
+          style={{ transition: "stroke-dashoffset 0.5s ease" }}
+        />
+      </svg>
+      <span
+        className="absolute text-[8px] font-semibold leading-none"
+        style={{ color: "var(--color-text-muted)" }}
+      >
+        {value != null ? value : "—"}
+      </span>
+    </span>
+  );
+}
+
 // ── Main Card ─────────────────────────────────────────────────────────────
 
 export function VocabCard({
@@ -98,6 +143,7 @@ export function VocabCard({
   category,
   status,
   bookmarked = false,
+  mastery,
   onBookmarkToggle,
   onPractice,
 }: VocabCardProps) {
@@ -265,6 +311,8 @@ export function VocabCard({
               </svg>
               Practice
             </button>
+            {/* Mastery indicator */}
+            <MasteryRing value={mastery} />
           </div>
         </div>
       </div>

@@ -12,28 +12,26 @@ export interface LessonStageDef {
 
 // Default primary-CTA per stage — the bottom action updates automatically.
 export const DEFAULT_STAGE_CTA: Record<string, string> = {
-  "warm-welcome": "Start lesson",
   "dialogue": "Continue reading",
   "vocabulary": "Continue",
+  "speaking": "Continue",
   "grammar": "Got it",
   "guided-practice": "Practice",
   "interactive-exercise": "Check answer",
-  "speaking": "Continue",
   "mini-review": "Continue",
   "celebration": "See summary",
   "learning-summary": "Finish lesson",
 };
 
-// Canonical order. The 8 learning stages are progress segments; Celebration and
+// Canonical order. The 7 learning stages are progress segments; Celebration and
 // Learning Summary are post-lesson (inProgress: false → the bar reads complete).
 export const DEFAULT_LESSON_STAGES: LessonStageDef[] = [
-  { key: "warm-welcome", label: "Warm-up" },
   { key: "dialogue", label: "Dialogue" },
   { key: "vocabulary", label: "Vocabulary" },
+  { key: "speaking", label: "Speaking", optional: true },
   { key: "grammar", label: "Grammar" },
   { key: "guided-practice", label: "Practice" },
   { key: "interactive-exercise", label: "Exercise" },
-  { key: "speaking", label: "Speaking", optional: true },
   { key: "mini-review", label: "Review" },
   { key: "celebration", label: "Celebration", inProgress: false },
   { key: "learning-summary", label: "Summary", inProgress: false },

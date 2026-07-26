@@ -9,7 +9,6 @@ import type { LessonDetail, LessonListItem } from "@/types";
 import { LessonNavigator } from "@/components/lesson/LessonNavigator";
 import { DEFAULT_LESSON_STAGES, type LessonStageDef } from "@/components/lesson/lessonStages";
 import type { LessonNavApi } from "@/components/lesson/useLessonNavigation";
-import { LessonWelcome } from "@/components/lesson/LessonWelcome";
 import { DialogueContent } from "@/components/lesson/DialogueContent";
 import { VocabularyContent } from "@/components/lesson/VocabularyContent";
 import { GrammarContent } from "@/components/lesson/GrammarContent";
@@ -83,13 +82,11 @@ export default function LessonPage() {
     if (!data) return null;
 
     switch (stage.key) {
-      case "warm-welcome":
-        return <LessonWelcome lesson={data.lesson} vocabCount={data.vocabulary.length} exerciseCount={data.exercises.length} onStart={nav.goNext} />;
-
       case "dialogue":
         return <DialogueContent
           sceneTitle={data.lesson.title}
           sceneDescription={data.lesson.description ?? undefined}
+          welcomeMessage={`👋 Hi! Today we're learning "${data.lesson.title}". Don't worry — I'll help you pronounce every word.`}
           lines={dialogueLines.length ? dialogueLines.map((dl) => ({
             id: dl.id, speaker: dl.speaker, german: dl.german, translation: dl.translation,
           })) : [{ id: 0, speaker: "Speaker", german: data.lesson.content?.slice(0, 100) ?? "[Content]", translation: "Read the lesson content." }]}

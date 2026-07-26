@@ -126,6 +126,14 @@ export function LessonShell({
           </div>
 
           <ProgressSegments steps={steps} currentStep={currentStep} />
+
+          {/* Lesson progress percentage */}
+          <div className="mt-2 flex items-center gap-2">
+            <div className="flex-1 h-0.5 rounded-full" style={{ background: "var(--color-border)" }}>
+              <div className="h-full rounded-full" style={{ width: `${Math.round((currentStep / Math.max(steps.length, 1)) * 100)}%`, background: "var(--color-accent-gradient)" }} />
+            </div>
+            <span className="text-[10px] font-medium flex-shrink-0" style={{ color: "var(--color-text-muted)" }}>{Math.round((currentStep / Math.max(steps.length, 1)) * 100)}%</span>
+          </div>
         </div>
       </header>
 

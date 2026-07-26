@@ -19,12 +19,13 @@ export interface DialogueContentProps {
   audioDisabled?: boolean;
   onReplayLine?: (id: DialogueLine["id"]) => void;
   onSlowLine?: (id: DialogueLine["id"]) => void;
+  welcomeMessage?: string;
 }
 
 const DEFAULT_GUIDANCE = "Listen to each line, then reveal the English if you need it.";
 
 export function DialogueContent({
-  sceneTitle, sceneDescription, guidance = DEFAULT_GUIDANCE, lines, loading, audioDisabled, onReplayLine, onSlowLine,
+  sceneTitle, sceneDescription, guidance = DEFAULT_GUIDANCE, lines, loading, audioDisabled, onReplayLine, onSlowLine, welcomeMessage,
 }: DialogueContentProps) {
   // Stable tone per unique speaker (alternating), derived from the data — no hardcoded names.
   const speakerOrder: string[] = [];
@@ -34,6 +35,12 @@ export function DialogueContent({
 
   return (
     <div className="max-w-2xl mx-auto pb-24">
+      {welcomeMessage && (
+        <div className="mb-6 p-4 rounded-xl flex items-start gap-3" style={{ background: "var(--color-accent-subtle)", border: "1px solid var(--color-accent-border)" }}>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0" style={{ background: "var(--color-accent-gradient)", color: "#fff" }} role="img" aria-label="Emma">👩‍🏫</div>
+          <p className="text-sm leading-relaxed" style={{ color: "var(--color-text)" }}>{welcomeMessage}</p>
+        </div>
+      )}
       <h2 className="text-xl font-bold" style={{ color: "var(--color-text)" }}>{sceneTitle}</h2>
       {sceneDescription && <p className="text-sm mt-1" style={{ color: "var(--color-text-secondary)" }}>{sceneDescription}</p>}
       {guidance && <p className="text-xs mt-2" style={{ color: "var(--color-text-muted)" }}>{guidance}</p>}
