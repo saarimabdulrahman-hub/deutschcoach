@@ -50,19 +50,6 @@ export function ReadAloudBar({
         border: "1px solid var(--color-border)",
       }}
     >
-      {/* ── Header ──────────────────────────────── */}
-      <div className="flex items-start gap-3">
-        <span className="text-lg flex-shrink-0" aria-hidden>🎧</span>
-        <div>
-          <h3 className="text-sm font-semibold" style={{ color: "var(--color-text)" }}>
-            Listen to the Lesson
-          </h3>
-          <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
-            Emma will read this lesson naturally
-          </p>
-        </div>
-      </div>
-
       {/* ── Play/Pause + Duration + Stop ────────── */}
       <div className="flex items-center gap-4">
         {/* Large circular play/pause button */}
