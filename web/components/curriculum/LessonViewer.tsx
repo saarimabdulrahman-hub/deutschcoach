@@ -199,7 +199,6 @@ function DialogueBlock({ text }: { text: string }) {
               key={line.id}
               speaker={line.speaker}
               text={line.text}
-              align={isA ? "left" : "right"}
               accentColor={isA ? "#A855F7" : "#EC4899"}
             />
           );
@@ -221,40 +220,26 @@ function DialogueBlock({ text }: { text: string }) {
   );
 }
 
-function DialogueLineItem({ speaker, text, align, accentColor }: { speaker: string; text: string; align: "left" | "right"; accentColor: string }) {
+function DialogueLineItem({ speaker, text, accentColor }: { speaker: string; text: string; accentColor: string }) {
   const { speak, speaking } = useWordSpeech();
-  const isLeft = align === "left";
 
   return (
-    <div className={`flex ${isLeft ? "justify-start" : "justify-end"}`}>
-      <div className={`max-w-[85%] ${isLeft ? "" : "text-right"}`}>
-        {/* Speaker name */}
-        <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: accentColor }}>
-          {speaker}
-        </p>
-        {/* Bubble */}
-        <div
-          className="rounded-2xl px-4 py-2.5 inline-block text-left"
-          style={{
-            background: isLeft ? "rgba(168,85,247,0.08)" : "rgba(236,72,153,0.08)",
-            border: `1px solid ${isLeft ? "rgba(168,85,247,0.15)" : "rgba(236,72,153,0.15)"}`,
-          }}
-        >
-          <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
-            {renderInline(text)}
-          </p>
-        </div>
-        {/* Audio button */}
-        <button
-          onClick={() => !speaking && speak(text, "de-DE")}
-          disabled={speaking}
-          className="mt-1 text-xs font-medium flex items-center gap-1 px-2 py-0.5 rounded-md border-none cursor-pointer disabled:opacity-30"
-          style={{ color: "var(--color-text-muted)", background: "transparent" }}
-          title={`Listen to ${speaker}`}
-        >
-          <SpeakIcon size={14} />
-          Listen
-        </button>
+    <div className="flex items-start gap-2 py-1.5">
+      <button
+        onClick={() => !speaking && speak(text, "de-DE")}
+        disabled={speaking}
+        className="flex-shrink-0 mt-0.5 border-none cursor-pointer disabled:opacity-30 transition-opacity"
+        style={{ color: accentColor, background: "transparent", fontSize: "16px", lineHeight: 1 }}
+        title={`Listen to ${speaker}`}
+        aria-label={`Listen to ${speaker}: ${text}`}
+      >
+        🔊
+      </button>
+      <div className="min-w-0">
+        <span className="text-sm font-semibold" style={{ color: accentColor }}>{speaker}: </span>
+        <span className="text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
+          {renderInline(text)}
+        </span>
       </div>
     </div>
   );
