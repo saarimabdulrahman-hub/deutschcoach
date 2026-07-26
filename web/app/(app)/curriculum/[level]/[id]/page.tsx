@@ -402,9 +402,33 @@ export default function LessonPage() {
           )}
 
           {/* Lesson content */}
-          <div id="lesson-content" className="rounded-2xl p-5 sm:p-6"
+          <div id="lesson-content" className="rounded-2xl"
             style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
             <LessonViewer content={lesson.content || ""} />
+
+            {/* Footer navigation */}
+            <div className="flex items-center justify-between px-5 sm:px-6 py-4" style={{ borderTop: "1px solid var(--color-border)" }}>
+              <div>
+                {prevLesson && (
+                  <button onClick={() => router.push(`/curriculum/${level}/${prevLesson.id}`)}
+                    className="inline-flex items-center gap-1.5 text-sm font-medium transition-all hover:-translate-x-0.5"
+                    style={{ color: "var(--color-text-muted)" }}>
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                    Previous
+                  </button>
+                )}
+              </div>
+              <div>
+                {nextLesson && (
+                  <button onClick={() => router.push(`/curriculum/${level}/${nextLesson.id}`)}
+                    className="inline-flex items-center gap-1.5 text-sm font-medium transition-all hover:translate-x-0.5"
+                    style={{ color: "var(--color-text-muted)" }}>
+                    Next Lesson
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Exercises */}

@@ -179,9 +179,13 @@ function DialogueBlock({ text }: { text: string }) {
         </button>
       </div>
 
-      {/* Dialogue lines */}
-      <div className="p-4 sm:p-5 space-y-3">
-        {parsed.map((line) => {
+      {/* Dialogue lines + waveform decoration */}
+      <div className="flex gap-4 p-4 sm:p-5">
+        <div className="flex-1 space-y-3 min-w-0">
+          {parsed.length === 0 && (
+            <p className="text-sm italic" style={{ color: "var(--color-text-muted)" }}>Read the conversation aloud.</p>
+          )}
+          {parsed.map((line) => {
           if (line.type === "narrative") {
             return (
               <p key={line.id} className="text-xs italic leading-relaxed text-center" style={{ color: "var(--color-text-muted)" }}>
@@ -200,6 +204,18 @@ function DialogueBlock({ text }: { text: string }) {
             />
           );
         })}
+        </div>
+
+        {/* Decorative waveform illustration */}
+        <div className="hidden sm:flex flex-col items-center justify-center w-[80px] flex-shrink-0">
+          <svg width="60" height="120" viewBox="0 0 60 120" fill="none" aria-hidden style={{ opacity: 0.25 }}>
+            {[4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56].map((x, i) => {
+              const h = 20 + Math.sin(i * 0.7) * 15 + Math.cos(i * 0.3) * 8;
+              return <rect key={x} x={x} y={(120 - h) / 2} width="3" height={h} rx="1.5" fill={i % 3 === 0 ? "#A855F7" : i % 3 === 1 ? "#EC4899" : "#8B5CF6"} />;
+            })}
+          </svg>
+          <p className="text-[8px] mt-2 font-medium uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>Audio</p>
+        </div>
       </div>
     </div>
   );
