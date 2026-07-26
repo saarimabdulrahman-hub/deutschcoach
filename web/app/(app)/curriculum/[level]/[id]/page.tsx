@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import type { LessonDetail, LessonListItem } from "@/types";
 import { LessonViewer } from "@/components/curriculum/LessonViewer";
 import { VocabPanel } from "@/components/curriculum/VocabPanel";
-import { ReadAloudBar } from "@/components/curriculum/ReadAloudBar";
-import { useSentenceSpeech, splitSentences } from "@/hooks/useSpeech";
 
 // ── Sub-components ────────────────────────────────────────────────────
 
@@ -208,16 +206,6 @@ export default function LessonPage() {
   const prevLesson = currentIdx > 0 ? allLessons![currentIdx - 1] : null;
   const nextLesson = currentIdx >= 0 && allLessons && currentIdx < allLessons.length - 1 ? allLessons[currentIdx + 1] : null;
 
-  const lessonText = useMemo(() => {
-    const parts: string[] = [];
-    if (lesson?.description) parts.push(lesson.description);
-    if (lesson?.content) parts.push(lesson.content);
-    return parts.join(". ");
-  }, [lesson?.description, lesson?.content]);
-
-  const lessonSentences = useMemo(() => splitSentences(lessonText), [lessonText]);
-  const speech = useSentenceSpeech();
-
   if (isLoading) return <LessonSkeleton />;
   if (error || !data || !lesson)
     return (
@@ -231,9 +219,6 @@ export default function LessonPage() {
       </div>
     );
 
-  const handleReadAloud = () => {
-    speech.speakSentences(lessonSentences, "de-DE");
-  };
 
   return (
     <div className="space-y-6">
@@ -271,141 +256,103 @@ export default function LessonPage() {
         </div>
       </div>
 
-      {/* ── Hero Section ─────────────────────────── */}
-      <div className="rounded-2xl overflow-hidden mb-6" style={{
-        background: "linear-gradient(135deg, rgba(168,85,247,0.06) 0%, rgba(236,72,153,0.04) 50%, rgba(15,12,30,1) 100%)",
-        border: "1px solid rgba(168,85,247,0.12)",
-      }}>
-        <div className="flex flex-col lg:flex-row">
-          {/* ── Left: Text content ── */}
-          <div className="flex-1 p-6 sm:p-8">
-            {/* Level badge */}
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-xs font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider"
-                style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
-                {lesson.level}
-              </span>
-              {lesson.topics?.slice(0, 1).map((topic: string) => {
-                const icon = TOPIC_ICONS[topic.toLowerCase()] ?? "📖";
-                return (
-                  <span key={topic} className="text-xs font-medium px-2.5 py-1 rounded-lg flex items-center gap-1.5"
-                    style={{ background: "var(--color-card-bg)", color: "var(--color-text-muted)", border: "1px solid var(--color-border)" }}>
-                    <span aria-hidden>{icon}</span>
-                    {topic.charAt(0).toUpperCase() + topic.slice(1).replace("-", " ")}
-                  </span>
-                );
-              })}
-            </div>
-
-            {/* Title + translation */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight" style={{ color: "var(--color-text)" }}>
-              {lesson.title}
-            </h1>
-            <p className="text-sm sm:text-base mt-1.5 font-medium" style={{ color: "var(--color-text-muted)" }}>
-              {/* Generate a contextual translation from the topics */}
-              {getLessonTranslation(lesson.title, lesson.topics)}
-            </p>
-
-            {/* Description */}
-            {lesson.description && (
-              <p className="mt-3 text-sm sm:text-base leading-relaxed max-w-[480px]" style={{ color: "var(--color-text-secondary)" }}>
-                {lesson.description}
-              </p>
-            )}
-
-            {/* Stats row */}
-            <div className="flex flex-wrap gap-3 mt-5">
-              <StatChip icon="📚" label={`${vocabulary.length} ${vocabulary.length === 1 ? "Word" : "Words"}`} />
-              <StatChip icon="📝" label={`${exercises.length} ${exercises.length === 1 ? "Exercise" : "Exercises"}`} />
-              <StatChip icon="💬" label="1 Dialogue" />
-              {data?.grammar_topics && data.grammar_topics.length > 0 && (
-                <StatChip icon="📐" label={`${data.grammar_topics.length} Grammar`} />
-              )}
-              <StatChip icon="⏱" label={`~${Math.max(5, vocabulary.length * 2 + exercises.length * 2)} min`} />
-            </div>
-
-            {/* CTA */}
-            <button onClick={() => {
-              // Scroll to lesson content — the page starts with the hero
-              document.getElementById("lesson-content")?.scrollIntoView({ behavior: "smooth" });
-            }}
-              className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 border-none cursor-pointer"
-              style={{
-                background: "var(--color-accent-gradient)",
-                color: "#fff",
-                boxShadow: "0 4px 20px rgba(168,85,247,0.3)",
-              }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Begin Lesson
-            </button>
-          </div>
-
-          {/* ── Right: Illustration ── */}
-          <div className="hidden lg:flex w-[260px] flex-shrink-0 items-center justify-center p-6">
-            <div className="w-full h-full rounded-2xl flex items-center justify-center" style={{
-              background: "radial-gradient(ellipse at center, rgba(168,85,247,0.08) 0%, transparent 70%)",
-            }}>
-              <div className="text-center">
-                <div className="text-7xl mb-3" aria-hidden>{getLessonEmoji(lesson.title, lesson.topics)}</div>
-                <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>
-                  {lesson.level} · Unit {lesson.unit}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Today's Objectives ──────────────────── */}
-      {lesson.topics && lesson.topics.length > 0 && (
-        <div className="rounded-2xl p-5 sm:p-6 mb-6" style={{
-          background: "var(--color-card-bg)",
-          border: "1px solid var(--color-border)",
-        }}>
-          <h2 className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            Today's Objectives
-          </h2>
-          <div className="space-y-2.5">
-            {lesson.topics.map((topic: string) => {
-              const obj = OBJECTIVE_LABELS[topic.toLowerCase()] ?? `Learn ${topic}`;
-              return (
-                <div key={topic} className="flex items-start gap-3">
-                  <span className="flex-shrink-0 mt-0.5" style={{ color: "var(--color-accent)" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </span>
-                  <span className="text-sm" style={{ color: "var(--color-text-secondary)" }}>{obj}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── Read Aloud ─────────────────────────── */}
-      <ReadAloudBar
-        isPlaying={speech.isPlaying}
-        isPaused={speech.isPaused}
-        activeIndex={speech.activeIndex}
-        totalSentences={lessonSentences.length}
-        onPlay={handleReadAloud}
-        onPause={speech.pause}
-        onResume={speech.resume}
-        onStop={speech.stop}
-        onReplay={speech.replaySentence}
-        disabled={lessonSentences.length === 0}
-      />
-
       {/* ── Main content + Vocab ────────────────── */}
       <div className="grid lg:grid-cols-[1fr_320px] gap-8">
         <div className="space-y-6">
+          {/* Hero section (moved inside grid so vocab sidebar aligns from top) */}
+          {lesson && (
+            <div className="rounded-2xl overflow-hidden" style={{
+              background: "linear-gradient(135deg, rgba(168,85,247,0.06) 0%, rgba(236,72,153,0.04) 50%, rgba(15,12,30,1) 100%)",
+              border: "1px solid rgba(168,85,247,0.12)",
+            }}>
+              <div className="flex flex-col lg:flex-row">
+                <div className="flex-1 p-6 sm:p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider"
+                      style={{ background: "var(--color-accent-gradient)", color: "#fff" }}>
+                      {lesson.level}
+                    </span>
+                    {lesson.topics?.slice(0, 1).map((topic: string) => {
+                      const icon = TOPIC_ICONS[topic.toLowerCase()] ?? "📖";
+                      return (
+                        <span key={topic} className="text-xs font-medium px-2.5 py-1 rounded-lg flex items-center gap-1.5"
+                          style={{ background: "var(--color-card-bg)", color: "var(--color-text-muted)", border: "1px solid var(--color-border)" }}>
+                          <span aria-hidden>{icon}</span>
+                          {topic.charAt(0).toUpperCase() + topic.slice(1).replace("-", " ")}
+                        </span>
+                      );
+                    })}
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight" style={{ color: "var(--color-text)" }}>
+                    {lesson.title}
+                  </h1>
+                  <p className="text-sm sm:text-base mt-1.5 font-medium" style={{ color: "var(--color-text-muted)" }}>
+                    {getLessonTranslation(lesson.title, lesson.topics)}
+                  </p>
+                  {lesson.description && (
+                    <p className="mt-3 text-sm sm:text-base leading-relaxed max-w-[480px]" style={{ color: "var(--color-text-secondary)" }}>
+                      {lesson.description}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-3 mt-5">
+                    <StatChip icon="📚" label={`${vocabulary.length} ${vocabulary.length === 1 ? "Word" : "Words"}`} />
+                    <StatChip icon="📝" label={`${exercises.length} ${exercises.length === 1 ? "Exercise" : "Exercises"}`} />
+                    <StatChip icon="💬" label="1 Dialogue" />
+                    {data?.grammar_topics && data.grammar_topics.length > 0 && (
+                      <StatChip icon="📐" label={`${data.grammar_topics.length} Grammar`} />
+                    )}
+                    <StatChip icon="⏱" label={`~${Math.max(5, vocabulary.length * 2 + exercises.length * 2)} min`} />
+                  </div>
+                  <button onClick={() => {
+                    document.getElementById("lesson-content")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                    className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 border-none cursor-pointer"
+                    style={{
+                      background: "var(--color-accent-gradient)",
+                      color: "#fff",
+                      boxShadow: "0 4px 20px rgba(168,85,247,0.3)",
+                    }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Begin Lesson
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Today's Objectives */}
+          {lesson.topics && lesson.topics.length > 0 && (
+            <div className="rounded-2xl p-5 sm:p-6" style={{
+              background: "var(--color-card-bg)",
+              border: "1px solid var(--color-border)",
+            }}>
+              <h2 className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Today's Objectives
+              </h2>
+              <div className="space-y-2.5">
+                {lesson.topics.map((topic: string) => {
+                  const obj = OBJECTIVE_LABELS[topic.toLowerCase()] ?? `Learn ${topic}`;
+                  return (
+                    <div key={topic} className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-0.5" style={{ color: "var(--color-accent)" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </span>
+                      <span className="text-sm" style={{ color: "var(--color-text-secondary)" }}>{obj}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Lesson content */}
           <div id="lesson-content" className="rounded-2xl p-5 sm:p-6"
             style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
