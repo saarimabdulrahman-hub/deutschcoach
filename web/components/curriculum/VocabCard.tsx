@@ -15,6 +15,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { useWordSpeech } from "@/hooks/useSpeech";
+import { ConfidenceBadge } from "@/components/ui/ConfidenceBadge";
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -311,7 +312,12 @@ export function VocabCard({
               </svg>
               Practice
             </button>
-            {/* Mastery indicator */}
+            {/* Mastery indicator + confidence label (unified ConfidenceBadge) */}
+            <ConfidenceBadge
+              level={mastery != null ? (mastery >= 75 ? "high" : mastery >= 45 ? "medium" : "low") : null}
+              score={mastery}
+              size="sm"
+            />
             <MasteryRing value={mastery} />
           </div>
         </div>

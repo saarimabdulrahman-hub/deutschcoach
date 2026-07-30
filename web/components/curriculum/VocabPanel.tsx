@@ -15,6 +15,7 @@ import type { VocabEntry } from "@/types";
 import { VocabCard, type CardStatus } from "./VocabCard";
 import { useWordSpeech } from "@/hooks/useSpeech";
 import { SpeakIcon } from "@/components/ui/SpeakIcon";
+import { lookupIpa, lookupBeginnerPron } from "@/lib/pronunciation";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -35,102 +36,6 @@ const CATEGORY_LABEL: Record<string, string> = {
 function getCategory(pos: string | null): string | undefined {
   if (!pos) return undefined;
   return CATEGORY_LABEL[pos.toLowerCase()] ?? pos;
-}
-
-/** Generate IPA — simplified mapping for common German words */
-function getIpa(german: string): string | undefined {
-  // This is a simplified placeholder. A real implementation would use
-  // a dictionary lookup or an API. Common patterns are mapped here.
-  const known: Record<string, string> = {
-    "Hallo": "haˈloː",
-    "Guten Morgen": "ˈɡuːtən ˈmɔʁɡən",
-    "Guten Tag": "ˈɡuːtən taːk",
-    "Guten Abend": "ˈɡuːtən ˈaːbənt",
-    "Tschüss": "tʃʏs",
-    "Haus": "haʊs",
-    "Auto": "ˈaʊtoː",
-    "Tisch": "tɪʃ",
-    "Blume": "ˈbluːmə",
-    "Katze": "ˈkatsə",
-    "Hund": "hʊnt",
-    "Stuhl": "ʃtuːl",
-    "Buch": "buːx",
-    "Schule": "ˈʃuːlə",
-    "Wasser": "ˈvasɐ",
-    "Brot": "broːt",
-    "Name": "ˈnaːmə",
-    "danke": "ˈdaŋkə",
-    "bitte": "ˈbɪtə",
-    "ja": "jaː",
-    "nein": "naɪn",
-    "vielen Dank": "ˈfiːlən daŋk",
-    "Entschuldigung": "ɛntˈʃʊldɪɡʊŋ",
-    "der": "deːɐ",
-    "die": "diː",
-    "das": "das",
-    "ein": "aɪn",
-    "eine": "ˈaɪnə",
-    "und": "ʊnt",
-    "oder": "ˈoːdɐ",
-    "aber": "ˈaːbɐ",
-    "Mann": "man",
-    "Frau": "fʁaʊ",
-    "Kind": "kɪnt",
-    "Mädchen": "ˈmɛːtçən",
-    "Junge": "ˈjʊŋə",
-    "gut": "ɡuːt",
-    "schlecht": "ʃlɛçt",
-    "groß": "ɡʁoːs",
-    "klein": "klaɪn",
-  };
-  return known[german.trim()];
-}
-
-/** Generate beginner pronunciation guide */
-function getBeginnerPron(german: string): string | undefined {
-  const known: Record<string, string> = {
-    "Hallo": "HAH-loh",
-    "Guten Morgen": "GOO-ten MOR-gen",
-    "Guten Tag": "GOO-ten TAHK",
-    "Guten Abend": "GOO-ten AH-bent",
-    "Tschüss": "chooss",
-    "Haus": "houss",
-    "Auto": "OW-toh",
-    "Tisch": "tish",
-    "Blume": "BLOO-muh",
-    "Katze": "KAT-suh",
-    "Hund": "hoont",
-    "Stuhl": "shtool",
-    "Buch": "bookh",
-    "Schule": "SHOO-luh",
-    "Wasser": "VAH-suh",
-    "Brot": "broht",
-    "Name": "NAH-muh",
-    "danke": "DAHN-kuh",
-    "bitte": "BIT-tuh",
-    "ja": "yah",
-    "nein": "nine",
-    "vielen Dank": "FEE-len dahnk",
-    "Entschuldigung": "ent-SHOOL-di-goong",
-    "der": "dair",
-    "die": "dee",
-    "das": "dahs",
-    "ein": "ine",
-    "eine": "EYE-nuh",
-    "und": "oont",
-    "oder": "OH-duh",
-    "aber": "AH-buh",
-    "Mann": "mahn",
-    "Frau": "frou",
-    "Kind": "kint",
-    "Mädchen": "MAYT-chen",
-    "Junge": "YOONG-uh",
-    "gut": "goot",
-    "schlecht": "shlekht",
-    "groß": "grohss",
-    "klein": "kline",
-  };
-  return known[german.trim()];
 }
 
 // ── Props ──────────────────────────────────────────────────────────────────
@@ -235,8 +140,8 @@ export function VocabPanel({ vocabulary, onPractice }: VocabPanelProps) {
             key={v.id}
             german={v.german}
             english={v.english}
-            ipa={getIpa(v.german)}
-            beginnerPron={getBeginnerPron(v.german)}
+            ipa={lookupIpa(v.german)}
+            beginnerPron={lookupBeginnerPron(v.german)}
             category={getCategory(v.part_of_speech)}
             status="new"
             onPractice={onPractice}

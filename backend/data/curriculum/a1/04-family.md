@@ -72,6 +72,25 @@ exercises:
   - type: "translate"
     prompt: "My mother has three children."
     answer: "Meine Mutter hat drei Kinder."
+  - type: "fill-blank"
+    prompt: "Meine ___ heißt Julia. (Schwester / Mutter / Tante)"
+    answer: "Schwester"
+  - type: "fill-blank"
+    prompt: "___ du Geschwister?"
+    answer: "Hast"
+  - type: "multiple-choice"
+    prompt: "What does 'die Eltern' mean?"
+    options: ["the siblings", "the parents", "the children", "the grandparents"]
+    answer: "the parents"
+  - type: "translate"
+    prompt: "I have a brother."
+    answer: "Ich habe einen Bruder."
+  - type: "reorder"
+    prompt: "Put the words in order: habe / Ich / Schwester / eine"
+    answer: "Ich habe eine Schwester."
+  - type: "match"
+    prompt: "Match 'die Mutter' to its English meaning."
+    answer: "the mother"
 ---
 
 # Meine Familie — My Family

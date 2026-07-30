@@ -55,9 +55,11 @@ def sync_curriculum(db: Session):
             lesson.content = data["content"]
             lesson.topics = data.get("topics", [])
             lesson.exercises = data.get("exercises", [])
+            lesson.lesson_type = data.get("lesson_type", "mixed")
         else:
             lesson = Lesson(
                 level=data["level"],
+                lesson_type=data.get("lesson_type", "mixed"),
                 unit=data.get("unit", 1),
                 order=data.get("order", 1),
                 title=data["title"],

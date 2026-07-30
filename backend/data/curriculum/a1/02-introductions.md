@@ -66,6 +66,25 @@ exercises:
     prompt: "What does 'Wo wohnst du?' mean?"
     options: ["Where do you live?", "How are you?", "What is your name?", "Where are you from?"]
     answer: "Where do you live?"
+  - type: "fill-blank"
+    prompt: "Woher ___ du?"
+    answer: "kommst"
+  - type: "fill-blank"
+    prompt: "Er ___ aus Berlin. (kommen)"
+    answer: "kommt"
+  - type: "multiple-choice"
+    prompt: "What does 'Österreich' mean in English?"
+    options: ["Germany", "Switzerland", "Austria", "Berlin"]
+    answer: "Austria"
+  - type: "translate"
+    prompt: "Where do you live?"
+    answer: "Wo wohnst du?"
+  - type: "reorder"
+    prompt: "Put the words in order: aus / komme / Ich / Deutschland"
+    answer: "Ich komme aus Deutschland."
+  - type: "match"
+    prompt: "Match 'wohnen' to its English meaning."
+    answer: "to live"
 ---
 
 # Sich vorstellen — Introducing Yourself

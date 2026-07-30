@@ -32,12 +32,14 @@ def _lesson_to_dict(lesson: Lesson) -> dict:
     return {
         "id": lesson.id,
         "title": lesson.title,
+        "lesson_type": lesson.lesson_type.value if hasattr(lesson.lesson_type, "value") else "mixed",
         "level": lesson.level.value if hasattr(lesson.level, "value") else lesson.level,
         "unit": lesson.unit,
         "order": lesson.order,
         "description": lesson.description,
         "content": lesson.content,
         "topics": lesson.topics or [],
+        "stages_config": lesson.stages_config,
         "prerequisite_lesson_id": lesson.prerequisite_lesson_id,
         "created_at": lesson.created_at.isoformat() if lesson.created_at else None,
     }

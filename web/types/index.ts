@@ -2,6 +2,7 @@
 
 export type SubscriptionTier = "free" | "starter" | "plus" | "pro";
 export type CEFRLevel = "A1" | "A2" | "B1" | "B2" | "C1";
+export type LessonType = "dialogue" | "grammar" | "vocabulary" | "mixed";
 export type CardStatus = "new" | "learning" | "reviewing" | "mastered";
 export type QuizType = "translate" | "fill-blank" | "multiple-choice" | "conjugate" | "mixed";
 
@@ -29,12 +30,14 @@ export interface UserSettings {
 export interface Lesson {
   id: number;
   level: CEFRLevel;
+  lesson_type: LessonType;
   unit: number;
   order: number;
   title: string;
   description: string | null;
   content: string | null;
   topics: string[] | null;
+  stages_config: Record<string, unknown> | null;
   prerequisite_lesson_id: number | null;
   created_at: string;
 }
@@ -116,6 +119,7 @@ export interface CurriculumLevel {
 export interface LessonListItem {
   id: number;
   title: string;
+  lesson_type: LessonType;
   unit: number;
   order: number;
   topics: string[];
@@ -126,12 +130,14 @@ export interface LessonDetail {
   lesson: {
     id: number;
     title: string;
+    lesson_type: LessonType;
     level: string;
     unit: number;
     order: number;
     description: string | null;
     content: string | null;
     topics: string[];
+    stages_config: Record<string, unknown> | null;
     prerequisite_lesson_id: number | null;
     created_at: string;
   };

@@ -71,6 +71,25 @@ exercises:
   - type: "translate"
     prompt: "Would you like a coffee?"
     answer: "Möchtest du einen Kaffee?"
+  - type: "fill-blank"
+    prompt: "Möchtest du ___ Kaffee?"
+    answer: "einen"
+  - type: "fill-blank"
+    prompt: "Was ___ du? (trinken)"
+    answer: "trinkst"
+  - type: "multiple-choice"
+    prompt: "What does 'die Rechnung' mean?"
+    options: ["the table", "the food", "the bill", "the drink"]
+    answer: "the bill"
+  - type: "translate"
+    prompt: "I would like to eat."
+    answer: "Ich möchte essen."
+  - type: "reorder"
+    prompt: "Put the words in order: ein / möchte / Ich / Wasser"
+    answer: "Ich möchte ein Wasser."
+  - type: "match"
+    prompt: "Match 'der Kaffee' to its English meaning."
+    answer: "the coffee"
 ---
 
 # Essen und Trinken — Eating and Drinking

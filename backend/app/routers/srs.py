@@ -7,6 +7,10 @@ from database import get_db
 from app.models.user import User
 from app.models.vocab import VocabEntry
 from app.models.srs import SRSState, CardStatus
+from app.models.adaptive import ConceptConfidence
+from app.models.grammar_srs import GrammarCard
+from app.models.grammar import GrammarTopic
+from datetime import datetime as dt_module
 from app.models.user_vocab_note import UserVocabNote
 from app.routers.auth_dependency import require_auth
 from app.srs.engine import calculate_srs
@@ -109,6 +113,30 @@ def review_card(
 
     # Apply SM-2 algorithm (pure function, mutates card in place)
     calculate_srs(card, body.rating)
+
+    # Sync to shared concept_confidence (Section 10.2)
+    confidence_record = db.query(ConceptConfidence).filter(
+        ConceptConfidence.user_id == user.id,
+        ConceptConfidence.concept_type == "vocabulary",
+        ConceptConfidence.vocab_entry_id == card.vocab_entry_id,
+    ).first()
+    if confidence_record:
+        confidence_record.confidence = max(0.1, min(1.0, card.easiness_factor / 3.0))
+        confidence_record.easiness_factor = card.easiness_factor
+        confidence_record.lapse_count = card.lapses
+        confidence_record.review_count = card.repetitions
+        confidence_record.last_reviewed_at = dt_module.now()
+    else:
+        db.add(ConceptConfidence(
+            user_id=user.id,
+            concept_type="vocabulary",
+            vocab_entry_id=card.vocab_entry_id,
+            confidence=max(0.1, min(1.0, card.easiness_factor / 3.0)),
+            easiness_factor=card.easiness_factor,
+            lapse_count=card.lapses,
+            review_count=card.repetitions,
+            last_reviewed_at=dt_module.now(),
+        ))
 
     db.commit()
     db.refresh(card)
@@ -336,3 +364,148 @@ def seed_lesson(
         "already_existed": len(vocab_entries) - created,
         "streak": user.daily_streak,
     }
+
+
+# ── Grammar SRS (Section 18) ────────────────────────────────────────────
+
+@router.get("/grammar/due")
+def get_grammar_due(
+    limit: int = 20,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_auth),
+):
+    """Return grammar cards due for review, ordered by next_review_at."""
+    now = datetime.now(UTC).replace(tzinfo=None)
+    cards = (
+        db.query(GrammarCard, GrammarTopic)
+        .join(GrammarTopic, GrammarCard.grammar_topic_id == GrammarTopic.id)
+        .filter(GrammarCard.user_id == user.id, GrammarCard.next_review_at <= now)
+        .order_by(GrammarCard.next_review_at.asc())
+        .limit(limit)
+        .all()
+    )
+    return [
+        {
+            "id": c.id,
+            "grammar_topic_id": c.grammar_topic_id,
+            "topic_slug": t.slug,
+            "topic_title": t.title,
+            "topic_content": t.content,
+            "easiness_factor": c.easiness_factor,
+            "interval_days": c.interval_days,
+            "repetitions": c.repetitions,
+            "lapses": c.lapses,
+            "next_review_at": c.next_review_at.isoformat() if c.next_review_at else None,
+            "status": c.status.value if hasattr(c.status, "value") else c.status,
+        }
+        for c, t in cards
+    ]
+
+
+@router.post("/grammar/review")
+def review_grammar_card(
+    card_id: int,
+    rating: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_auth),
+):
+    """Submit a review rating (0-5) for a grammar card. Uses SM-2."""
+    card = db.query(GrammarCard).filter(
+        GrammarCard.id == card_id,
+        GrammarCard.user_id == user.id,
+    ).first()
+    if not card:
+        raise HTTPException(status_code=404, detail="Grammar card not found")
+    if rating < 0 or rating > 5:
+        raise HTTPException(status_code=400, detail="Rating must be 0-5")
+
+    # Apply SM-2 via the existing engine
+    srs_card = SRSState(
+        easiness_factor=card.easiness_factor,
+        interval_days=card.interval_days,
+        repetitions=card.repetitions,
+        lapses=card.lapses,
+        next_review_at=card.next_review_at,
+        last_reviewed_at=card.last_reviewed_at,
+        status=card.status,
+    )
+    calculate_srs(srs_card, rating)
+
+    card.easiness_factor = srs_card.easiness_factor
+    card.interval_days = srs_card.interval_days
+    card.repetitions = srs_card.repetitions
+    card.lapses = srs_card.lapses
+    card.next_review_at = srs_card.next_review_at
+    card.last_reviewed_at = srs_card.last_reviewed_at
+    card.status = srs_card.status
+
+    # Sync to concept_confidence
+    confidence = max(0.1, min(1.0, card.easiness_factor / 3.0))
+    existing = db.query(ConceptConfidence).filter(
+        ConceptConfidence.user_id == user.id,
+        ConceptConfidence.concept_type == "grammar",
+        ConceptConfidence.grammar_topic_id == card.grammar_topic_id,
+    ).first()
+    if existing:
+        existing.confidence = confidence
+        existing.easiness_factor = card.easiness_factor
+        existing.lapse_count = card.lapses
+        existing.review_count = card.repetitions
+        existing.last_reviewed_at = card.last_reviewed_at
+    else:
+        db.add(ConceptConfidence(
+            user_id=user.id,
+            concept_type="grammar",
+            grammar_topic_id=card.grammar_topic_id,
+            confidence=confidence,
+            easiness_factor=card.easiness_factor,
+            lapse_count=card.lapses,
+            review_count=card.repetitions,
+        ))
+
+    db.commit()
+    db.refresh(card)
+    return {
+        "id": card.id,
+        "grammar_topic_id": card.grammar_topic_id,
+        "easiness_factor": card.easiness_factor,
+        "interval_days": card.interval_days,
+        "repetitions": card.repetitions,
+        "lapses": card.lapses,
+        "next_review_at": card.next_review_at.isoformat() if card.next_review_at else None,
+        "status": card.status.value if hasattr(card.status, "value") else card.status,
+    }
+
+
+@router.post("/grammar/seed-lesson")
+def seed_grammar_cards(
+    lesson_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_auth),
+):
+    """Create grammar SRS cards for a lesson's grammar topics."""
+    from app.models.lesson import Lesson
+    lesson = db.query(Lesson).filter(Lesson.id == lesson_id).first()
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    grammar_topics = db.query(GrammarTopic).filter(
+        GrammarTopic.related_lesson_ids.contains([lesson.id])
+    ).all()
+
+    now = datetime.now(UTC).replace(tzinfo=None)
+    created = 0
+    for topic in grammar_topics:
+        existing = db.query(GrammarCard).filter(
+            GrammarCard.user_id == user.id,
+            GrammarCard.grammar_topic_id == topic.id,
+        ).first()
+        if not existing:
+            db.add(GrammarCard(
+                user_id=user.id,
+                grammar_topic_id=topic.id,
+                next_review_at=now,
+            ))
+            created += 1
+    db.commit()
+    return {"lesson_id": lesson_id, "grammar_topics": len(grammar_topics), "cards_created": created}

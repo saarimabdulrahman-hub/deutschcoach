@@ -89,6 +89,25 @@ exercises:
   - type: "translate"
     prompt: "The sky is blue."
     answer: "Der Himmel ist blau."
+  - type: "fill-blank"
+    prompt: "___ Bier, bitte. (two)"
+    answer: "Zwei"
+  - type: "fill-blank"
+    prompt: "Die Sonne ist ___. (yellow)"
+    answer: "gelb"
+  - type: "multiple-choice"
+    prompt: "What does 'schwarz' mean?"
+    options: ["white", "black", "red", "green"]
+    answer: "black"
+  - type: "translate"
+    prompt: "The flower is yellow."
+    answer: "Die Blume ist gelb."
+  - type: "reorder"
+    prompt: "Put the words in order: grün / ist / Das / Gras"
+    answer: "Das Gras ist grün."
+  - type: "match"
+    prompt: "Match 'weiß' to its English meaning."
+    answer: "white"
 ---
 
 # Zahlen und Farben — Numbers and Colors

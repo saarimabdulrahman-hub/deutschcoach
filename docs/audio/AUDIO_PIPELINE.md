@@ -1,7 +1,7 @@
 # DeutschFlow — Audio Asset Production Pipeline
 
-**Version:** 1.0 · **Updated:** 2026-07-13 · **Status:** Active
-**Scope:** Production spec for generating, versioning, caching, and serving every audio asset in DeutschFlow. No implementation — this is the blueprint.
+**Version:** 1.1 · **Updated:** 2026-07-27 · **Status:** Active
+**Scope:** Production spec for generating, versioning, caching, and serving every audio asset in DeutschFlow. This document describes both the Phase 0 neural TTS bridge and the long-term production pipeline.
 
 ---
 
@@ -11,7 +11,48 @@ Every german text element in every lesson — dialogue lines, vocabulary words, 
 
 ---
 
-## 1. Folder convention
+## 0.5 Phase 0 bridge (neural TTS)
+
+A simplified interim pipeline delivers neural TTS audio for all curriculum vocabulary while the full production pipeline is being built.
+
+### Generation
+
+```
+scripts/generate_audio.py
+```
+
+Reads all curriculum markdown files, generates MP3 via OpenAI tts-1 (default) or ElevenLabs Turbo, and saves to a flat directory.
+
+### Folder convention (Phase 0 bridge)
+
+```
+web/public/audio/
+├── {sanitized-word}.mp3              # e.g. hallo.mp3, guten-tag.mp3, tschuess.mp3
+```
+
+Filenames are derived from the German word:
+- Lowercase
+- Umlauts expanded (ä→ae, ö→oe, ü→ue, ß→ss)
+- Spaces become hyphens
+- Non-alphanumeric characters removed
+
+### Frontend fallback chain
+
+```
+Tier 1: /audio/{sanitized-word}.mp3   → pre-generated neural MP3
+Tier 2: window.speechSynthesis         → browser TTS
+Tier 3: (silent)                       → graceful degradation
+```
+
+The frontend (`useWordSpeech` in `web/hooks/useSpeech.ts`) attempts Tier 1 first. If the MP3 is missing or fails to play, it falls through to Tier 2. If TTS is unavailable, it degrades silently.
+
+### Relationship to the production pipeline
+
+When native recordings or production-grade TTS assets arrive (Phase 5), they supersede neural MP3s as Tier 1 without architectural changes. The frontend only needs its URL lookup updated to prefer the production path over the bridge path. The three-tier fallback structure remains unchanged.
+
+---
+
+## 1. Folder convention (production pipeline)
 
 ```
 web/public/audio/
@@ -201,11 +242,14 @@ When the frontend requests an audio URL that doesn't exist:
 
 | Priority | Source | When used |
 |---|---|---|
-| 1 | `web/public/audio/` pre-generated file | Normal operation |
+| 0 (future) | Native recordings (CDN) | Phase 5 production |
+| 1 | `web/public/audio/{word}.mp3` | Phase 0 bridge — pre-generated neural TTS |
 | 2 | Browser `speechSynthesis` (TTS fallback) | File missing, offline, or pre-generation pending |
 | 3 | Silent / disabled audio control | TTS unavailable (e.g. older browser) |
 
-The frontend `AudioPlayer` already supports this fallback chain (Sprint 15 `AudioEngine.speak()` method). The URL is tried first; if it 404s or the network is offline, TTS kicks in. This means a lesson can ship *before* its audio assets are generated and still provide audio (via browser TTS), with pre-generated files replacing TTS as they arrive.
+The frontend (`useWordSpeech` in `web/hooks/useSpeech.ts`) implements this three-tier chain. The URL is tried first via HTML5 Audio; if it 404s or play is prevented, the browser `SpeechSynthesis` API is used as fallback. If TTS is also unavailable, no audio plays — no error is surfaced. This means a lesson can ship *before* its audio assets are generated and still provide audio (via browser TTS), with pre-generated files replacing TTS as they arrive.
+
+When native recordings arrive in Phase 5, they slot in at Tier 0 by being checked before the bridge path, requiring no changes to the fallback chain itself.
 
 ---
 

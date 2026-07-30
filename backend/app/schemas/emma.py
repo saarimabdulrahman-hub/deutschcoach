@@ -65,3 +65,48 @@ class EmmaStreamDone(BaseModel):
 class EmmaStreamError(BaseModel):
     event: str = Field(default="error", max_length=20)
     detail: str = Field(max_length=500)
+
+
+# ── Phase 3 dedicated endpoint schemas ────────────────────────────────────
+
+class EmmaHintRequest(BaseModel):
+    lesson_context: EmmaLessonContext = Field(default_factory=EmmaLessonContext)
+    question: str = Field(max_length=500)
+
+
+class EmmaHintResponse(BaseModel):
+    hint: str = Field(max_length=1000)
+    prompt_version: str = Field(default="v1", max_length=20)
+
+
+class EmmaPronounceRequest(BaseModel):
+    lesson_text: str = Field(max_length=500)
+    # Audio is handled via multipart upload — text metadata sent here
+
+
+class EmmaPronounceResponse(BaseModel):
+    feedback: str = Field(max_length=1000)
+    score: int = Field(default=0, ge=0, le=100)
+    prompt_version: str = Field(default="v1", max_length=20)
+
+
+class EmmaEncourageRequest(BaseModel):
+    checkpoint_score: float = Field(ge=0, le=100)
+    lesson_title: str = Field(default="", max_length=200)
+    stage: str = Field(default="", max_length=50)
+
+
+class EmmaEncourageResponse(BaseModel):
+    message: str = Field(max_length=1000)
+    prompt_version: str = Field(default="v1", max_length=20)
+
+
+class EmmaExplainGrammarRequest(BaseModel):
+    topic_slug: str = Field(max_length=100)
+    topic_title: str = Field(default="", max_length=200)
+    topic_content: str | None = Field(default=None, max_length=2000)
+
+
+class EmmaExplainGrammarResponse(BaseModel):
+    explanation: str = Field(max_length=2000)
+    prompt_version: str = Field(default="v1", max_length=20)

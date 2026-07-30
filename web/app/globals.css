@@ -568,6 +568,23 @@ h3, .h3 {
   white-space: nowrap;
 }
 
+/* Clickable German words in lesson content */
+.german-word {
+  cursor: pointer;
+  border-bottom: 1px dashed rgba(168, 85, 247, 0.2);
+  transition: border-color 0.15s ease, background 0.15s ease;
+  border-radius: 2px;
+}
+.german-word:hover {
+  border-bottom-color: rgba(168, 85, 247, 0.6);
+  background: rgba(168, 85, 247, 0.06);
+}
+.german-word:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
 /* Premium divider — gradient fade */
 .divider-gradient {
   height: 1px;

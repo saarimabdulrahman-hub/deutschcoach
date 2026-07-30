@@ -38,6 +38,10 @@ const ACTIONS = [
   { label: "Why is this correct?", prompt: "Why is this correct?" },
   { label: "I'm stuck", prompt: "I'm stuck" },
   { label: "Translate", prompt: "Translate" },
+  { label: "Give me a tip", prompt: "Give me a learning tip" },
+  { label: "Pronunciation tip", prompt: "Give me a pronunciation tip" },
+  { label: "Conversation", prompt: "Practice conversation with me" },
+  { label: "What to review?", prompt: "What should I review based on my weak words?" },
 ];
 
 function QuickActions({ onAction }: { onAction: (prompt: string) => void }) {

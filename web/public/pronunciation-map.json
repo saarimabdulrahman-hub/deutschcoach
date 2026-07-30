@@ -1,0 +1,734 @@
+{
+  "Hallo": {
+    "ipa": "haloː",
+    "beginnerPron": "Hallo"
+  },
+  "der Name": {
+    "ipa": "dɛːr naːmə",
+    "beginnerPron": "Der-Name"
+  },
+  "sein": {
+    "ipa": "zaɪ̯n",
+    "beginnerPron": "Seyen"
+  },
+  "heißen": {
+    "ipa": "haɪ̯sɛːn",
+    "beginnerPron": "Heyessen"
+  },
+  "Guten Tag": {
+    "ipa": "ɡtɛːn taːk",
+    "beginnerPron": "Guten-Tak"
+  },
+  "Tschüss": {
+    "ipa": "tʃʏs",
+    "beginnerPron": "Chooss"
+  },
+  "Wie geht es Ihnen?": {
+    "ipa": "viː ɡeːt ɛːs iːnɛːn?",
+    "beginnerPron": "Vee-Geht-Es-Ihnen?"
+  },
+  "ich": {
+    "ipa": "ɪç",
+    "beginnerPron": "Ich"
+  },
+  "wohnen": {
+    "ipa": "vonn̩",
+    "beginnerPron": "Vohnen"
+  },
+  "die Stadt": {
+    "ipa": "diː staːt",
+    "beginnerPron": "Dee-Shtadt"
+  },
+  "kommen": {
+    "ipa": "kɔmn̩",
+    "beginnerPron": "Kommen"
+  },
+  "aus": {
+    "ipa": "aʊ̯s",
+    "beginnerPron": "Ows"
+  },
+  "Deutschland": {
+    "ipa": "dɔɪ̯tʃlant",
+    "beginnerPron": "Doychlant"
+  },
+  "die Schweiz": {
+    "ipa": "diː ʃvaɪ̯s",
+    "beginnerPron": "Dee-Shveyets"
+  },
+  "Österreich": {
+    "ipa": "œstɛraɪ̯ç",
+    "beginnerPron": "Urshterreyech"
+  },
+  "das Land": {
+    "ipa": "daːs lant",
+    "beginnerPron": "Das-Lant"
+  },
+  "eins": {
+    "ipa": "aɪ̯ns",
+    "beginnerPron": "Eyens"
+  },
+  "zwei": {
+    "ipa": "t͡svaɪ̯",
+    "beginnerPron": "Tsveye"
+  },
+  "drei": {
+    "ipa": "draɪ̯",
+    "beginnerPron": "Dreye"
+  },
+  "vier": {
+    "ipa": "fiːɐ̯",
+    "beginnerPron": "Feer"
+  },
+  "fünf": {
+    "ipa": "fʏnf",
+    "beginnerPron": "Foonf"
+  },
+  "sechs": {
+    "ipa": "zɛçs",
+    "beginnerPron": "Seks"
+  },
+  "sieben": {
+    "ipa": "zibn̩",
+    "beginnerPron": "Seeben"
+  },
+  "acht": {
+    "ipa": "axt",
+    "beginnerPron": "Acht"
+  },
+  "neun": {
+    "ipa": "nɔɪ̯n",
+    "beginnerPron": "Noyn"
+  },
+  "zehn": {
+    "ipa": "t͡seːn",
+    "beginnerPron": "Tsehn"
+  },
+  "rot": {
+    "ipa": "roːt",
+    "beginnerPron": "Rot"
+  },
+  "blau": {
+    "ipa": "blaʊ̯",
+    "beginnerPron": "Blow"
+  },
+  "grün": {
+    "ipa": "ɡryːn",
+    "beginnerPron": "Groon"
+  },
+  "gelb": {
+    "ipa": "ɡəlp",
+    "beginnerPron": "Gelp"
+  },
+  "schwarz": {
+    "ipa": "ʃvaːrs",
+    "beginnerPron": "Shvarts"
+  },
+  "weiß": {
+    "ipa": "vaɪ̯s",
+    "beginnerPron": "Veyess"
+  },
+  "die Familie": {
+    "ipa": "diː faːmiːliː",
+    "beginnerPron": "Dee-Familee"
+  },
+  "die Mutter": {
+    "ipa": "diː mʊtɐ",
+    "beginnerPron": "Dee-Mutter"
+  },
+  "der Vater": {
+    "ipa": "dɛːr faːtɐ",
+    "beginnerPron": "Der-Fater"
+  },
+  "der Bruder": {
+    "ipa": "dɛːr bruːdɐ",
+    "beginnerPron": "Der-Bruder"
+  },
+  "die Schwester": {
+    "ipa": "diː ʃvɛstɐ",
+    "beginnerPron": "Dee-Shveshter"
+  },
+  "das Kind": {
+    "ipa": "daːs kɪnt",
+    "beginnerPron": "Das-Kint"
+  },
+  "haben": {
+    "ipa": "habn̩",
+    "beginnerPron": "Haben"
+  },
+  "die Eltern": {
+    "ipa": "diː ɛltɛːɐ̯n",
+    "beginnerPron": "Dee-Eltern"
+  },
+  "das Brot": {
+    "ipa": "daːs broːt",
+    "beginnerPron": "Das-Brot"
+  },
+  "das Wasser": {
+    "ipa": "daːs vasɐ",
+    "beginnerPron": "Das-Vasser"
+  },
+  "der Kaffee": {
+    "ipa": "dɛːr kafeː",
+    "beginnerPron": "Der-Kaffeh"
+  },
+  "der Tee": {
+    "ipa": "dɛːr teː",
+    "beginnerPron": "Der-Teh"
+  },
+  "die Milch": {
+    "ipa": "diː milx",
+    "beginnerPron": "Dee-Milch"
+  },
+  "das Bier": {
+    "ipa": "daːs biːɐ̯",
+    "beginnerPron": "Das-Beer"
+  },
+  "möchten": {
+    "ipa": "mœçtn̩",
+    "beginnerPron": "Murchten"
+  },
+  "trinken": {
+    "ipa": "trɪŋkn̩",
+    "beginnerPron": "Trinken"
+  },
+  "essen": {
+    "ipa": "ɛzɛːn",
+    "beginnerPron": "Essen"
+  },
+  "bestellen": {
+    "ipa": "bəstɛln̩",
+    "beginnerPron": "Beshtellen"
+  },
+  "die Rechnung": {
+    "ipa": "diː rɛçnʊŋk",
+    "beginnerPron": "Dee-Rechnung"
+  },
+  "das Trinkgeld": {
+    "ipa": "daːs trɪŋkɡɛlt",
+    "beginnerPron": "Das-Trinkgelt"
+  },
+  "der Kellner / die Kellnerin": {
+    "ipa": "dɛːr kɛlnɛːr / diː kɛlnɛːriːn",
+    "beginnerPron": "Der-Kellner-/-Dee-Kellnerin"
+  },
+  "lecker": {
+    "ipa": "lɛːkɐ",
+    "beginnerPron": "Lecker"
+  },
+  "das Gericht": {
+    "ipa": "daːs ɡɛːrɪçt",
+    "beginnerPron": "Das-Gericht"
+  },
+  "empfehlen": {
+    "ipa": "ɛmp͡feln̩",
+    "beginnerPron": "Empfehlen"
+  },
+  "der Bahnhof": {
+    "ipa": "dɛːr baːnhoːf",
+    "beginnerPron": "Der-Bahnhof"
+  },
+  "die Fahrkarte": {
+    "ipa": "diː faːrkaːrtə",
+    "beginnerPron": "Dee-Fahrkarte"
+  },
+  "umsteigen": {
+    "ipa": "ʊmstaɪ̯ɡn̩",
+    "beginnerPron": "Umshteyegen"
+  },
+  "die Verspätung": {
+    "ipa": "diː fɛːrspɛːtʊŋk",
+    "beginnerPron": "Dee-Fershpehtung"
+  },
+  "der Flughafen": {
+    "ipa": "dɛːr fluːɡaːfɛːn",
+    "beginnerPron": "Der-Flughafen"
+  },
+  "abfahren": {
+    "ipa": "abfaːrən",
+    "beginnerPron": "Abfahren"
+  },
+  "ankommen": {
+    "ipa": "aŋkɔmn̩",
+    "beginnerPron": "Ankommen"
+  },
+  "aufstehen": {
+    "ipa": "aʊ̯fsteːən",
+    "beginnerPron": "Owfshtehen"
+  },
+  "sich duschen": {
+    "ipa": "zɪç dʊʃɛːn",
+    "beginnerPron": "Sich-Dushen"
+  },
+  "frühstücken": {
+    "ipa": "frystykn̩",
+    "beginnerPron": "Froohshtoocken"
+  },
+  "zur Arbeit fahren": {
+    "ipa": "t͡suːr aːrbaɪ̯t faːrən",
+    "beginnerPron": "Tsur-Arbeyet-Fahren"
+  },
+  "Feierabend machen": {
+    "ipa": "faɪ̯ɛːraːbɛnd maxn̩",
+    "beginnerPron": "Feyeerabent-Machen"
+  },
+  "einschlafen": {
+    "ipa": "aɪ̯nʃlaːfɛːn",
+    "beginnerPron": "Eyenshlafen"
+  },
+  "das Frühstück": {
+    "ipa": "daːs frystyːk",
+    "beginnerPron": "Das-Froohshtoock"
+  },
+  "die Größe": {
+    "ipa": "diː ɡrøːsə",
+    "beginnerPron": "Dee-Grursse"
+  },
+  "anprobieren": {
+    "ipa": "anproːbiːrən",
+    "beginnerPron": "Anprobeeren"
+  },
+  "der Preis": {
+    "ipa": "dɛːr praɪ̯s",
+    "beginnerPron": "Der-Preyes"
+  },
+  "billig / teuer": {
+    "ipa": "bɪliːɡ / tɔɪ̯ɐ",
+    "beginnerPron": "Billikh-/-Toyer"
+  },
+  "die Umkleidekabine": {
+    "ipa": "diː ʊmklaɪ̯dɛːkaːbiːnə",
+    "beginnerPron": "Dee-Umkleyedekabine"
+  },
+  "passen": {
+    "ipa": "pazɛːn",
+    "beginnerPron": "Passen"
+  },
+  "bar bezahlen": {
+    "ipa": "baːr bɛːt͡saln̩",
+    "beginnerPron": "Bar-Betsahlen"
+  },
+  "die Bewerbung": {
+    "ipa": "diː bjuːɛːrbʊŋk",
+    "beginnerPron": "Dee-Beverbung"
+  },
+  "der Lebenslauf": {
+    "ipa": "dɛːr lɛːbɛnslaʊ̯f",
+    "beginnerPron": "Der-Lebenslowf"
+  },
+  "die Erfahrung": {
+    "ipa": "diː ɛːrfaːrʊŋk",
+    "beginnerPron": "Dee-Erfahrung"
+  },
+  "das Gehalt": {
+    "ipa": "daːs ɡeːalt",
+    "beginnerPron": "Das-Gehalt"
+  },
+  "die Stärken / die Schwächen": {
+    "ipa": "diː stɛːrkɛːn / diː ʃvɛçn̩",
+    "beginnerPron": "Dee-Shtehrken-/-Dee-Shvehchen"
+  },
+  "übernehmen": {
+    "ipa": "yːbɛːrnemn̩",
+    "beginnerPron": "Oobernehmen"
+  },
+  "sich bewerben": {
+    "ipa": "zɪç bjuːɛːrbən",
+    "beginnerPron": "Sich-Beverben"
+  },
+  "die Umwelt": {
+    "ipa": "diː ʊmvɛlt",
+    "beginnerPron": "Dee-Umvelt"
+  },
+  "der Müll": {
+    "ipa": "dɛːr mʏl",
+    "beginnerPron": "Der-Mooll"
+  },
+  "recyceln": {
+    "ipa": "rɛːkyːkɛln",
+    "beginnerPron": "Recyceln"
+  },
+  "erneuerbare Energie": {
+    "ipa": "ɛɐ̯nɔɪ̯ɛːrbaːrɛː ɛːnɛːrɡiː",
+    "beginnerPron": "Ernoyerbare-Energee"
+  },
+  "der Klimawandel": {
+    "ipa": "dɛːr kliːmaːvandl̩",
+    "beginnerPron": "Der-Klimavandel"
+  },
+  "schützen": {
+    "ipa": "ʃyːt͡sɛːn",
+    "beginnerPron": "Shoottsen"
+  },
+  "nachhaltig": {
+    "ipa": "naxhaltɪç",
+    "beginnerPron": "Nachhaltikh"
+  },
+  "das Smartphone": {
+    "ipa": "daːs smaːrtfoːnə",
+    "beginnerPron": "Das-Smartphone"
+  },
+  "die Nachricht": {
+    "ipa": "diː naxrɪçt",
+    "beginnerPron": "Dee-Nachricht"
+  },
+  "posten": {
+    "ipa": "pɔstn̩",
+    "beginnerPron": "Poshten"
+  },
+  "der Bildschirm": {
+    "ipa": "dɛːr bɪld͡ʒiːɐ̯m",
+    "beginnerPron": "Der-Bildshirm"
+  },
+  "die Werbung": {
+    "ipa": "diː vɛːrbʊŋk",
+    "beginnerPron": "Dee-Verbung"
+  },
+  "das Internet": {
+    "ipa": "daːs ɪntɛːrnɛːt",
+    "beginnerPron": "Das-Internet"
+  },
+  "teilen": {
+    "ipa": "taɪ̯ln̩",
+    "beginnerPron": "Teyelen"
+  },
+  "die Freundschaft": {
+    "ipa": "diː frɔɪ̯nd͡ʒaft",
+    "beginnerPron": "Dee-Froyndshaft"
+  },
+  "sich verlieben": {
+    "ipa": "zɪç fɛːrlibn̩",
+    "beginnerPron": "Sich-Ferleeben"
+  },
+  "vertrauen": {
+    "ipa": "fɛːrtraʊ̯ən",
+    "beginnerPron": "Fertrowen"
+  },
+  "die Ehe": {
+    "ipa": "diː eːə",
+    "beginnerPron": "Dee-Ehe"
+  },
+  "sich streiten": {
+    "ipa": "zɪç straɪ̯tn̩",
+    "beginnerPron": "Sich-Shtreyeten"
+  },
+  "die Gefühle": {
+    "ipa": "diː ɡɛːfyːlə",
+    "beginnerPron": "Dee-Gefoohle"
+  },
+  "sich trennen": {
+    "ipa": "zɪç trɛnn̩",
+    "beginnerPron": "Sich-Trennen"
+  },
+  "die Regierung": {
+    "ipa": "diː rɛːɡiːrʊŋk",
+    "beginnerPron": "Dee-Regeerung"
+  },
+  "die Wahl": {
+    "ipa": "diː vaːl",
+    "beginnerPron": "Dee-Vahl"
+  },
+  "die Meinungsfreiheit": {
+    "ipa": "diː maɪ̯nʊŋsfraɪ̯aɪ̯t",
+    "beginnerPron": "Dee-Meyenungsfreyeheyet"
+  },
+  "das Gesetz": {
+    "ipa": "daːs ɡɛːzɛːt͡s",
+    "beginnerPron": "Das-Gesetts"
+  },
+  "verabschieden": {
+    "ipa": "fɛːrabʃidn̩",
+    "beginnerPron": "Ferabsheeden"
+  },
+  "der Abgeordnete": {
+    "ipa": "dɛːr abɡɛːoːrdnɛːtə",
+    "beginnerPron": "Der-Abgeordnete"
+  },
+  "die Demokratie": {
+    "ipa": "diː dɛːmoːkraːtiː",
+    "beginnerPron": "Dee-Demokratee"
+  },
+  "die Ausstellung": {
+    "ipa": "diː aʊ̯stɛlʊŋk",
+    "beginnerPron": "Dee-Owsshtellung"
+  },
+  "das Gemälde": {
+    "ipa": "daːs ɡɛːmɛldə",
+    "beginnerPron": "Das-Gemehlde"
+  },
+  "der Betrachter": {
+    "ipa": "dɛːr bɛːtraxtɐ",
+    "beginnerPron": "Der-Betrachter"
+  },
+  "darstellen": {
+    "ipa": "daːrstɛln̩",
+    "beginnerPron": "Darshtellen"
+  },
+  "die Leinwand": {
+    "ipa": "diː laɪ̯nvant",
+    "beginnerPron": "Dee-Leyenvant"
+  },
+  "beeindruckend": {
+    "ipa": "beːɪndrukn̩t",
+    "beginnerPron": "Behindruckent"
+  },
+  "das Meisterwerk": {
+    "ipa": "daːs maɪ̯stɛːrvɛːɐ̯k",
+    "beginnerPron": "Das-Meyeshterverk"
+  },
+  "die Forschung": {
+    "ipa": "diː foːrʃʊŋk",
+    "beginnerPron": "Dee-Forshung"
+  },
+  "die Entdeckung": {
+    "ipa": "diː ɛntdɛːkʊŋk",
+    "beginnerPron": "Dee-Entdeckung"
+  },
+  "entwickeln": {
+    "ipa": "ɛntviːkɛln",
+    "beginnerPron": "Entvickeln"
+  },
+  "der Durchbruch": {
+    "ipa": "dɛːr duːrxbrʊx",
+    "beginnerPron": "Der-Durchbruch"
+  },
+  "die Auswirkung": {
+    "ipa": "diː aʊ̯sviːrkʊŋk",
+    "beginnerPron": "Dee-Owsvirkung"
+  },
+  "nachweisen": {
+    "ipa": "naxvaɪ̯zɛːn",
+    "beginnerPron": "Nachveyesen"
+  },
+  "die Erkenntnis": {
+    "ipa": "diː ɛːrkɛntniːs",
+    "beginnerPron": "Dee-Erkenntnis"
+  },
+  "die Wirtschaft": {
+    "ipa": "diː viːrtʃaft",
+    "beginnerPron": "Dee-Virchaft"
+  },
+  "der Gewinn": {
+    "ipa": "dɛːr ɡjuːɪn",
+    "beginnerPron": "Der-Gevinn"
+  },
+  "die Steuer": {
+    "ipa": "diː stɔɪ̯ɐ",
+    "beginnerPron": "Dee-Shtoyer"
+  },
+  "die Inflation": {
+    "ipa": "diː ɪnflaːtiːoːn",
+    "beginnerPron": "Dee-Inflation"
+  },
+  "investieren": {
+    "ipa": "ɪnfɛstiːrən",
+    "beginnerPron": "Infeshteeren"
+  },
+  "der Umsatz": {
+    "ipa": "dɛːr ʊmzaːt͡s",
+    "beginnerPron": "Der-Umsatts"
+  },
+  "die Börse": {
+    "ipa": "diː bøːrzə",
+    "beginnerPron": "Dee-Burrse"
+  },
+  "der Zins": {
+    "ipa": "dɛːr t͡sɪns",
+    "beginnerPron": "Der-Tsins"
+  },
+  "die Schulden": {
+    "ipa": "diː ʃʊldn̩",
+    "beginnerPron": "Dee-Shulden"
+  },
+  "die Arbeitslosigkeit": {
+    "ipa": "diː aːrbaɪ̯tsloːzɪɡkaɪ̯t",
+    "beginnerPron": "Dee-Arbeyetslosigkeyet"
+  },
+  "die Digitalisierung": {
+    "ipa": "diː diːɡiːtaːliːziːrʊŋk",
+    "beginnerPron": "Dee-Digitaliseerung"
+  },
+  "die Künstliche Intelligenz (KI)": {
+    "ipa": "diː kʏnstlɪçɛː ɪntɛliːɡɛːnt͡s (kiː)",
+    "beginnerPron": "Dee-Koonshtliche-Intelligents-(ki)"
+  },
+  "die Datenschutz": {
+    "ipa": "diː daːtɛnʃʊt͡s",
+    "beginnerPron": "Dee-Datenshutts"
+  },
+  "das Gerät": {
+    "ipa": "daːs ɡɛːrɛt",
+    "beginnerPron": "Das-Gereht"
+  },
+  "die Software": {
+    "ipa": "diː zɔftvaːrə",
+    "beginnerPron": "Dee-Softvare"
+  },
+  "automatisieren": {
+    "ipa": "aʊ̯toːmaːtiːziːrən",
+    "beginnerPron": "Owtomatiseeren"
+  },
+  "das Netzwerk": {
+    "ipa": "daːs nɛt͡svɛːɐ̯k",
+    "beginnerPron": "Das-Nettsverk"
+  },
+  "die Programmiersprache": {
+    "ipa": "diː proːɡramiːrspraxə",
+    "beginnerPron": "Dee-Programmeershprache"
+  },
+  "der Sachverhalt": {
+    "ipa": "dɛːr zaxfɛːrhalt",
+    "beginnerPron": "Der-Sachferhalt"
+  },
+  "hinreichend": {
+    "ipa": "hiːnraɪ̯çn̩t",
+    "beginnerPron": "Hinreyechent"
+  },
+  "die Herangehensweise": {
+    "ipa": "diː hɛːraŋeːɛnsvaɪ̯zə",
+    "beginnerPron": "Dee-Herangehensveyese"
+  },
+  "der Widerspruch": {
+    "ipa": "dɛːr viːdɛːrsprʊx",
+    "beginnerPron": "Der-Vidershpruch"
+  },
+  "implizieren": {
+    "ipa": "ɪmpliːt͡siːrən",
+    "beginnerPron": "Implitseeren"
+  },
+  "plausibel": {
+    "ipa": "plaʊ̯zibl̩",
+    "beginnerPron": "Plowsibel"
+  },
+  "die Schlussfolgerung": {
+    "ipa": "diː ʃlʊsfɔlɡɛːrʊŋk",
+    "beginnerPron": "Dee-Shlussfolgerung"
+  },
+  "die Deutung": {
+    "ipa": "diː dɔɪ̯tʊŋk",
+    "beginnerPron": "Dee-Doytung"
+  },
+  "anspielen auf": {
+    "ipa": "anspiːlɛːn aʊ̯f",
+    "beginnerPron": "Anshpeelen-Owf"
+  },
+  "die Metapher": {
+    "ipa": "diː mɛːtaːfɐ",
+    "beginnerPron": "Dee-Metapher"
+  },
+  "widerspiegeln": {
+    "ipa": "viːdɛːrspiːɡɛln",
+    "beginnerPron": "Vidershpeegeln"
+  },
+  "die Erzählperspektive": {
+    "ipa": "diː ɛːrt͡sɛːhlpɛːrspɛktiːf",
+    "beginnerPron": "Dee-Ertsehhlpershpektife"
+  },
+  "vielschichtig": {
+    "ipa": "filʃɪçtɪç",
+    "beginnerPron": "Feelshichtikh"
+  },
+  "das Leitmotiv": {
+    "ipa": "daːs laɪ̯tmoːtiːf",
+    "beginnerPron": "Das-Leyetmotif"
+  },
+  "die Haltung": {
+    "ipa": "diː haltʊŋk",
+    "beginnerPron": "Dee-Haltung"
+  },
+  "abwägen": {
+    "ipa": "abvɛɡn̩",
+    "beginnerPron": "Abvehgen"
+  },
+  "der Einwand": {
+    "ipa": "dɛːr aɪ̯nvant",
+    "beginnerPron": "Der-Eyenvant"
+  },
+  "untermauern": {
+    "ipa": "ʊntɛːrmaʊ̯ɛːɐ̯n",
+    "beginnerPron": "Untermowern"
+  },
+  "sachlich": {
+    "ipa": "zaxlɪç",
+    "beginnerPron": "Sachlich"
+  },
+  "zuspitzen": {
+    "ipa": "t͡sʊspiːt͡sɛːn",
+    "beginnerPron": "Tsushpittsen"
+  },
+  "das Bewusstsein": {
+    "ipa": "daːs bjuːʊstzaɪ̯n",
+    "beginnerPron": "Das-Bevusshtseyen"
+  },
+  "die Verantwortung": {
+    "ipa": "diː fɛːrantvoːrtʊŋk",
+    "beginnerPron": "Dee-Ferantvortung"
+  },
+  "hinterfragen": {
+    "ipa": "hɪntɛːrfraɡn̩",
+    "beginnerPron": "Hinterfragen"
+  },
+  "der freie Wille": {
+    "ipa": "dɛːr fraɪ̯ɛː vɪlə",
+    "beginnerPron": "Der-Freyee-Ville"
+  },
+  "die Ethik": {
+    "ipa": "diː ɛːtiːk",
+    "beginnerPron": "Dee-Ethik"
+  },
+  "die Tugend": {
+    "ipa": "diː tuɡn̩t",
+    "beginnerPron": "Dee-Tugent"
+  },
+  "das Dilemma": {
+    "ipa": "daːs diːlɛmaː",
+    "beginnerPron": "Das-Dilemma"
+  },
+  "die Metaphysik": {
+    "ipa": "diː mɛːtaːfyːziːk",
+    "beginnerPron": "Dee-Metaphysik"
+  },
+  "skeptisch": {
+    "ipa": "zkɛptɪʃ",
+    "beginnerPron": "Skeptish"
+  },
+  "die Sprachwissenschaft": {
+    "ipa": "diː spraxvɪzɛnʃaft",
+    "beginnerPron": "Dee-Shprachvissenshaft"
+  },
+  "der Spracherwerb": {
+    "ipa": "dɛːr spraxɛːrvɛːɐ̯p",
+    "beginnerPron": "Der-Shpracherverp"
+  },
+  "die Mehrsprachigkeit": {
+    "ipa": "diː meːrspraxɪɡkaɪ̯t",
+    "beginnerPron": "Dee-Mehrshprachigkeyet"
+  },
+  "die Bedeutung": {
+    "ipa": "diː bɛːdɔɪ̯tʊŋk",
+    "beginnerPron": "Dee-Bedoytung"
+  },
+  "der Dialekt": {
+    "ipa": "dɛːr diːaːlɛkt",
+    "beginnerPron": "Der-Dialekt"
+  },
+  "die Syntax": {
+    "ipa": "diː zʏntaks",
+    "beginnerPron": "Dee-Syntax"
+  },
+  "die Semantik": {
+    "ipa": "diː zɛːmantiːk",
+    "beginnerPron": "Dee-Semantik"
+  },
+  "die Sprachvarietät": {
+    "ipa": "diː spraxfaːriːtɛt",
+    "beginnerPron": "Dee-Shprachfareeteht"
+  },
+  "der muttersprachler": {
+    "ipa": "dɛːr mʊtɛːrspraxlɐ",
+    "beginnerPron": "Der-Muttershprachler"
+  },
+  "die Redewendung": {
+    "ipa": "diː rɛdjuːɛndʊŋk",
+    "beginnerPron": "Dee-Redevendung"
+  }
+}

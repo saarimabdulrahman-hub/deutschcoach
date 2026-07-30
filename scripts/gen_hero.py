@@ -15,7 +15,17 @@ import urllib.error
 import urllib.request
 
 CFG = os.path.expanduser("~/.claude.json")
-KEY = json.load(open(CFG))["projects"]["C:/Users/saari"]["mcpServers"]["mcp-sight"]["env"]["VISION_API_KEY"]
+# Read Vision API key from env var first, fall back to ~/.claude.json mcp-sight config
+KEY = os.getenv("VISION_API_KEY")
+if not KEY:
+    config = json.load(open(CFG))
+    projects = config.get("projects", {})
+    for proj in projects.values():
+        mcp = proj.get("mcpServers", {})
+        env = mcp.get("mcp-sight", {}).get("env", {})
+        KEY = env.get("VISION_API_KEY")
+        if KEY:
+            break
 MODELS = ["gemini-3-flash-image", "gemini-2.5-flash-image", "nano-banana-pro-preview", "gemini-3-pro-image"]
 OUT = "scripts/gen"
 

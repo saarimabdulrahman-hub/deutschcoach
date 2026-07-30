@@ -33,6 +33,15 @@ from app.models.user_vocab_note import UserVocabNote
 from app.models.reset_token import PasswordResetToken
 from app.models.learning_event import LearningEvent
 from app.models.lesson_checkpoint import LessonCheckpoint
+from app.models.word_interaction import WordInteraction
+from app.models.lesson_session import LessonSession, CheckpointResult, LessonStageProgress
+from app.models.emma_cache import EmmaCache
+from app.models.adaptive import ConceptConfidence, LessonPrerequisite
+from app.models.missions import DailyMission, Achievement
+from app.models.audio_asset import AudioAsset
+from app.models.feature_flag import FeatureFlag
+from app.models.dialogue import DialogueLine
+from app.models.grammar_srs import GrammarCard
 from database import Base
 target_metadata = Base.metadata
 

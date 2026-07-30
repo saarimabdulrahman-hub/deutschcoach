@@ -19,6 +19,13 @@ class CEFRLevel(str, enum.Enum):
     C1 = "C1"
 
 
+class LessonType(str, enum.Enum):
+    dialogue = "dialogue"
+    grammar = "grammar"
+    vocabulary = "vocabulary"
+    mixed = "mixed"
+
+
 class User(Base):
     __tablename__ = "users"
 

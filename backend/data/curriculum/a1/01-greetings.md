@@ -59,6 +59,25 @@ exercises:
   - type: "translate"
     prompt: "My name is Peter."
     answer: "Mein Name ist Peter."
+  - type: "fill-blank"
+    prompt: "Wie ___ es Ihnen?"
+    answer: "geht"
+  - type: "fill-blank"
+    prompt: "Ich ___ Max. (sein)"
+    answer: "bin"
+  - type: "multiple-choice"
+    prompt: "What does 'Tschüss' mean?"
+    options: ["Hello", "Please", "Bye", "Thank you"]
+    answer: "Bye"
+  - type: "translate"
+    prompt: "How are you? (formal)"
+    answer: "Wie geht es Ihnen?"
+  - type: "match"
+    prompt: "Match 'ich' to its English translation."
+    answer: "I"
+  - type: "reorder"
+    prompt: "Put the words in order: heiße / ich / Thomas"
+    answer: "Ich heiße Thomas."
 ---
 
 # Erste Begegnungen — First Encounters

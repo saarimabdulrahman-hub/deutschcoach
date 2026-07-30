@@ -14,12 +14,13 @@ import re
 from typing import AsyncGenerator
 
 import httpx
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from database import get_db
 from app.routers.auth_dependency import require_auth
+from app.models.emma_cache import EmmaCache
 from app.schemas.emma import (
     EmmaRequest,
     EmmaResponse,
@@ -27,6 +28,14 @@ from app.schemas.emma import (
     EmmaStreamDelta,
     EmmaStreamDone,
     EmmaStreamError,
+    EmmaHintRequest,
+    EmmaHintResponse,
+    EmmaPronounceRequest,
+    EmmaPronounceResponse,
+    EmmaEncourageRequest,
+    EmmaEncourageResponse,
+    EmmaExplainGrammarRequest,
+    EmmaExplainGrammarResponse,
 )
 from app.services.emma_prompts import (
     build_system_prompt,
@@ -261,3 +270,198 @@ async def emma_chat_stream(
     """Convenience alias — forces streaming mode."""
     body.stream = True
     return await emma_chat(body, db, user)
+
+
+# ── Phase 3 dedicated endpoints ──────────────────────────────────────────
+
+@router.post("/hint", response_model=EmmaHintResponse)
+async def emma_hint(
+    body: EmmaHintRequest,
+    db: Session = Depends(get_db),
+    user=Depends(require_auth),
+):
+    """Return a contextual Emma hint based on lesson context and learner question.
+    Common hints are cached by (topic_slug, cefr_level) to avoid redundant LLM calls."""
+    ctx = body.lesson_context
+    topic_slug = ctx.grammar_pattern.lower().replace(" ", "-") if ctx.grammar_pattern else "general"
+    cache_key = f"{topic_slug}:{ctx.level or 'A1'}"
+    cached = db.query(EmmaCache).filter(
+        EmmaCache.cache_key == cache_key,
+        EmmaCache.response_type == "hint",
+    ).first()
+    if cached:
+        logger.info("Emma cache HIT for hint key=%s", cache_key)
+        return EmmaHintResponse(hint=cached.response_text, prompt_version=DEFAULT_VERSION)
+
+    logger.info("Emma cache MISS for hint key=%s — invoking LLM", cache_key)
+    messages = [
+        {"role": "user", "content": (
+            f"The learner is in lesson \"{ctx.lesson_title}\" (stage: {ctx.stage_label}). "
+            f"Vocabulary: {', '.join(ctx.vocabulary[:5])}. "
+            f"Grammar pattern: {ctx.grammar_pattern or 'N/A'}. "
+            f"Their question is: {body.question}\n\n"
+            "Provide a concise, encouraging hint in English. Do not give the answer directly — "
+            "guide the learner to discover it themselves. Max 3 sentences."
+        )}
+    ]
+    system = "You are Emma, a warm German tutor. Give short contextual hints in English."
+    try:
+        resp = await _non_streaming_response(messages, system)
+        # Cache the successful hint response
+        db.add(EmmaCache(
+            cache_key=cache_key,
+            response_type="hint",
+            response_text=resp.reply,
+        ))
+        db.commit()
+        return EmmaHintResponse(hint=resp.reply, prompt_version=DEFAULT_VERSION)
+    except HTTPException:
+        return EmmaHintResponse(
+            hint=f"Think about the pattern you've seen in this lesson. Try breaking down the question into smaller parts — what do you already know? 💡",
+            prompt_version=DEFAULT_VERSION,
+        )
+
+
+@router.post("/pronounce", response_model=EmmaPronounceResponse)
+async def emma_pronounce(
+    body: EmmaPronounceRequest,
+    user=Depends(require_auth),
+):
+    """Return pronunciation feedback for a spoken text (Phase 3 temporary).
+    Flow: lesson text → LLM evaluation → binary feedback.
+    Phase 5 will replace this with Speechace (STT + scoring).
+    Returns only binary feedback — no numeric scoring."""
+    import time as _time
+    t0 = _time.time()
+    messages = [
+        {"role": "user", "content": (
+            f"The learner is practicing pronouncing this German text: \"{body.lesson_text}\"\n\n"
+            "Evaluate whether their pronunciation sounds correct. Detect obvious mistakes like "
+            "pronouncing 'ch' as 'k' (e.g. saying 'ik' instead of 'ich'). "
+            "Respond with exactly one of these two formats:\n"
+            "- If correct: \"Good!\"\n"
+            "- If incorrect: \"Try again — focus on the [specific sound] sound\"\n"
+            "Example: \"Try again — focus on the 'ch' sound\"\n"
+            "Do not include scores, ratings, or any other text."
+        )}
+    ]
+    system = "You are Emma, a German pronunciation coach. Respond with exactly one line: 'Good!' or 'Try again — focus on the ... sound'."
+    try:
+        resp = await _non_streaming_response(messages, system)
+        elapsed = _time.time() - t0
+        logger.info("Pronunciation eval (text) completed in %.2fs — feedback: %s", elapsed, resp.reply[:40])
+        return EmmaPronounceResponse(feedback=resp.reply, score=50, prompt_version=DEFAULT_VERSION)
+    except HTTPException:
+        return EmmaPronounceResponse(
+            feedback="Try again — focus on the vowel sounds. 🎤",
+            score=50, prompt_version=DEFAULT_VERSION,
+        )
+
+
+@router.post("/pronounce/audio", response_model=EmmaPronounceResponse)
+async def emma_pronounce_audio(
+    file: UploadFile = File(...),
+    lesson_text: str = Form(...),
+    user=Depends(require_auth),
+):
+    """Pronunciation evaluation from recorded audio (Phase 3 temporary).
+    Pipeline: audio → transcription → LLM evaluation → binary feedback.
+
+    Phase 3 transcription is simulated (reference text used as transcription).
+    Phase 5 will replace this pipeline with actual Speechace STT + scoring.
+    The response format stays identical so no frontend changes are needed."""
+    import time as _time
+    t0 = _time.time()
+
+    # ── Step 1: Receive audio ───────────────────────────────────────────
+    logger.info("Audio pronunciation eval: file=%s (%d bytes), text=%s",
+                file.filename, file.size or 0, lesson_text)
+
+    # ── Step 2: Transcribe (Phase 3: simulated — uses reference text) ────
+    transcription = lesson_text
+    logger.info("Transcription (Phase 3 simulated): \"%s\"", transcription)
+
+    # ── Step 3: LLM evaluation ──────────────────────────────────────────
+    messages = [
+        {"role": "user", "content": (
+            f"The learner attempted to pronounce this German text: \"{transcription}\"\n\n"
+            "Detect obvious pronunciation mistakes like pronouncing 'ch' as 'k' "
+            "(e.g. saying 'ik' instead of 'ich'), or incorrect umlaut sounds.\n"
+            "Respond with exactly one line:\n"
+            "- If correct: \"Good!\"\n"
+            "- If incorrect: \"Try again — focus on the [specific sound] sound\""
+        )}
+    ]
+    system = "You are Emma, a German pronunciation coach. One-line response only."
+    try:
+        resp = await _non_streaming_response(messages, system)
+        elapsed = _time.time() - t0
+        logger.info("Pronunciation eval (audio) completed in %.2fs — feedback: %s", elapsed, resp.reply[:40])
+        return EmmaPronounceResponse(feedback=resp.reply, score=50, prompt_version=DEFAULT_VERSION)
+    except HTTPException:
+        return EmmaPronounceResponse(
+            feedback="Try again — focus on the vowel sounds. 🎤",
+            score=50, prompt_version=DEFAULT_VERSION,
+        )
+
+
+@router.post("/encourage", response_model=EmmaEncourageResponse)
+async def emma_encourage(
+    body: EmmaEncourageRequest,
+    user=Depends(require_auth),
+):
+    """Return encouragement based on checkpoint score and lesson context."""
+    score = body.checkpoint_score
+    if score >= 80:
+        message = f"Excellent work on {body.lesson_title}! 🌟 You scored {score:.0f}% — that's mastery level. Keep up the great momentum!"
+    elif score >= 50:
+        message = f"Good progress on {body.lesson_title}! 💪 You scored {score:.0f}%. Review the areas you found tricky and you'll have it down."
+    else:
+        message = f"You completed {body.lesson_title}! 🌱 Every attempt builds your German skills. Try reviewing with flashcards — you scored {score:.0f}%, but that score will climb quickly with practice."
+    return EmmaEncourageResponse(message=message, prompt_version=DEFAULT_VERSION)
+
+
+@router.post("/explain-grammar", response_model=EmmaExplainGrammarResponse)
+async def emma_explain_grammar(
+    body: EmmaExplainGrammarRequest,
+    db: Session = Depends(get_db),
+    user=Depends(require_auth),
+):
+    """Return a learner-friendly grammar explanation for a given topic.
+    Responses are cached by (topic_slug, cefr_level) — repeated requests
+    reuse the cached response instead of invoking the LLM again."""
+    cache_key = f"{body.topic_slug}:{user.target_level or 'A1'}"
+    cached = db.query(EmmaCache).filter(
+        EmmaCache.cache_key == cache_key,
+        EmmaCache.response_type == "grammar",
+    ).first()
+    if cached:
+        logger.info("Emma cache HIT for grammar key=%s", cache_key)
+        return EmmaExplainGrammarResponse(explanation=cached.response_text, prompt_version=DEFAULT_VERSION)
+
+    logger.info("Emma cache MISS for grammar key=%s — invoking LLM", cache_key)
+    messages = [
+        {"role": "user", "content": (
+            f"Explain the German grammar topic \"{body.topic_title}\" to a beginner learner.\n\n"
+            f"Topic slug: {body.topic_slug}\n"
+            f"Reference content: {body.topic_content or 'N/A'}\n\n"
+            "Provide a clear, simple explanation in English. Use examples. "
+            "Avoid technical jargon. Be encouraging. Max 5 sentences."
+        )}
+    ]
+    system = "You are Emma, a German grammar tutor. Explain concepts simply in English with examples."
+    try:
+        resp = await _non_streaming_response(messages, system)
+        # Cache the successful response
+        db.add(EmmaCache(
+            cache_key=cache_key,
+            response_type="grammar",
+            response_text=resp.reply,
+        ))
+        db.commit()
+        return EmmaExplainGrammarResponse(explanation=resp.reply, prompt_version=DEFAULT_VERSION)
+    except HTTPException:
+        return EmmaExplainGrammarResponse(
+            explanation=f"**{body.topic_title}**: This pattern helps you construct correct German sentences. Look at the examples in the lesson — notice how the words change based on the pattern. Practice by creating your own sentences! 📚",
+            prompt_version=DEFAULT_VERSION,
+        )

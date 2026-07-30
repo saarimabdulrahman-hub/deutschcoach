@@ -12,6 +12,7 @@ from sqlalchemy import func as sqla_func
 from database import get_db
 from app.routers.auth_dependency import require_auth
 from app.models.learning_event import LearningEvent
+from app.models.lesson_session import LessonSession, CheckpointResult
 from app.schemas.analytics import (
     RecordEventRequest,
     RecordBatchRequest,
@@ -156,6 +157,79 @@ def get_dashboard(
         ))
 
     return DashboardResponse(learner=learner, recent_lessons=recent)
+
+
+# ── Emma effectiveness (Section 9.6 success criteria) ───────────────────
+
+@router.get("/emma-effectiveness")
+def emma_effectiveness(
+    db: Session = Depends(get_db),
+    user=Depends(require_auth),
+):
+    """Report the relationship between Emma hint usage and checkpoint pass rates.
+    Returns per-session data showing hint count vs average checkpoint score,
+    enabling verification that Emma hints improve checkpoint performance."""
+    uid = user.id
+
+    # Get all completed lesson sessions with checkpoint results
+    sessions = (
+        db.query(LessonSession)
+        .filter(LessonSession.user_id == uid, LessonSession.status == "completed")
+        .all()
+    )
+
+    results: list[dict] = []
+    for session in sessions:
+        # Count Emma questions asked during this session's timeframe
+        hint_count = (
+            db.query(sqla_func.count(LearningEvent.id))
+            .filter(
+                LearningEvent.user_id == uid,
+                LearningEvent.event_type == "emma_question",
+                LearningEvent.created_at >= session.started_at,
+                LearningEvent.created_at <= (session.completed_at or session.started_at),
+            )
+            .scalar()
+        ) or 0
+
+        # Get checkpoint scores for this session
+        checkpoints = (
+            db.query(CheckpointResult)
+            .filter(CheckpointResult.session_id == session.id)
+            .all()
+        )
+        avg_checkpoint = (
+            round(sum(c.pct for c in checkpoints) / len(checkpoints), 1)
+            if checkpoints else None
+        )
+
+        results.append({
+            "session_id": session.id,
+            "lesson_id": session.lesson_id,
+            "hint_count": hint_count,
+            "checkpoint_count": len(checkpoints),
+            "avg_checkpoint_pct": avg_checkpoint,
+            "overall_score": session.score,
+        })
+
+    # Aggregate: compare sessions WITH hints vs WITHOUT hints
+    with_hints = [r for r in results if r["hint_count"] > 0 and r["avg_checkpoint_pct"] is not None]
+    without_hints = [r for r in results if r["hint_count"] == 0 and r["avg_checkpoint_pct"] is not None]
+
+    avg_with = round(sum(r["avg_checkpoint_pct"] for r in with_hints) / len(with_hints), 1) if with_hints else None
+    avg_without = round(sum(r["avg_checkpoint_pct"] for r in without_hints) / len(without_hints), 1) if without_hints else None
+    improvement = round(avg_with - avg_without, 1) if (avg_with is not None and avg_without is not None) else None
+
+    return {
+        "aggregate": {
+            "sessions_with_hints": len(with_hints),
+            "sessions_without_hints": len(without_hints),
+            "avg_checkpoint_with_hints_pct": avg_with,
+            "avg_checkpoint_without_hints_pct": avg_without,
+            "improvement_pct_points": improvement,
+        },
+        "sessions": results,
+    }
 
 
 # ── Event type reference ─────────────────────────────────────────────────

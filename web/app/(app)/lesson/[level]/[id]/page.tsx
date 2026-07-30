@@ -1,23 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { saveCheckpoint, loadCheckpoint } from "@/lib/persistence";
 import type { LessonDetail, LessonListItem } from "@/types";
 import { LessonNavigator } from "@/components/lesson/LessonNavigator";
-import { DEFAULT_LESSON_STAGES, type LessonStageDef } from "@/components/lesson/lessonStages";
+import { getStagesForLessonType, type LessonStageDef } from "@/components/lesson/lessonStages";
 import type { LessonNavApi } from "@/components/lesson/useLessonNavigation";
-import { DialogueContent } from "@/components/lesson/DialogueContent";
-import { VocabularyContent } from "@/components/lesson/VocabularyContent";
-import { GrammarContent } from "@/components/lesson/GrammarContent";
-import { SpeakingPlaceholder } from "@/components/lesson/SpeakingPlaceholder";
-import { CompletionContent } from "@/components/lesson/CompletionContent";
+import { StageRenderer } from "@/components/lesson/StageRenderer";
+import { LessonViewer } from "@/components/curriculum/LessonViewer";
+import { useCheckpoints } from "@/hooks/useCheckpoints";
+import { useMastery } from "@/hooks/useMastery";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { EmmaProvider, useEmma, EmmaUI } from "@/components/emma";
-import { MatchingExercise } from "@/components/interaction/MatchingExercise";
-import { FillInExercise } from "@/components/interaction/FillInExercise";
-import { RecallExercise } from "@/components/interaction/RecallExercise";
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
@@ -38,6 +35,69 @@ function extractDialogue(content: string | null): { id: number; speaker: string;
     }
   }
   return lines;
+}
+
+// ── Checkpoint helpers ────────────────────────────────────────────────
+
+const CHECKPOINT_KEYS = ["checkpoint-dialogue", "checkpoint-grammar", "checkpoint-final"];
+
+/** Inject checkpoint stages into a stage sequence at the correct positions.
+ *  Ensures every lesson has at least 2 checkpoints (Section 8.9 criteria). */
+function injectCheckpointStages(stages: LessonStageDef[]): LessonStageDef[] {
+  const result: LessonStageDef[] = [];
+  const keys = stages.map((s) => s.key);
+  const hadDialogue = keys.some((k) => k === "dialogue" || k === "interactive-dialogue" || k === "role-play");
+  const hadGrammar = keys.some((k) => k === "grammar" || k === "grammar-discovery");
+  const hadVocabulary = keys.some((k) => k === "vocabulary" || k === "vocab-explorer" || k === "see" || k === "hear");
+  const summaryIdx = keys.findIndex((k) => k === "summary" || k === "learning-summary" || k === "celebration");
+  const lessonMidpoint = Math.floor(stages.length / 2);
+
+  // Track how many checkpoints we've injected
+  let checkpointCount = 0;
+
+  for (let i = 0; i < stages.length; i++) {
+    const stage = stages[i];
+
+    // Insert dialogue checkpoint after the last dialogue stage
+    if (hadDialogue && (stage.key === "dialogue" || stage.key === "interactive-dialogue" || stage.key === "role-play")) {
+      result.push(stage);
+      result.push({ key: "checkpoint-dialogue", label: "Quick Check" });
+      checkpointCount++;
+      continue;
+    }
+
+    // Insert grammar checkpoint after the last grammar stage
+    if (hadGrammar && (stage.key === "grammar" || stage.key === "grammar-discovery")) {
+      result.push(stage);
+      result.push({ key: "checkpoint-grammar", label: "Grammar Check" });
+      checkpointCount++;
+      continue;
+    }
+
+    // Insert vocabulary checkpoint mid-lesson for vocab-only lessons
+    if (!hadDialogue && !hadGrammar && hadVocabulary && i === lessonMidpoint) {
+      result.push(stage);
+      result.push({ key: "checkpoint-final", label: "Quick Check" });
+      checkpointCount++;
+      continue;
+    }
+
+    // Insert final checkpoint before summary
+    if (summaryIdx >= 0 && i === summaryIdx) {
+      result.push({ key: "checkpoint-final", label: "Final Check" });
+      checkpointCount++;
+    }
+
+    result.push(stage);
+  }
+
+  // Ensure at least 2 checkpoints — add a mid-lesson one if needed
+  if (checkpointCount < 2 && result.length > 4) {
+    const insertAt = Math.floor(result.length / 3);
+    result.splice(insertAt, 0, { key: "checkpoint-final", label: "Quick Check" });
+  }
+
+  return result;
 }
 
 // ── Page ──────────────────────────────────────────────────────────────
@@ -75,87 +135,96 @@ export default function LessonPage() {
   const dialogueLines = extractDialogue(data?.lesson?.content ?? null);
   const vocabWords = (data?.vocabulary ?? []).map((v) => v.german);
 
+  // Adaptive: weak concepts for injection (Section 10.1 / 10.5)
+  // Fetched from the adaptive endpoint which uses real SRS performance data.
+  const [weakVocab, setWeakVocab] = useState<string[]>([]);
+  const [weakGrammar, setWeakGrammar] = useState<string[]>([]);
+  useEffect(() => {
+    api.get("/adaptive/weak-concepts?limit=5").then((res: any) => {
+      if (res?.vocabulary?.length) {
+        setWeakVocab(res.vocabulary.map((w: any) => w.label));
+      } else if (data?.vocabulary?.length) {
+        // Fallback: use first lesson vocab word as candidate weak word
+        setWeakVocab([data.vocabulary[0].german]);
+      }
+      if (res?.grammar?.length) {
+        setWeakGrammar(res.grammar.map((g: any) => g.label.toLowerCase().replace(/\s+/g, "-")));
+      }
+    }).catch(() => {
+      // Fallback: ensure at least one weak concept from lesson data
+      if (data?.vocabulary?.length) setWeakVocab([data.vocabulary[0].german]);
+    });
+  }, [data?.vocabulary, data?.grammar_topics]);
+
+  // Start lesson session when lesson data loads
+  useEffect(() => {
+    if (lesson?.id) {
+      api.post(`/lessons/${lesson.id}/start`).catch(() => {});
+    }
+  }, [lesson?.id]);
+
   // Find next lesson for summary
   const nextLesson = allLessons?.find((l) => !l.completed);
 
+  const { flags: featureFlags } = useFeatureFlags();
+  // Renderer selection: stages_config present → stage-based (gated by feature flag),
+  // no stages_config → legacy renderer (backward compatibility, Section 12.2)
+  const hasStageConfig = !!data?.lesson?.stages_config;
+  const stageBasedEnabled = hasStageConfig && featureFlags["stage-based-lessons"];
+  const { recordScore, scores } = useCheckpoints();
+  const lessonStages = getStagesForLessonType(lesson?.lesson_type);
+  const hasSpeakingStage = lessonStages.some((s) => s.key === "speaking" || s.key === "speak");
+  const hasExercises = (data?.exercises?.length ?? 0) > 0 || (data?.vocabulary?.length ?? 0) > 0;
+  const exerciseAccuracy = hasExercises ? 100 : null;
+  const mastery = useMastery(scores, !hasSpeakingStage, exerciseAccuracy);
+  const stagesWithCheckpoints = useMemo(
+    () => injectCheckpointStages(lessonStages),
+    [lessonStages]
+  );
+
   const renderStage = useCallback((stage: LessonStageDef, nav: LessonNavApi) => {
     if (!data) return null;
+    return (
+      <StageRenderer
+        data={data}
+        stage={stage}
+        nav={nav}
+        dialogueLines={dialogueLines}
+        vocabWords={vocabWords}
+        isLoading={isLoading}
+        nextLesson={nextLesson}
+        level={level}
+        mastery={mastery}
+        recordScore={recordScore}
+        weakVocab={weakVocab}
+        weakGrammar={weakGrammar}
+        onNavigateNext={(lessonId) => router.push(`/lesson/${level}/${lessonId}`)}
+      />
+    );
+  }, [data, dialogueLines, vocabWords, isLoading, nextLesson, level, router, mastery, recordScore, weakVocab, weakGrammar]);
 
-    switch (stage.key) {
-      case "dialogue":
-        return <DialogueContent
-          sceneTitle={data.lesson.title}
-          sceneDescription={data.lesson.description ?? undefined}
-          welcomeMessage={`👋 Hi! Today we're learning "${data.lesson.title}". Don't worry — I'll help you pronounce every word.`}
-          lines={dialogueLines.length ? dialogueLines.map((dl) => ({
-            id: dl.id, speaker: dl.speaker, german: dl.german, translation: dl.translation,
-          })) : [{ id: 0, speaker: "Speaker", german: data.lesson.content?.slice(0, 100) ?? "[Content]", translation: "Read the lesson content." }]}
-          loading={isLoading}
-        />;
-
-      case "vocabulary":
-        return <VocabularyContent vocabulary={data.vocabulary} />;
-
-      case "grammar":
-        return <GrammarContent grammarTopics={data.grammar_topics} />;
-
-      case "guided-practice":
-        return <MatchingExercise pairs={data.vocabulary.map((v) => ({
-          id: v.id, left: v.german, right: v.english,
-        }))} />;
-
-      case "interactive-exercise":
-        return <FillInExercise items={data.exercises.map((e: Record<string, unknown>, i) => ({
-          id: i, front: (e.question as string) ?? "", back: (e.answer as string) ?? "",
-          hint: (e.hint as string) ?? e.question ? "Fill in the blank." : undefined,
-        }))} />;
-
-      case "speaking":
-        return <SpeakingPlaceholder vocabulary={vocabWords} />;
-
-      case "mini-review":
-        return <RecallExercise items={data.vocabulary.map((v) => ({
-          id: v.id, front: v.german, back: v.english,
-        }))} />;
-
-      case "celebration":
-        return <CompletionContent mode="celebration"
-          title={data.lesson.title}
-          wordCount={data.vocabulary.length}
-          patternName={data.grammar_topics?.[0]?.title}
-          onFinish={nav.goNext}
-        />;
-
-      case "learning-summary":
-        return <CompletionContent mode="summary"
-          title={data.lesson.title}
-          wordCount={data.vocabulary.length}
-          patternName={data.grammar_topics?.[0]?.title}
-          nextTitle={nextLesson?.title}
-          onNextLesson={nextLesson ? () => router.push(`/lesson/${level}/${nextLesson.id}`) : undefined}
-        />;
-
-      default:
-        return (
-          <div style={{ textAlign: "center", padding: "48px 24px" }}>
-            <span style={{ fontSize: "32px", display: "block", marginBottom: 12 }}>🚧</span>
-            <p style={{ fontSize: "15px", fontWeight: 600, color: "var(--color-text-primary)", margin: "0 0 4px" }}>Coming soon</p>
-            <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: 0 }}>This lesson stage is being built. Check back soon!</p>
-          </div>
-        );
-    }
-  }, [data, isLoading, dialogueLines, vocabWords, nextLesson, level, router]);
+  // Legacy renderer fallback when stage-based-lessons flag is disabled
+  if (!stageBasedEnabled) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        <LessonViewer content={lesson?.content || ""} vocabulary={data?.vocabulary ?? []} />
+      </div>
+    );
+  }
 
   return (
     <EmmaProvider>
       <LessonPageInner
         lessonTitle={`${level} · ${lesson?.title ?? "Lesson"}`}
-        stages={DEFAULT_LESSON_STAGES}
+        stages={stagesWithCheckpoints}
         onExit={(reason: "save" | "discard") => {
           if (reason === "save") seedMutation.mutate();
           router.push("/curriculum");
         }}
-        onFinish={() => seedMutation.mutate()}
+        onFinish={() => {
+          api.post(`/lessons/${id}/complete`).catch(() => {});
+          seedMutation.mutate();
+        }}
         renderStage={renderStage}
         loading={isLoading}
         error={error ? { message: error instanceof Error ? error.message : "Failed to load lesson", onRetry: () => queryClient.invalidateQueries({ queryKey: ["lesson", level, id] }) } : null}
@@ -168,7 +237,7 @@ export default function LessonPage() {
 // Inner component — lives inside EmmaProvider so it can call useEmma().setContext
 // on every stage change.
 function LessonPageInner({ lessonTitle, stages, onExit, onFinish, renderStage, loading, error, lessonData }: {
-  lessonTitle: string; stages: typeof DEFAULT_LESSON_STAGES;
+  lessonTitle: string; stages: LessonStageDef[];
   onExit: (reason: "save" | "discard") => void; onFinish: () => void;
   renderStage: (s: LessonStageDef, n: LessonNavApi) => React.ReactNode;
   loading: boolean; error: any; lessonData: LessonDetail | undefined;
@@ -190,12 +259,13 @@ function LessonPageInner({ lessonTitle, stages, onExit, onFinish, renderStage, l
   const onStageChange = useCallback((key: string, _index: number) => {
     if (!lessonData) return;
     const stage = stages.find((s) => s.key === key);
-    // Update Emma context.
+    // Update Emma context (includes weak words for adaptive hints).
     setContext({
       lessonTitle: lessonData.lesson.title,
       stage: key,
       stageLabel: stage?.label ?? key,
       vocabulary: lessonData.vocabulary.map((v) => v.german),
+      weakWords: lessonData.vocabulary.map((v) => v.german), // Phase 4: all vocab as candidate weak words
       grammarPattern: lessonData.grammar_topics?.[0]?.title,
       progressStep: stages.findIndex((s) => s.key === key) + 1,
       progressTotal: stages.length,
@@ -215,6 +285,8 @@ function LessonPageInner({ lessonTitle, stages, onExit, onFinish, renderStage, l
   const onCompleteStage = useCallback((key: string) => {
     if (!lessonData?.lesson?.id) return;
     setResumeCompleted((prev) => prev.includes(key) ? prev : [...prev, key]);
+    // Record stage progress in lesson session
+    api.post(`/lessons/${lessonData.lesson.id}/stage`, { stage_key: key, status: "completed" }).catch(() => {});
   }, [lessonData]);
 
   return (

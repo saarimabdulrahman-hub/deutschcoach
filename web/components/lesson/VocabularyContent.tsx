@@ -4,6 +4,8 @@ import type { VocabEntry } from "@/types";
 import { useInteractionController } from "@/components/interaction/useInteractionController";
 import { QuestionCard, ProgressDots, PageNav } from "@/components/interaction/InteractionPrimitives";
 import type { InteractionItem } from "@/components/interaction/types";
+import { useWordSpeech } from "@/hooks/useSpeech";
+import { SpeakIcon } from "@/components/ui/SpeakIcon";
 
 // Vocabulary stage — thin wrapper over the interaction engine (Sprint 8.2).
 // No longer maintains its own index/flip/prev/next state.
@@ -20,9 +22,14 @@ function vocabToItems(vocab: VocabEntry[]): InteractionItem[] {
   }));
 }
 
-interface Props { vocabulary: VocabEntry[]; }
+interface Props {
+  vocabulary: VocabEntry[];
+  /** Weak words to highlight (Section 10.1 adaptive injection). */
+  weakWords?: string[];
+}
 
-export function VocabularyContent({ vocabulary }: Props) {
+export function VocabularyContent({ vocabulary, weakWords }: Props) {
+  const { speak, speaking } = useWordSpeech();
   const items = vocabulary.length ? vocabToItems(vocabulary) : [{ id: "empty", front: "No vocabulary", back: "for this lesson" }];
   const ctrl = useInteractionController({ mode: "flashcard", items });
 
@@ -34,14 +41,33 @@ export function VocabularyContent({ vocabulary }: Props) {
   const back = ctrl.current.back ?? "";
   const meta = ctrl.current.meta ?? "";
   const isFlipped = ctrl.phase === "revealed";
+  const isWeak = weakWords?.some((w) => w.toLowerCase() === front.toLowerCase());
 
   return (
     <div className="max-w-lg mx-auto py-2">
       <div className="flex items-center justify-between mb-2">
         <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
-          Your words · {ctrl.index + 1} of {ctrl.total}
+          Tap to flip · {ctrl.index + 1} of {ctrl.total}
         </p>
-        <ProgressDots total={ctrl.total} current={ctrl.index} completed={ctrl.completedCount} />
+        <div className="flex items-center gap-2">
+          {isWeak && (
+            <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded"
+              style={{ background: "rgba(255,71,87,0.12)", color: "#FF6B77" }}>
+              Review
+            </span>
+          )}
+          <button
+            onClick={() => !speaking && speak(ctrl.current.front, "de-DE")}
+            disabled={speaking}
+            className="w-8 h-8 rounded-lg flex items-center justify-center border-none cursor-pointer disabled:opacity-40"
+            style={{ background: "rgba(168,85,247,0.08)", color: "var(--color-accent-light)" }}
+            aria-label={`Listen to ${ctrl.current.front}`}
+            title="Listen"
+          >
+            <SpeakIcon size={16} />
+          </button>
+          <ProgressDots total={ctrl.total} current={ctrl.index} completed={ctrl.completedCount} />
+        </div>
       </div>
 
       <QuestionCard>

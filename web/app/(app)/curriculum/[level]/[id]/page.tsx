@@ -52,6 +52,103 @@ function ExerciseCard({ index, question, answer, type }: { index: number; questi
   );
 }
 
+// ── Hero Illustration (Emma portrait + vocab chips) ────────────────────
+
+function HeroIllustration({ level, unit, vocabWords, topicEmoji }: {
+  level: string;
+  unit: number;
+  vocabWords: string[];
+  topicEmoji: string;
+}) {
+  const chips = [
+    { word: vocabWords[0] ?? "", x: 6, y: 14, delay: 0.2, color: "#a855f7" },
+    { word: vocabWords[1] ?? "", x: 214, y: 56, delay: 0.35, color: "#ec4899" },
+    { word: vocabWords[2] ?? "", x: 14, y: 110, delay: 0.5, color: "#8b5cf6" },
+  ];
+
+  return (
+    <div className="hidden lg:flex w-[300px] flex-shrink-0 items-center justify-center">
+      <svg width="300" height="340" viewBox="0 0 300 340" aria-hidden>
+        <defs>
+          <filter id="chip-shadow">
+            <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="rgba(168,85,247,0.15)"/>
+          </filter>
+        </defs>
+
+        <style>{`
+          @keyframes chipSlide {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes floatGentle {
+            0%, 100% { transform: translateY(0px); }
+            50%      { transform: translateY(-4px); }
+          }
+          .chip-in  { animation: chipSlide 0.5s ease-out both; }
+          .chip-drift { animation: floatGentle 4s ease-in-out infinite; }
+        `}</style>
+
+        {/* Vocab chips */}
+        {chips.map((c, i) => c.word && (
+          <g key={i} className="chip-in" style={{ animationDelay: `${c.delay}s` }}>
+            <g className="chip-drift" style={{ animationDelay: `${i * 0.6}s` }}>
+              <rect
+                x={c.x} y={c.y} width="76" height="28" rx="14"
+                fill="rgba(20,14,45,0.82)"
+                stroke={c.color}
+                strokeWidth="1"
+                strokeOpacity="0.35"
+                filter="url(#chip-shadow)"
+              />
+              <text
+                x={c.x + 38} y={c.y + 18}
+                textAnchor="middle"
+                fontSize="12"
+                fontWeight="700"
+                fill={c.color}
+                letterSpacing="0.3"
+              >{c.word}</text>
+            </g>
+          </g>
+        ))}
+
+        {/* Topic emoji badge */}
+        <g className="chip-in" style={{ animationDelay: "0.7s" }}>
+          <g className="chip-drift" style={{ animationDelay: "1.2s" }}>
+            <circle cx="244" cy="14" r="20" fill="rgba(20,14,45,0.82)" stroke="rgba(168,85,247,0.15)" strokeWidth="1"/>
+            <text x="244" y="22" textAnchor="middle" fontSize="21">{topicEmoji}</text>
+          </g>
+        </g>
+
+        {/* Rings around Emma */}
+        <circle cx="150" cy="172" r="134" fill="none" stroke="rgba(168,85,247,.12)" strokeWidth="1" />
+        <circle cx="150" cy="172" r="131" fill="none" stroke="rgba(168,85,247,.06)" strokeWidth="0.5" strokeDasharray="5 8" />
+
+        {/* Emma portrait */}
+        <g className="chip-in" style={{ animationDelay: "0.1s" }}>
+          <foreignObject x="30" y="52" width="240" height="240">
+            <div style={{
+              width: "240px", height: "240px", borderRadius: "50%", overflow: "hidden",
+              boxShadow: "0 0 60px rgba(168,85,247,.3)",
+            }}>
+              <img
+                src="/emma-portrait.png"
+                alt="Emma"
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            </div>
+          </foreignObject>
+        </g>
+
+        {/* Level label */}
+        <text x="150" y="320" textAnchor="middle" fontSize="10" fontWeight="600" fill="#94a3b8" letterSpacing="2">
+          {level} · UNIT {unit}
+        </text>
+      </svg>
+    </div>
+  );
+}
+
 function LessonSkeleton() {
   return (
     <div className="space-y-6">
@@ -356,18 +453,13 @@ export default function LessonPage() {
                   </div>
                 </div>
 
-                {/* Right: Illustration */}
-                <div className="hidden lg:flex w-[200px] flex-shrink-0 items-center justify-center p-6">
-                  <div className="w-full rounded-2xl flex flex-col items-center justify-center gap-3" style={{
-                    background: "radial-gradient(ellipse at center, rgba(168,85,247,0.08) 0%, transparent 70%)",
-                    minHeight: "180px",
-                  }}>
-                    <div className="text-6xl" aria-hidden>{getLessonEmoji(lesson.title, lesson.topics)}</div>
-                    <p className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>
-                      {lesson.level} · Unit {lesson.unit}
-                    </p>
-                  </div>
-                </div>
+                {/* Right: Emma illustration */}
+                <HeroIllustration
+                  level={lesson.level}
+                  unit={lesson.unit}
+                  vocabWords={vocabulary.slice(0, 3).map(v => v.german)}
+                  topicEmoji={getLessonEmoji(lesson.title, lesson.topics)}
+                />
               </div>
             </div>
           )}
@@ -402,12 +494,11 @@ export default function LessonPage() {
           )}
 
           {/* Lesson content */}
-          <div id="lesson-content" className="rounded-2xl"
-            style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
-            <LessonViewer content={lesson.content || ""} />
+          <div id="lesson-content">
+            <LessonViewer content={lesson.content || ""} vocabulary={vocabulary} />
 
             {/* Footer navigation */}
-            <div className="flex items-center justify-between px-5 sm:px-6 py-4" style={{ borderTop: "1px solid var(--color-border)" }}>
+            <div className="flex items-center justify-between px-5 sm:px-6 py-4 rounded-2xl" style={{ background: "var(--color-card-bg)", border: "1px solid var(--color-border)" }}>
               <div>
                 {prevLesson && (
                   <button onClick={() => router.push(`/curriculum/${level}/${prevLesson.id}`)}
@@ -444,7 +535,7 @@ export default function LessonPage() {
               </h2>
               <div className="space-y-3">
                 {exercises.map((ex, i) => {
-                  const question = typeof ex.question === "string" ? ex.question : "";
+                  const question = typeof ex.prompt === "string" ? ex.prompt : (typeof ex.question === "string" ? ex.question : "");
                   const answer = typeof ex.answer === "string" ? ex.answer : "";
                   const exType = typeof ex.type === "string" ? ex.type : "";
                   return (

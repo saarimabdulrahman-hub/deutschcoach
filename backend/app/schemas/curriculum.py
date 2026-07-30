@@ -18,6 +18,7 @@ class VocabEntryOut(BaseModel):
 class LessonListItem(BaseModel):
     id: int
     title: str
+    lesson_type: str = "mixed"
     unit: int
     order: int
     topics: list

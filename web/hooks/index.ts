@@ -6,4 +6,4 @@ export { useErrorRecovery } from "./useErrorRecovery";
 export { useOnlineStatus } from "./useOnlineStatus";
 export { useSafeArea } from "./useSafeArea";
 export { useSearch } from "./useSearch";
-export { useSentenceSpeech, useWordSpeech, splitSentences } from "./useSpeech";
+export { useSentenceSpeech, useWordSpeech, splitSentences, sanitizeAudioFilename } from "./useSpeech";

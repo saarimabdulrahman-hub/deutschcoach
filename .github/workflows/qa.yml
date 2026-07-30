@@ -77,6 +77,47 @@ jobs:
           name: test-results
           path: web/test-results/
 
+  lesson-validation:
+    name: Lesson Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate all lessons
+        run: node scripts/validate-lesson.mjs
+
+  performance-budget:
+    name: Performance Budget
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Check bundle size
+        run: |
+          TOTAL_KB=$(du -sk .next/static/chunks/pages 2>/dev/null | awk '{print $1}' || echo 0)
+          echo "Bundle size: ${TOTAL_KB}KB"
+          if [ "$TOTAL_KB" -gt 500 ]; then
+            echo "❌ Bundle size ${TOTAL_KB}KB exceeds 500KB budget"
+            exit 1
+          fi
+          echo "✅ Bundle size: ${TOTAL_KB}KB (budget: 500KB)"
+
   accessibility:
     name: Accessibility Scan
     runs-on: ubuntu-latest

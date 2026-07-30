@@ -6,7 +6,7 @@ import os
 import logging
 from dotenv import load_dotenv
 
-from app.routers import auth, curriculum, grammar, quiz, srs, dashboard, payments, user, chat, emma, analytics, checkpoint, search
+from app.routers import auth, curriculum, grammar, quiz, srs, dashboard, payments, user, chat, emma, analytics, checkpoint, search, vocab, lessons, adaptive, audio, pronunciation, missions, flags, experiment, migration
 
 load_dotenv()
 
@@ -70,6 +70,42 @@ app.include_router(emma.router)
 app.include_router(analytics.router)
 app.include_router(checkpoint.router)
 app.include_router(search.router)
+app.include_router(vocab.router)
+app.include_router(lessons.router)
+app.include_router(adaptive.router)
+app.include_router(audio.router)
+app.include_router(pronunciation.router)
+app.include_router(missions.router)
+app.include_router(flags.router)
+app.include_router(experiment.router)
+app.include_router(migration.router)
+
+# ── Specification-defined endpoint aliases (Section 11.6) ──────────────
+# These delegate to existing handlers so both path conventions work.
+from app.routers.pronunciation import score_pronunciation
+from app.routers.missions import get_missions, get_achievements
+from fastapi import HTTPException, Depends
+from database import get_db
+from sqlalchemy.orm import Session
+from app.routers.auth_dependency import require_auth
+from app.models.lesson import Lesson
+from app.models.user import User
+from app.routers.curriculum import _lesson_to_dict
+
+app.post("/speaking/score")(score_pronunciation)
+app.get("/missions/daily")(get_missions)
+app.get("/achievements")(get_achievements)
+
+# ── API versioning (Section 12.2 backward compatibility) ─────────────────
+@app.get("/api/v1/lessons/{lesson_id}")
+@app.get("/api/v2/lessons/{lesson_id}")
+def get_lesson_api(lesson_id: int, db: Session = Depends(get_db), user: User = Depends(require_auth)):
+    """Return lesson detail by ID. Both v1 and v2 coexist for migration compatibility.
+    v1 uses the current response format; v2 returns the same data (backward compatible)."""
+    lesson = db.query(Lesson).filter(Lesson.id == lesson_id).first()
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    return {"lesson": _lesson_to_dict(lesson)}
 
 
 @app.get("/health")
